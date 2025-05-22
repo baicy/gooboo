@@ -25,6 +25,7 @@ export default {
         fishingProgress: 0,
         treasureRods: 0,
         boughtRods: 0,
+        logs: [],
     },
     getters: {
         eventMult: (state, getters, rootState, rootGetters) => {
@@ -161,6 +162,16 @@ export default {
         },
         updateSubkey(state, o) {
             Vue.set(state[o.name][o.key], o.subkey, o.value);
+        },
+        addLog(state, r) {
+            state.logs.unshift({
+                time: Date.now(),
+                location: state.currentLocation,
+                ...r
+            });
+            if (state.logs.length > 50) {
+                state.logs.pop();
+            }
         }
     },
     actions: {
@@ -184,6 +195,7 @@ export default {
             commit('updateKey', {key: 'fishingProgress', value: 0});
             commit('updateKey', {key: 'treasureRods', value: 0});
             commit('updateKey', {key: 'boughtRods', value: 0});
+            commit('updateKey', {key: 'logs', value: []});
         },
         catchFish({ state, rootGetters, commit, dispatch }, name) {
             const fish = state.fish[name];
@@ -198,6 +210,7 @@ export default {
             }
 
             dispatch('currency/gain', {feature: 'event', name: 'slime', gainMult: true, amount: size}, {root: true});
+            commit('addLog', {type: 'fish', name, size});
 
             if (state.fish[name].catchRecord === null || state.fish[name].catchRecord < size) {
                 dispatch('event/giveTokens', {event: 'weatherChaos', amount: size - (state.fish[name].catchRecord ?? 0)}, {root: true});
@@ -240,6 +253,7 @@ export default {
                         if (next) {
                             commit('updateSubkey', {name: 'location', key: next.name, subkey: 'owned', value: true});
                             dispatch('note/find', 'event_17', {root: true});
+                            commit('addLog', {type: 'location', name: next.name});
                         }
                     } else if (treasureCaught === 'fishingRod') {
                         // Unlock random fishing rod
@@ -251,15 +265,18 @@ export default {
                         }
                         if (eligible.length > 0) {
                             let rngGenRod = rootGetters['system/getRng']('weatherChaos_fishingRod');
+                            const rodName = randomElem(eligible, rngGenRod());
                             commit('system/nextRng', {name: 'weatherChaos_fishingRod', amount: 1}, {root: true});
-                            commit('updateSubkey', {name: 'fishingRod', key: randomElem(eligible, rngGenRod()), subkey: 'owned', value: true});
+                            commit('updateSubkey', {name: 'fishingRod', key: rodName, subkey: 'owned', value: true});
                             commit('updateKey', {key: 'treasureRods', value: state.treasureRods + 1});
+                            commit('addLog', {type: 'rod', name: rodName});
                         }
                     } else if (treasureCaught === 'bait') {
                         // Gain random bait
                         const baitName = randomElem(Object.keys(state.bait), rngGen());
                         const bait = state.bait[baitName];
                         commit('updateSubkey', {name: 'bait', key: baitName, subkey: 'owned', value: bait.owned + bait.stackSize});
+                        commit('addLog', {type: 'bait', name: baitName, amount: bait.stackSize});
                     }
                 } else if (chance(fishChance, rngGen())) {
                     // Catch fish
@@ -269,7 +286,10 @@ export default {
                     dispatch('note/find', 'event_16', {root: true});
                 } else {
                     // Catch trash
-                    dispatch('currency/gain', {feature: 'event', name: trashNames[weightSelect(trashWeights, rngGen())], gainMult: true, amount: 100 * getters.eventMult}, {root: true});
+                    const trashName = trashNames[weightSelect(trashWeights, rngGen())];
+                    const trashAmount = 100 * getters.eventMult;
+                    dispatch('currency/gain', {feature: 'event', name: trashName, gainMult: true, amount: trashAmount}, {root: true});
+                    commit('addLog', {type: 'trash', name: trashName, amount: trashAmount});
                 }
             }
         },
