@@ -3,6 +3,11 @@
   width: 72px;
   height: 72px;
 }
+.fish-percent {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
 </style>
 
 <template>
@@ -12,6 +17,7 @@
         <div class="fish-box bg-tile-default rounded d-flex justify-center align-center" :class="$vnode.data.staticClass" v-bind="attrs" v-on="on">
           <v-icon v-if="caught" :size="24 * fish.iconSize" :color="fish.color">{{ fish.icon }}</v-icon>
           <v-icon v-else size="36" color="secondary">mdi-help</v-icon>
+          <div v-if="chance" class="fish-percent text-caption ma-2">{{ $formatNum(chance * 100, true) }}%</div>
         </div>
       </v-badge>
     </template>

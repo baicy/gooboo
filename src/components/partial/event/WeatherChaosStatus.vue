@@ -54,7 +54,7 @@
         <v-icon class="ma-1" v-for="(item, key) in nextWeather.slice(1)" :key="`weather-next-${ key }`" :style="`opacity: ${ 0.5 - key * 0.02 };`">{{ weather[item].icon }}</v-icon>
       </div>
     </div>
-    <div class="d-flex justify-center align-center pa-1">
+    <div class="d-flex flex-wrap justify-center align-center pa-1">
       <div class="bg-tile-default elevation-2 rounded ma-1 pa-1">
         <price-tag class="ma-1" currency="event_cloud" :amount="resetCost"></price-tag>
         <v-btn class="ma-1" color="primary" :disabled="cloud < resetCost" @click="selectWeather = true">
@@ -71,6 +71,9 @@
             </v-btn>
           </v-sheet>
         </v-dialog>
+      </div>
+      <div class="bg-tile-default elevation-2 rounded ma-1 pa-1">
+        <weather-chaos-log />
       </div>
     </div>
     <div class="d-flex flex-wrap justify-space-around ma-1">
@@ -145,9 +148,10 @@ import PriceTag from '../../render/PriceTag.vue';
 import StatBreakdown from '../../render/StatBreakdown.vue';
 import DisplayRow from '../upgrade/DisplayRow.vue';
 import WeatherChaosFish from './WeatherChaosFish.vue';
+import WeatherChaosLog from './WeatherChaosLog.vue';
 
 export default {
-  components: { WeatherChaosFish, PriceTag, DisplayRow, StatBreakdown },
+  components: { WeatherChaosFish, PriceTag, DisplayRow, StatBreakdown, WeatherChaosLog },
   data: () => ({
     selectWeather: false,
   }),
