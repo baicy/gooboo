@@ -41,6 +41,14 @@
 import { mapGetters } from 'vuex';
 
 const changeLogs = [
+    {
+    day: '2025-05-24',
+    content: {
+      cheat: [
+        '天气混乱事件150云更改天气从随机改为可选',
+      ]
+    },
+  },
   {
     day: 'xxxx-xx-xx',
     content: {

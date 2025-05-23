@@ -362,13 +362,16 @@ export default {
                 commit('updateSubkey', {name: 'bait', key: name, subkey: 'owned', value: bait.owned + bait.stackSize * 10});
             }
         },
-        initWeatherCycle({ state, commit }) {
+        initWeatherCycle({ state, commit }, name) {
             let arr = [];
             let same = 0;
             let current = null;
 
             for (let i = 0; i < 24; i++) {
-                if (current === null || chance(same / 4)) {
+                if (name && i === 0) {
+                    current = name;
+                    same = 1;
+                } else if (current === null || chance(same / 4)) {
                     current = randomElem(current === null ? Object.keys(state.weather) : state.weather[current].next);
                     same = 1;
                 } else {
@@ -399,10 +402,10 @@ export default {
 
             commit('updateKey', {key: 'nextWeather', value: arr});
         },
-        resetWeatherCycle({ rootGetters, dispatch }) {
+        resetWeatherCycle({ rootGetters, dispatch }, name) {
             if (rootGetters['currency/value']('event_cloud') >= WEATHER_CHAOS_RESET_COST) {
                 dispatch('currency/spend', {feature: 'event', name: 'cloud', amount: WEATHER_CHAOS_RESET_COST}, {root: true});
-                dispatch('initWeatherCycle');
+                dispatch('initWeatherCycle', name);
             }
         }
     }

@@ -57,10 +57,20 @@
     <div class="d-flex justify-center align-center pa-1">
       <div class="bg-tile-default elevation-2 rounded ma-1 pa-1">
         <price-tag class="ma-1" currency="event_cloud" :amount="resetCost"></price-tag>
-        <v-btn class="ma-1" color="primary" :disabled="cloud < resetCost" @click="resetWeather">
+        <v-btn class="ma-1" color="primary" :disabled="cloud < resetCost" @click="selectWeather = true">
           <v-icon class="mr-2">mdi-refresh</v-icon>
           {{ $vuetify.lang.t(`$vuetify.event.weatherChaos.changeWeather`) }}
         </v-btn>
+        <v-dialog v-model="selectWeather" max-width="400" scrollable>
+          <v-sheet class="pa-4 d-flex flex-wrap">
+            <v-btn v-for="(w,i) in weather" :key="i" fab plain x-large @click="resetWeather(i)">
+              <v-icon>{{ w.icon }}</v-icon>
+            </v-btn>
+            <v-btn fab plain x-large color="error" @click="resetWeather()">
+              随机
+            </v-btn>
+          </v-sheet>
+        </v-dialog>
       </div>
     </div>
     <div class="d-flex flex-wrap justify-space-around ma-1">
@@ -138,6 +148,9 @@ import WeatherChaosFish from './WeatherChaosFish.vue';
 
 export default {
   components: { WeatherChaosFish, PriceTag, DisplayRow, StatBreakdown },
+  data: () => ({
+    selectWeather: false,
+  }),
   computed: {
     ...mapState({
       fishingRod: state => state.weatherChaos.fishingRod,
@@ -241,8 +254,9 @@ export default {
     buyBait(name) {
       this.$store.dispatch('weatherChaos/buyBait', name);
     },
-    resetWeather() {
-      this.$store.dispatch('weatherChaos/resetWeatherCycle');
+    resetWeather(name) {
+      this.$store.dispatch('weatherChaos/resetWeatherCycle', name);
+      this.selectWeather = false;
     }
   }
 }
