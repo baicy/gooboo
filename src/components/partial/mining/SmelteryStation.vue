@@ -27,7 +27,7 @@
       <price-tag class="ma-1" :currency="smeltery.output" :amount="1" add></price-tag>
       <v-spacer></v-spacer>
       <v-badge v-if="smeltery.stored > 0" inline color="secondary" :content="$formatNum(smeltery.stored)"></v-badge>
-      <v-btn class="ma-1" small color="primary" :disabled="isFrozen || !canAfford" @click="buyCustom">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
+      <v-btn class="ma-1" small color="primary" :disabled="isFrozen || !canAfford" @click="buyCustom">{{ $vuetify.lang.t('$vuetify.gooboo.custom') }}</v-btn>
       <v-btn class="ma-1" color="primary" :disabled="isFrozen || !canAfford" @click="buy">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
     </div>
     <v-progress-linear class="rounded-b" height="4" :indeterminate="isHighspeed" :value="isHighspeed ? undefined : (smeltery.progress * 100)"></v-progress-linear>
