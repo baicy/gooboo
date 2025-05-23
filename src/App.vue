@@ -399,7 +399,9 @@
       </gb-tooltip>
       <v-spacer></v-spacer>
       <v-btn icon @click="changeScreen('info')">
-        <v-icon>mdi-information</v-icon>
+        <v-badge :value="importantNotice" color="red" overlap dot>
+          <v-icon>mdi-information</v-icon>
+        </v-badge>
       </v-btn>
       <v-menu bottom open-on-hover offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -677,6 +679,7 @@ export default {
       sideFeatures: 'system/sideFeatures',
       nextFeature: 'system/nextFeature',
       globalLevelParts: 'meta/globalLevelParts',
+      importantNotice: 'system/importantNotice',
       backupHint: 'system/backupHint',
       isEndOfFeature: 'system/isEndOfFeature',
       isOnMainFeature: 'system/isOnMainFeature',

@@ -2,7 +2,7 @@ import Vue from "vue";
 import { tick } from "../js/tick";
 import { randomHex } from "../js/utils/random";
 import seedrandom from "seedrandom";
-import { LOCAL_STORAGE_NAME } from "../js/constants";
+import { LOCAL_STORAGE_NAME, EXTRA_VERSION } from "../js/constants";
 
 export default {
     namespaced: true,
@@ -440,6 +440,7 @@ export default {
         cachePage: {},
         playerId: null,
         playerName: null,
+        extraVersion: 0,
     },
     getters: {
         mainFeatures: (state, getters, rootState) => {
@@ -564,6 +565,9 @@ export default {
         },
         isMe: (state) => {
             return state.playerName === 'BaiLee';
+        },
+        importantNotice: (state) => {
+            return state.extraVersion !== EXTRA_VERSION;
         }
     },
     mutations: {
@@ -683,6 +687,9 @@ export default {
                 }
             }
             Vue.set(state, 'cheatDetected', newCheatObj);
+        },
+        removeImportantNotice(state) {
+            Vue.set(state, 'extraVersion', EXTRA_VERSION);
         }
     },
     actions: {
@@ -708,6 +715,7 @@ export default {
             commit('updateKey', {key: 'cachePage', value: {}});
             commit('updateKey', {key: 'playerId', value: null});
             commit('updateKey', {key: 'playerName', value: null});
+            commit('updateKey', {key: 'extraVersion', value: 0});
 
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {

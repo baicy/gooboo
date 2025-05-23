@@ -327,7 +327,7 @@ export default {
       1: '这里',
       2: ' (测试版本中的保存文件无法在游戏的发布版本中使用)',
     },
-    viewPatchnotes: '查看更新日志',
+    viewPatchnotes: '更新日志',
     numberFormatting: '数字格式',
     numberFormattingDescription:
       '为了保持数字可读，极大（和极小）的数字使用以下单位进行格式化.',
@@ -342,15 +342,15 @@ export default {
     },
     socials: {
       title: '社交',
-      text: 'Gooboo 可以单独玩，无需外部指南。 但如果你想和其他玩家一起出去玩，你可以参观这些地方:',
-      viewCode: '查看源码',
+      text: 'Gooboo 可以独自玩，无需外部指南。但如果你想和其他玩家一起玩，你可以访问这些地方:',
+      viewCode: '源码',
       patreon: 'Patreon',
       reddit: 'Reddit',
       discord: 'Discord',
     },
     supportMe: {
-      title: '支持原作者',
-      text: '该游戏是免费的，没有微交易或广告。 如果您想支持开发，请查看我的 patreon 页面:',
+      title: '支持开发',
+      text: '该游戏是免费的，没有微交易或广告。 如果您想支持开发，请查看原作者的 patreon 页面或者修改者的收款码:',
       patreon: 'Patreon',
     },
     tech: {

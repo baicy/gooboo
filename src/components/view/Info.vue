@@ -15,6 +15,17 @@
   vertical-align: super;
   font-size: 66%;
 }
+.qrcode {
+  background-size: contain;
+  width: 200px;
+  height: 275px;
+}
+.alipay-qrcode {
+  background-image: url('/public/img/alipay.png');
+}
+.wxpay-qrcode {
+  background-image: url('/public/img/wxpay.png');
+}
 </style>
 
 <template>
@@ -45,85 +56,25 @@
           </div>
         </alert-text>
       </v-card-text>
-      <v-card-subtitle class="text-center">此汉化网页版提供者是 Whiteberry Lee</v-card-subtitle>
-      <v-card-text>Gooboo CN QQ群：468760729 欢迎加入讨论。</v-card-text>
       <v-card-actions class="flex-wrap justify-end">
         <v-spacer></v-spacer>
         <v-btn class="ma-1" color="primary" @click="toStatOverview"><v-icon class="mr-2">mdi-card-account-details</v-icon>{{ $vuetify.lang.t('$vuetify.info.statistics.name') }}</v-btn>
         <v-btn class="ma-1" color="primary" @click="toPatchnote"><v-icon class="mr-2">mdi-script-text</v-icon>{{ $vuetify.lang.t('$vuetify.info.viewPatchnotes') }}</v-btn>
-        <v-btn class="ma-1" color="primary" target="_blank" href="https://github.com/baicy/gooboo/"><v-icon class="mr-2">mdi-open-in-new</v-icon>{{ $vuetify.lang.t('$vuetify.info.socials.viewCode') }}</v-btn>
+        <v-btn class="ma-1" color="primary" target="_blank" href="https://github.com/Tendsty/gooboo"><v-icon class="mr-2">mdi-open-in-new</v-icon>{{ $vuetify.lang.t('$vuetify.info.socials.viewCode') }}</v-btn>
+        <v-btn class="ma-1" color="primary" target="_blank" href="https://tendsty.itch.io/gooboo"><v-icon class="mr-2">mdi-open-in-new</v-icon>原版</v-btn>
       </v-card-actions>
     </v-card>
-    <v-card class="ma-2">
-      <v-card-title class="justify-center">特别声明</v-card-title>
-      <v-card-text>Gooboo汉化由锅巴汉化组引入，本网汉化基础继承自锅巴汉化组，部分汉化略有不同。</v-card-text>
-      <v-card-text>以下是本网站和原版网站在游玩时的不同之处：</v-card-text>
-      <v-card-text>
-        <span class="d-flex ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>在画廊声望页显示画廊的全局等级进度</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>显示画廊的灵感每层已使用数</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>画廊的形状游戏显示各个形状的个数</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>村庄-工匠显示每个制品的基础价格和预计销售时间之比和当前里程碑升级所需时间（以不间断制作计算）</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>冷冻实验室显示升级所需天数</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>采矿冶炼可自己输入个数</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="teal">体验</v-chip>
-          <span>可直接复制存档文本，避免无法导出文件</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="red">作弊</v-chip>
-          <span>画廊虚空生产加速器（解锁完所有形状后出现）</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="red">作弊</v-chip>
-          <span>村庄冻结收益 40% -> 100%（作者于v1.5.0削弱）</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="red">作弊</v-chip>
-          <span>学校点击“参加考试”即可以满分通过考试</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="red">作弊</v-chip>
-          <span>未采用v1.5.5的画廊重大削弱（画布等级和灵感“订购大量保险箱”提供的鼓数量和画布速度）</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="green">反作弊</v-chip>
-          <span>无法通过修改存档来提前解锁子功能</span>
-        </span>
-        <span class="d-flex mt-2 ml-4" :class="{'flex-wrap': $vuetify.breakpoint.xsOnly}">
-          <v-chip label small class="flex-shrink-0 mr-2 px-2" color="green">反作弊</v-chip>
-          <span>无法通过修改存档来设置多个冷冻实验室，此时冷冻收益强制为0</span>
-        </span>
-      </v-card-text>
-      <v-card-actions class="flex-wrap justify-end">
-        <v-spacer></v-spacer>
-        <v-btn class="ma-1" color="primary" target="_blank" href="https://tendsty.itch.io/gooboo"><v-icon class="mr-2">mdi-open-in-new</v-icon>原版Gooboo</v-btn>
-        <v-btn class="ma-1" color="primary" target="_blank" href="https://gityx.com/g8hh/yihanhua/778.html"><v-icon class="mr-2">mdi-open-in-new</v-icon>锅巴版Gooboo</v-btn>
-      </v-card-actions>
-    </v-card>
+    <change-content />
     <v-card class="ma-2">
       <v-card-title class="justify-center">{{ $vuetify.lang.t('$vuetify.info.socials.title') }}</v-card-title>
       <v-card-text>{{ $vuetify.lang.t('$vuetify.info.socials.text') }}</v-card-text>
       <v-card-actions class="flex-wrap justify-end">
         <v-btn class="ma-1" color="#ff4500" target="_blank" href="https://www.reddit.com/r/GoobooGame"><v-icon class="mr-2">mdi-open-in-new</v-icon>{{ $vuetify.lang.t('$vuetify.info.socials.reddit') }}</v-btn>
         <v-btn class="ma-1" color="#404eed" target="_blank" href="https://discord.gg/SQ2zFfrxXT"><v-icon class="mr-2">mdi-open-in-new</v-icon>{{ $vuetify.lang.t('$vuetify.info.socials.discord') }}</v-btn>
+        <v-btn class="ma-1" color="#ea4c89" target="_blank" href="https://gityx.com/g8hh/yihanhua/778.html" ><v-icon class="mr-2">mdi-open-in-new</v-icon>锅巴汉化</v-btn>
+        <v-btn class="ma-1" color="#ffedc3" target="_blank" href="https://bbs.nga.cn/read.php?tid=38042407" ><v-icon class="mr-2">mdi-forum</v-icon>nga</v-btn>
+        <v-btn class="ma-1" color="#0099ff" target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=aHepMfL3oYYl0TIyUZJ6ikeF5DzMtweZ&jump_from=webapi&authKey=2LK48lJ5zp93sglq8hW4sDLBJr/cH2p68KOktFb/Go5uTff4KnNtAG4FupUlr/J6" ><v-icon class="mr-2">mdi-qqchat</v-icon>QQ群</v-btn>
+        <v-btn class="ma-1" color="#02c277" target="_blank" href="https://docs.qq.com/sheet/DQlNPSHdVVkdxZ0l4" ><v-icon class="mr-2">mdi-bookshelf</v-icon>wiki</v-btn>
       </v-card-actions>
     </v-card>
     <v-card v-if="canSeePatreon" class="ma-2">
@@ -131,6 +82,13 @@
       <v-card-text>{{ $vuetify.lang.t('$vuetify.info.supportMe.text') }}</v-card-text>
       <v-card-actions class="flex-wrap justify-end">
         <v-btn class="ma-1" color="#f1465a" target="_blank" href="https://patreon.com/Tendsty"><v-icon class="mr-2">mdi-open-in-new</v-icon>{{ $vuetify.lang.t('$vuetify.info.supportMe.patreon') }}</v-btn>
+        <v-btn class="ma-1" color="primary" id="reward-coffee"><v-icon class="mr-2">mdi-coffee</v-icon>打赏</v-btn>
+        <v-dialog activator="#reward-coffee" max-width="400">
+          <v-card class="default-card d-flex">
+            <v-sheet class="qrcode alipay-qrcode"></v-sheet>
+            <v-sheet class="qrcode wxpay-qrcode"></v-sheet>
+          </v-card>
+        </v-dialog>
       </v-card-actions>
     </v-card>
     <v-card class="ma-2">
@@ -224,9 +182,10 @@ import { mapState } from 'vuex';
 import { APP_ENV, APP_TESTING } from '../../js/constants';
 import { numFormatters, numNegativeFormatters } from '../../js/utils/format';
 import AlertText from '../partial/render/AlertText.vue';
+import ChangeContent from '../partial/info/ChangeContent.vue';
 
 export default {
-  components: { AlertText },
+  components: { AlertText, ChangeContent },
   data: () => ({
     timeUnits: ['s', 'm', 'h', 'd'],
     tech: {
