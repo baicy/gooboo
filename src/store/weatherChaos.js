@@ -286,10 +286,7 @@ export default {
                     dispatch('note/find', 'event_16', {root: true});
                 } else {
                     // Catch trash
-                    const trashName = trashNames[weightSelect(trashWeights, rngGen())];
-                    const trashAmount = 100 * getters.eventMult;
-                    dispatch('currency/gain', {feature: 'event', name: trashName, gainMult: true, amount: trashAmount}, {root: true});
-                    commit('addLog', {type: 'trash', name: trashName, amount: trashAmount});
+                    dispatch('currency/gain', {feature: 'event', name: trashNames[weightSelect(trashWeights, rngGen())], gainMult: true, amount: 100 * getters.eventMult}, {root: true});
                 }
             }
         },

@@ -162,6 +162,9 @@ export default {
             if (gained < 0) {
                 gained = 0;
             }
+            if(['algae', 'driftwood', 'plastic'].includes(o.name)) {
+                commit('weatherChaos/addLog', {type: 'trash', name: o.name, amount: gained}, {root: true});
+            }
             commit('add', {feature, name: o.name, amount: gained});
             if (!o.refund) {
                 commit('stat/add', {feature, name: o.name, value: gained}, {root: true});
