@@ -40,16 +40,16 @@
       <v-btn-toggle :value="listFilter" color="primary" dense @change="setListFilter">
         <gb-tooltip :min-width="0">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn value="price" v-bind="attrs" v-on="on">
-              <v-icon>mdi-cash-check</v-icon>
+            <v-btn value="price" v-bind="attrs" v-on="on" :class="{'primary': listFilter==='price'}">
+              <v-icon :color="listFilter==='price'?'white':''">mdi-cash-check</v-icon>
             </v-btn>
           </template>
           只显示当前能够购买的升级
         </gb-tooltip>
         <gb-tooltip>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn value="cap" v-bind="attrs" v-on="on">
-              <v-icon>mdi-package-variant-closed-check</v-icon>
+            <v-btn value="cap" v-bind="attrs" v-on="on" :class="{'primary': listFilter==='cap'}">
+              <v-icon :color="listFilter==='cap'?'white':''">mdi-package-variant-closed-check</v-icon>
             </v-btn>
           </template>
           只显示当前材料容量足够但库存不足暂时无法购买的升级

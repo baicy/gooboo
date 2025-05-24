@@ -3,11 +3,15 @@
     <div class="d-flex flex-wrap justify-center ma-1">
       <currency v-for="(item, key) in currencies" class="ma-1" :key="'currency-' + key" :name="'farm_' + item">
         <div v-if="rareDropSource[`farm_${item}`]">
-          掉落作物：
-          <v-chip v-for="crop in rareDropSource[`farm_${item}`]" :key="crop" class="ma-1 balloon-text-dynamic" :color="crops[crop].color" small label>
-            <v-icon class="mr-1">{{ crops[crop].icon }}</v-icon>
-            {{ $vuetify.lang.t(`$vuetify.farm.crop.${ crop }`) }}
-          </v-chip>
+          <div class="d-flex">
+            <div style="min-width: 70px">掉落作物：</div>
+            <div class="d-flex flex-wrap">
+              <v-chip v-for="crop in rareDropSource[`farm_${item}`]" :key="crop" class="ma-1 balloon-text-dynamic" :color="crops[crop].color" small label>
+                <v-icon class="mr-1">{{ crops[crop].icon }}</v-icon>
+                {{ $vuetify.lang.t(`$vuetify.farm.crop.${ crop }`) }}
+              </v-chip>
+            </div>
+          </div>
         </div>
       </currency>
     </div>
