@@ -12,6 +12,11 @@
 .reduced-height {
   height: 28px;
 }
+.buy-progress {
+  position: absolute;
+  height: 100%;
+  opacity: 0.5;
+}
 </style>
 
 <template>
@@ -42,7 +47,8 @@
     <v-btn key="upgrade-max-collapse" small v-if="!isMax" class="ma-1 px-2" color="primary" :disabled="!canAfford || disabled" @click="buyMax">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
     <gb-tooltip key="upgrade-buy-collapse">
       <template v-slot:activator="{ on, attrs }">
-        <div class="ma-1 rounded" v-bind="attrs" v-on="on">
+        <div class="ma-1 rounded" v-bind="attrs" v-on="on" style="position: relative;">
+          <div class="buy-progress rounded" v-if="!canAfford" :class="[ableAfford?'primary':'error']" :style="{ width: `${affordProgress}%` }"></div>
           <v-btn class="px-2" v-if="!isMax" color="primary" :disabled="!canAfford || disabled" @click="buy">{{ $vuetify.lang.t(upgradeTranslation) }}</v-btn>
         </div>
       </template>
@@ -144,7 +150,10 @@
       </div>
       <v-spacer></v-spacer>
       <v-btn key="upgrade-buy-max" small v-if="!isMax" color="primary" :disabled="!canAfford || disabled" @click="buyMax">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
-      <v-btn key="upgrade-buy" v-if="!isMax" :data-cy="`upgrade-${ name }-buy`" color="primary" :disabled="!canAfford || disabled" @click="buy">{{ $vuetify.lang.t(upgradeTranslation) }}</v-btn>
+      <div class="ma-1 rounded" style="position: relative;">
+        <div class="buy-progress rounded" v-if="!canAfford" :class="[ableAfford?'primary':'error']" :style="{ width: `${affordProgress}%` }"></div>
+        <v-btn key="upgrade-buy" v-if="!isMax" :data-cy="`upgrade-${ name }-buy`" color="primary" :disabled="!canAfford || disabled" @click="buy">{{ $vuetify.lang.t(upgradeTranslation) }}</v-btn>
+      </div>
     </v-card-actions>
     <v-btn class="upgrade-collapse" icon @click="toggleCollapse"><v-icon>mdi-arrow-collapse</v-icon></v-btn>
     <gb-tooltip key="upgrade-persistent" v-if="upgrade.persistent" :min-width="0">
@@ -157,6 +166,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { capitalize } from '../../js/utils/format';
 import AlertText from '../partial/render/AlertText.vue';
 import DisplayRow from '../partial/upgrade/DisplayRow.vue';
@@ -186,6 +196,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      currency: state => state.currency,
+    }),
     upgrade() {
       return this.$store.state.upgrade.item[this.name];
     },
@@ -206,6 +219,22 @@ export default {
     },
     canAfford() {
       return this.$store.getters['upgrade/canAfford'](this.upgrade.feature, this.splitName);
+    },
+    ableAfford() {
+      return this.$store.getters['upgrade/ableAfford'](this.upgrade.feature, this.splitName);
+    },
+    affordProgress() {
+      const percents = [];
+      if (this.ableAfford) {
+        for(const c in this.price) {
+          percents.push(this.currency[c].value < this.price[c] ? this.currency[c].value / this.price[c] : 1);
+        }
+      } else {
+        for(const c in this.price) {
+          percents.push(this.currency[c].cap < this.price[c] ? this.currency[c].cap / this.price[c] : 1);
+        }
+      }
+      return percents.reduce((a, b) => a + b, 0) / percents.length * 100;
     },
     isMax() {
       return this.upgrade.cap !== null && this.upgrade.bought >= this.upgrade.cap;
