@@ -25,25 +25,33 @@
 </style>
 
 <template>
-  <div class="d-flex flex-column justify-space-between" style="height: 100%">
-    <div class="d-flex justify-center align-center" :class="{'crop-headline-small mt-1': $vuetify.breakpoint.smAndDown, 'ma-1': $vuetify.breakpoint.mdAndUp}" v-if="isGrown">
-      <v-icon :size="$vuetify.breakpoint.smAndDown ? 10 : 16">mdi-basket</v-icon>
-      <span class="stage-text-small ml-1">{{ $formatNum(grow * 100) }}%</span>
+  <gb-tooltip :title-text="$vuetify.lang.t(`$vuetify.farm.crop.${ item.crop }`)" :min-width="0">
+    <template v-slot:activator="{ on, attrs }">
+      <div class="d-flex flex-column justify-space-between" style="height: 100%" v-bind="attrs" v-on="on">
+        <div class="d-flex justify-center align-center" :class="{'crop-headline-small mt-1': $vuetify.breakpoint.smAndDown, 'ma-1': $vuetify.breakpoint.mdAndUp}" v-if="isGrown">
+          <v-icon :size="$vuetify.breakpoint.smAndDown ? 10 : 16">mdi-basket</v-icon>
+          <span class="stage-text-small ml-1">{{ $formatNum(grow * 100) }}%</span>
+        </div>
+        <div :class="{'crop-headline-small': $vuetify.breakpoint.smAndDown}" v-else>
+          <span>{{ $formatTime(Math.ceil(60 * (1 - item.grow) / item.cache.grow)) }}</span>
+        </div>
+        <v-icon :size="iconSize" :color="crop.color">{{ crop.icon }}</v-icon>
+        <v-progress-linear :class="{'rounded-b': $vuetify.breakpoint.smAndDown, 'rounded-b-lg': $vuetify.breakpoint.mdAndUp}" :height="$vuetify.breakpoint.smAndDown ? 4 : 12" :color="isGrown ? 'green' : 'light-green'" :value="grow * 100"></v-progress-linear>
+        <div class="crop-symbol-bar" :class="{'crop-symbol-bar-small': $vuetify.breakpoint.smAndDown}">
+          <v-icon :size="buildingIconSize" v-if="item.cache.sprinkler" class="mr-05">mdi-sprinkler-variant</v-icon>
+          <v-icon :size="buildingIconSize" v-if="item.cache.lectern" class="mr-05">mdi-book-open-page-variant</v-icon>
+          <v-icon :size="buildingIconSize" v-if="item.cache.pinwheelSource" class="mr-05">mdi-pinwheel</v-icon>
+          <v-icon :size="buildingIconSize" v-if="item.cache.flag" class="mr-05">mdi-flag</v-icon>
+          <v-icon :size="buildingIconSize" v-if="item.cache.gnome" class="mr-05">mdi-human-child</v-icon>
+          <v-icon :size="buildingIconSize" v-if="item.cache.lonely" class="mr-05">mdi-circle-expand</v-icon>
+        </div>
+      </div>
+    </template>
+    <div>
+      <div>{{ $vuetify.lang.t('$vuetify.unlock.farmFertilizer') }}: {{ item.fertilizer?$vuetify.lang.t(`$vuetify.consumable.farm_${ item.fertilizer }.name`):'无' }}</div>
+      <div>下阶段: {{ $formatTime(nextStage) }}</div>
     </div>
-    <div :class="{'crop-headline-small': $vuetify.breakpoint.smAndDown}" v-else>
-      <span>{{ $formatTime(Math.ceil(60 * (1 - item.grow) / item.cache.grow)) }}</span>
-    </div>
-    <v-icon :size="iconSize" :color="crop.color">{{ crop.icon }}</v-icon>
-    <v-progress-linear :class="{'rounded-b': $vuetify.breakpoint.smAndDown, 'rounded-b-lg': $vuetify.breakpoint.mdAndUp}" :height="$vuetify.breakpoint.smAndDown ? 4 : 12" :color="isGrown ? 'green' : 'light-green'" :value="grow * 100"></v-progress-linear>
-    <div class="crop-symbol-bar" :class="{'crop-symbol-bar-small': $vuetify.breakpoint.smAndDown}">
-      <v-icon :size="buildingIconSize" v-if="item.cache.sprinkler" class="mr-05">mdi-sprinkler-variant</v-icon>
-      <v-icon :size="buildingIconSize" v-if="item.cache.lectern" class="mr-05">mdi-book-open-page-variant</v-icon>
-      <v-icon :size="buildingIconSize" v-if="item.cache.pinwheelSource" class="mr-05">mdi-pinwheel</v-icon>
-      <v-icon :size="buildingIconSize" v-if="item.cache.flag" class="mr-05">mdi-flag</v-icon>
-      <v-icon :size="buildingIconSize" v-if="item.cache.gnome" class="mr-05">mdi-human-child</v-icon>
-      <v-icon :size="buildingIconSize" v-if="item.cache.lonely" class="mr-05">mdi-circle-expand</v-icon>
-    </div>
-  </div>
+  </gb-tooltip>
 </template>
 
 <script>
@@ -78,6 +86,14 @@ export default {
         return 12;
       }
       return 16;
+    },
+    nextStage() {
+      let grow = this.item.grow;
+      let stage = Math.floor(this.item.grow);
+      const left = (stage + 1) - grow;
+      const stageMult = stage > 0 ? Math.pow(this.item.cache.overgrow, stage) : 1;
+      const time = left * stageMult * 60 / this.item.cache.grow;
+      return time;
     }
   }
 }
