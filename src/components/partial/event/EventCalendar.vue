@@ -7,7 +7,7 @@
       <v-spacer></v-spacer>
       <v-btn icon class="ma-2" @click="$refs.calendar.next()"><v-icon>mdi-chevron-right</v-icon></v-btn>
     </div>
-    <v-calendar ref="calendar" v-model="day" :events="calendar" :weekdays="[1, 2, 3, 4, 5, 6, 0]">
+    <v-calendar ref="calendar" v-model="day" :events="calendar" :weekdays="[1, 2, 3, 4, 5, 6, 0]" color="primary">
       <template v-slot:event="{ event }"><span class="pa-2">{{ $vuetify.lang.t(`$vuetify.event.${event.name}.name`) }}</span></template>
     </v-calendar>
   </div>

@@ -441,6 +441,7 @@ export default {
         playerId: null,
         playerName: null,
         extraVersion: 0,
+        listFilter: '',
     },
     getters: {
         mainFeatures: (state, getters, rootState) => {
@@ -716,6 +717,7 @@ export default {
             commit('updateKey', {key: 'playerId', value: null});
             commit('updateKey', {key: 'playerName', value: null});
             commit('updateKey', {key: 'extraVersion', value: 0});
+            commit('updateKey', {key: 'listFilter', value: ''});
 
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {

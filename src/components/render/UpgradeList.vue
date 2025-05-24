@@ -18,9 +18,24 @@
 
 <template>
   <div>
-    <div class="d-flex justify-center mx-2 my-2 py-1 bg-tile-default">
-      <v-btn small @click="ableType = ableType==='price'?'':'price'" :color="ableType==='price' ? 'success' : 'warning'"><v-icon>mdi-check</v-icon>价格</v-btn>
-      <v-btn small @click="ableType = ableType==='cap'?'':'cap'" :color="ableType==='cap' ? 'success' : 'warning'" class="ml-2"><v-icon>mdi-check-underline</v-icon>容量</v-btn>
+    <div class="d-flex mx-2 my-2 py-1 bg-tile-default">
+      <v-btn-toggle :value="listFilter" color="primary" dense @change="setListFilter">
+        <v-btn value="price">
+          <v-icon>mdi-cash-check</v-icon>
+        </v-btn>
+        <v-btn value="cap">
+          <v-icon>mdi-package-variant-closed-check</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+      <v-spacer></v-spacer>
+      <div class="d-flex align-center pr-1">
+        <gb-tooltip v-for="mat in neededMaterials" :key="mat" :min-width="0">
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon :color="currency[mat].color" v-bind="attrs" v-on="on" small>{{ currency[mat].icon }}</v-icon>
+          </template>
+          {{ $vuetify.lang.t(`$vuetify.currency.${mat}.name`) }}
+        </gb-tooltip>
+      </div>
     </div>
     <div v-if="items.length > 0">
       <div class="d-flex upgrade-pagination justify-center align-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'upgrade-pagination-mobile': $vuetify.breakpoint.smAndDown && !noTabs, 'upgrade-pagination-mobile-notabs': $vuetify.breakpoint.smAndDown && noTabs, 'pr-10': showQueueSpeed}" v-if="pages > 1 || requirementStat.length > 0">
@@ -60,6 +75,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { capitalize } from '../../js/utils/format';
 import AlertText from '../partial/render/AlertText.vue';
 import StatBreakdown from './StatBreakdown.vue';
@@ -110,7 +126,6 @@ export default {
   },
   data: () => ({
     page: 1,
-    ableType: ""
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -119,16 +134,20 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      listFilter: state => state.system.listFilter,
+      currency: state => state.currency,
+    }),
     baseItems() {
       return [...this.$store.state.upgrade.cache[`${this.feature}_${this.subfeature}_${this.type}`]];
     },
     items() {
       return this.baseItems.filter(elem => {
         const upgrade = this.$store.state.upgrade.item[elem];
-        if (this.ableType) {
+        if (this.listFilter) {
           const [feature, name] = elem.split('_');
           let result = false;
-          if (this.ableType==='price') {
+          if (this.listFilter==='price') {
             result  = this.$store.getters['upgrade/canAfford'](feature, name);
           } else {
             result  = this.$store.getters['upgrade/ableAfford'](feature, name);
@@ -144,6 +163,17 @@ export default {
         return this.items;
       }
       return this.items.slice(this.upgradeLimit * (this.page - 1), this.upgradeLimit * this.page);
+    },
+    neededMaterials() {
+      const mats = new Set();
+      this.items.forEach(elem => {
+        const upgrade = this.$store.state.upgrade.item[elem];
+        const price = upgrade.price(upgrade.level);
+        if(price) {
+          Object.keys(price).forEach(material => mats.add(material));
+        }
+      });
+      return mats;
     },
     upgradeLimit() {
       return ['smeltery', 'cindersProducer'].includes(this.type) && this.$vuetify.breakpoint.xlOnly ? 12 : this.$store.state.system.settings.performance.items.upgradeListItems.value;
@@ -191,6 +221,11 @@ export default {
     },
     cacheKey() {
       return `${ this.feature }_${ this.subfeature }_${ this.type }`;
+    }
+  },
+  methods: {
+    setListFilter(value) {
+      this.$store.commit('system/updateKey', {key: 'listFilter', value});
     }
   },
   watch: {
