@@ -18,17 +18,8 @@
 
 <template>
   <div>
-    <div class="d-flex mx-2 my-2 py-1 bg-tile-default">
-      <v-btn-toggle :value="listFilter" color="primary" dense @change="setListFilter">
-        <v-btn value="price">
-          <v-icon>mdi-cash-check</v-icon>
-        </v-btn>
-        <v-btn value="cap">
-          <v-icon>mdi-package-variant-closed-check</v-icon>
-        </v-btn>
-      </v-btn-toggle>
-      <v-spacer></v-spacer>
-      <div class="d-flex align-center pr-1">
+    <div class="d-flex mx-2 my-2 py-1 bg-tile-default align-center">
+      <div class="d-flex px-1 overflow-x-auto overflow-y-hidden">
         <gb-tooltip v-for="mat in neededMaterials" :key="mat" :min-width="0">
           <template v-slot:activator="{ on, attrs }">
             <v-icon :color="currency[mat].color" v-bind="attrs" v-on="on" small>{{ currency[mat].icon }}</v-icon>
@@ -36,6 +27,34 @@
           {{ $vuetify.lang.t(`$vuetify.currency.${mat}.name`) }}
         </gb-tooltip>
       </div>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn v-bind="attrs" v-on="on" fab x-small text>
+            <v-icon>mdi-help-circle-outline</v-icon>
+          </v-btn>
+        </template>
+        <div>左侧显示下列升级项需要用到的材料</div>
+        <div>将升级项收起可将其加入黑名单</div>
+      </gb-tooltip>
+      <v-spacer></v-spacer>
+      <v-btn-toggle :value="listFilter" color="primary" dense @change="setListFilter">
+        <gb-tooltip :min-width="0">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn value="price" v-bind="attrs" v-on="on">
+              <v-icon>mdi-cash-check</v-icon>
+            </v-btn>
+          </template>
+          只显示当前能够购买的升级
+        </gb-tooltip>
+        <gb-tooltip>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn value="cap" v-bind="attrs" v-on="on">
+              <v-icon>mdi-package-variant-closed-check</v-icon>
+            </v-btn>
+          </template>
+          只显示当前材料容量足够但库存不足暂时无法购买的升级
+        </gb-tooltip>
+      </v-btn-toggle>
     </div>
     <div v-if="items.length > 0">
       <div class="d-flex upgrade-pagination justify-center align-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'upgrade-pagination-mobile': $vuetify.breakpoint.smAndDown && !noTabs, 'upgrade-pagination-mobile-notabs': $vuetify.breakpoint.smAndDown && noTabs, 'pr-10': showQueueSpeed}" v-if="pages > 1 || requirementStat.length > 0">
@@ -137,6 +156,7 @@ export default {
     ...mapState({
       listFilter: state => state.system.listFilter,
       currency: state => state.currency,
+      stat: state => state.stat,
     }),
     baseItems() {
       return [...this.$store.state.upgrade.cache[`${this.feature}_${this.subfeature}_${this.type}`]];
@@ -168,9 +188,11 @@ export default {
       const mats = new Set();
       this.items.forEach(elem => {
         const upgrade = this.$store.state.upgrade.item[elem];
-        const price = upgrade.price(upgrade.level);
-        if(price) {
-          Object.keys(price).forEach(material => mats.add(material));
+        if (!upgrade.collapse) {
+          const price = upgrade.price(upgrade.level);
+          if (price) {
+            Object.keys(price).forEach(material => this.stat[material].total>0 && mats.add(material));
+          }
         }
       });
       return mats;

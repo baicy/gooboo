@@ -57,6 +57,10 @@ export default {
                 if (rootState.currency[key].cap !== null && rootState.currency[key].cap < elem) {
                     ableAfford = false;
                 }
+                // 没有解锁的材料
+                if (rootState.stat[key].total <= 0) {
+                    ableAfford = false;
+                }
             }
             return ableAfford;
         },
