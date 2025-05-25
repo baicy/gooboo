@@ -810,6 +810,11 @@ export default {
   event_fishWhistle: '鱼哨',
   event_pollution: '污染',
   event_goldenHook: '金钩',
+  event_silverHook: '银钩',
+  event_trashRecycle: '回收',
+  event_rodIronclad: '鱼竿加固',
+  event_baitBonus: '连锁',
+  event_entangle: '缠绕',
 
   event_extraBuildingSlot: '额外的建筑槽位',
   event_doubleTime: '双倍时间',

@@ -3,7 +3,7 @@
     <v-menu top offset-y :close-on-content-click="false">
       <template v-slot:activator="{ on, attrs }">
         <v-btn text v-bind="attrs" v-on="on">
-          <weather-chaos-log-item v-if="logs.length" :log="logs[0]" />
+          <weather-chaos-log-item v-if="logs.length" :mini="$vuetify.breakpoint.xsOnly" :log="logs[0]" />
           <v-icon right>mdi-menu-up</v-icon>
         </v-btn>
       </template>

@@ -214,7 +214,7 @@ export default {
   weatherChaosIgnoreWeather: '忽略天气',
   weatherChaosFishChance: '中鱼几率',
   weatherChaosTreasureChance: '宝藏几率',
-  weatherChaosAlgaeWeight: '海藻比重',
+  weatherChaosAlgaeWeight: '藻类比重',
   weatherChaosDriftwoodWeight: '浮木比重',
   weatherChaosPlasticWeight: '塑料比重',
   weatherChaosTrashGain: '垃圾增益',

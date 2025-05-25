@@ -809,6 +809,11 @@ export default {
   event_fishWhistle: 'Fischflöte',
   event_pollution: 'Verschmutzung',
   event_goldenHook: 'Goldener Haken',
+  event_silverHook: 'Silberner Haken',
+  event_trashRecycle: 'Müll recyceln',
+  event_rodIronclad: 'Rod Ironclad',
+  event_baitBonus: 'Köderbonus',
+  event_entangle: 'Verwickeln',
 
   event_extraBuildingSlot: 'Extra-Bauplatz',
   event_doubleTime: 'Doppel-Zeit',

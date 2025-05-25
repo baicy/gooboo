@@ -1,7 +1,7 @@
 <style scoped>
 .fishing-rod-box {
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
 }
 </style>
@@ -26,7 +26,7 @@
       <gb-tooltip v-for="(item, key) in fishingRod" :key="`fishing-rod-${ key }`" :title-text="$vuetify.lang.t(`$vuetify.event.weatherChaos.fishingRod.name`) + ': ' + $vuetify.lang.t(`$vuetify.event.weatherChaos.fishingRod.${ key }`)">
         <template v-slot:activator="{ on, attrs }">
           <div class="fishing-rod-box d-flex justify-center align-center bg-tile-default rounded ma-1" v-bind="attrs" v-on="on" @click="clickFishingRod(key)">
-            <v-icon size="48" :color="key === currentFishingRod ? 'primary' : (item.owned ? undefined : 'secondary')">{{ item.icon }}</v-icon>
+            <v-icon size="30" :color="key === currentFishingRod ? 'primary' : (item.owned ? undefined : 'secondary')">{{ item.icon }}</v-icon>
           </div>
         </template>
         <div v-if="item.owned">{{ $vuetify.lang.t(`$vuetify.event.weatherChaos.owned`) }}</div>
@@ -98,6 +98,15 @@
           <div>{{ $vuetify.lang.t(`$vuetify.event.weatherChaos.fishSizeDescription`) }}</div>
           <stat-breakdown name="weatherChaosFishSizeAverage"></stat-breakdown>
         </gb-tooltip>
+        <gb-tooltip :title-text="$vuetify.lang.t(`$vuetify.mult.weatherChaosFishDoubleChance`)">
+          <template v-slot:activator="{ on, attrs }">
+            <div class="bg-tile-default rounded ma-1 pa-1" v-bind="attrs" v-on="on">
+              <v-icon>mdi-call-split</v-icon>
+              <span class="ma-1">{{ $formatNum(fishDoubleChance * 100, true) }}%</span>
+            </div>
+          </template>
+          <stat-breakdown name="weatherChaosFishDoubleChance"></stat-breakdown>
+        </gb-tooltip>
       </div>
       <div class="d-flex flex-wrap justify-center">
         <gb-tooltip :title-text="$vuetify.lang.t(`$vuetify.mult.weatherChaosFishChance`)">
@@ -133,7 +142,12 @@
       </div>
     </div>
     <div class="ma-2">
-      <v-progress-linear height="24" class="rounded" :value="fishingPercent">{{ $formatTime(fishingTimeLeft) }}</v-progress-linear>
+      <gb-tooltip :title-text="$vuetify.lang.t(`$vuetify.mult.weatherChaosFishingTime`)">
+        <template v-slot:activator="{ on, attrs }">
+          <v-progress-linear v-bind="attrs" v-on="on" height="24" class="rounded" :value="fishingPercent">{{ $formatTime(fishingTimeLeft) }}</v-progress-linear>
+        </template>
+        <stat-breakdown name="weatherChaosFishingTime"></stat-breakdown>
+      </gb-tooltip>
     </div>
     <div class="d-flex flex-wrap ma-1">
       <weather-chaos-fish class="ma-1" v-for="(item, key) in fishList" :key="`fish-${key}`" :name="key" :chance="fishChances[key]"></weather-chaos-fish>
@@ -187,6 +201,9 @@ export default {
     },
     fishSizeAverage() {
       return this.$store.getters['mult/get']('weatherChaosFishSizeAverage');
+    },
+    fishDoubleChance() {
+      return this.$store.getters['mult/get']('weatherChaosFishDoubleChance');
     },
     fishingTimeLeft() {
       return this.fishingTimeNeeded - this.$store.state.weatherChaos.fishingProgress;

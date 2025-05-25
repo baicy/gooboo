@@ -100,7 +100,7 @@ export default {
     description: '她们很漂亮，但看起来都一样',
   },
   event_algae: {
-    name: '海藻',
+    name: '藻类',
     description: '绿色且粘稠',
   },
   event_driftwood: {

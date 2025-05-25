@@ -809,6 +809,11 @@ export default {
   event_fishWhistle: 'Fish whistle',
   event_pollution: 'Pollution',
   event_goldenHook: 'Golden hook',
+  event_silverHook: 'Silver hook',
+  event_trashRecycle: 'Trash recycle',
+  event_rodIronclad: 'Rod ironclad',
+  event_baitBonus: 'Bait bonus',
+  event_entangle: 'Entangle',
 
   event_extraBuildingSlot: 'Extra building slot',
   event_doubleTime: 'Double time',

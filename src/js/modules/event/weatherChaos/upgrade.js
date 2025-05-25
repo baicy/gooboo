@@ -28,4 +28,29 @@ export default {
     }, effect: [
         {name: 'weatherChaosFishingTime', type: 'mult', value: lvl => 1 / (lvl * 0.25 + 1)}
     ]},
+    silverHook: {type: 'weatherChaos', cap: 6, price(lvl) {
+        return {event_cloud: Math.pow(1.25, lvl) * 10};
+    }, effect: [
+        {name: 'weatherChaosFishingTime', type: 'base', value: lvl => lvl * -20}
+    ]},
+    trashRecycle: {type: 'weatherChaos', cap: 5, price(lvl) {
+        return {event_algae: Math.pow(2 + 0.08 * lvl, lvl) * 100000, event_driftwood: Math.pow(2 + 0.08 * lvl, lvl) * 100000, event_plastic: Math.pow(2 + 0.08 * lvl, lvl) * 100000};
+    }, effect: [
+        {name: 'weatherChaosTreasureChance', type: 'base', value: lvl => lvl * + 0.005}
+    ]},
+    rodIronclad: {type: 'weatherChaos', cap: 50, price(lvl) {
+        return {event_driftwood: Math.pow(1 + 0.01 * lvl, lvl) * 150, event_plastic: Math.pow(1 + 0.01 * lvl, lvl) * 180};
+    }, effect: [
+        {name: 'weatherChaosFishingPower', type: 'base', value: lvl => lvl * 1}
+    ]},
+    baitBonus: {type: 'weatherChaos', cap: 5, price(lvl) {
+        return {event_algae: Math.pow(1.5 + 0.025 * lvl, lvl) * 500, event_driftwood: Math.pow(1.5 + 0.025 * lvl, lvl) * 600};
+    }, effect: [
+        {name: 'weatherChaosFishDoubleChance', type: 'base', value: lvl => lvl * 0.05}
+    ]},
+    entangle: {type: 'weatherChaos', price(lvl) {
+        return {event_algae: Math.pow(1.5, lvl) * 100, event_plastic: Math.pow(1.5, lvl) * 120};
+    }, effect: [
+        {name: 'currencyEventSlimeGain', type: 'mult', value: lvl => lvl * 0.05 + 1}
+    ]},
 }

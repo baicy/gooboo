@@ -1,5 +1,12 @@
 <template>
-  <div>
+  <div v-if="mini">
+    <v-icon v-if="log.type==='fish'" small :color="fish[log.name].color">{{ fish[log.name].icon }}</v-icon>
+    <v-icon v-else-if="log.type==='trash'" small :color="trashList[log.name].color">{{ trashList[log.name].icon }}</v-icon>
+    <v-icon v-else-if="log.type==='bait'" small>{{ bait[log.name].icon }}</v-icon>
+    <v-icon v-else-if="log.type==='rod'" small>{{ fishingRod[log.name].icon }}</v-icon>
+    <v-btn v-else-if="log.type==='location'">{{ $vuetify.lang.t(`$vuetify.event.weatherChaos.location.${log.name}`) }}</v-btn>
+  </div>
+  <div v-else>
     [ {{ logTime }} ]
     [ {{ $vuetify.lang.t(`$vuetify.event.weatherChaos.location.${log.location}`) }} ] 
     <template v-if="log.type==='fish'">
@@ -35,6 +42,10 @@ export default {
     log: {
       type: Object,
       required: true,
+    },
+    mini: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
