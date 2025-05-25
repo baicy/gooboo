@@ -126,6 +126,16 @@ export default {
         return obj;
     },
     loadGame(data) {
+        // 游戏加载系统成功，重新计算增益
+        store.dispatch('cryolab/init', {
+            'name': 'village',
+            'unlock': 'villageFeature',
+            data: [
+                {village_blessing: 'village_bestPrestige0'},
+                {village_shares: 'village_bestPrestige1'},
+            ],
+            effect: effect.village,
+        })
         for (const [key, elem] of Object.entries(data)) {
             if (store.state.cryolab[key] !== undefined) {
                 store.commit('cryolab/updateKey', {name: key, key: 'active', value: elem.active});

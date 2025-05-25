@@ -133,7 +133,7 @@
           <price-tag currency="gem_sapphire" :amount="motivationBuyCost"></price-tag>
         </div>
       </gb-tooltip>
-      <gb-tooltip :min-width="0" v-if="unlockedAllShapes">
+      <gb-tooltip :min-width="0" v-if="unlockedAllShapes&&accelerator">
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on">
               <v-btn class="ma-1" width="36" min-width="36" color="primary" @click="cheatAccelerator"><v-icon>mdi-rotate-orbit</v-icon></v-btn>
@@ -176,7 +176,8 @@ export default {
   computed: {
     ...mapState({
       shapeList: state => state.gallery.shape,
-      shapeGrid: state => state.gallery.shapeGrid
+      shapeGrid: state => state.gallery.shapeGrid,
+      accelerator: state => state.system.settings.cheat.items.galleryAccelerator.value
     }),
     ...mapGetters({
       hourglassTime: 'gallery/hourglassTime'

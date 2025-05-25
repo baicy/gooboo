@@ -80,12 +80,12 @@ export default {
                 commit('updateKey', {name, key: 'active', value: !state[name].active});
             }
         },
-        init({ commit }, o) {
+        init({ commit, rootState }, o) {
             let modifiedEffect = [];
             (o.effect ?? [[]]).forEach((effect, subfeature) => {
                 const activeMultName = `${ o.name }CryolabActive${ subfeature }`;
                 const passiveMultName = `${ o.name }CryolabPassive${ subfeature }`;
-                const featureMult = 1;
+                const featureMult = (o.name === 'village' && !rootState.system.settings.cheat.items.oldVillageCryolab.value) ? 0.4 : 1;
                 modifiedEffect.push([
                     {name: activeMultName, type: 'base', value: lvl => lvl * featureMult * 0.02},
                     {name: passiveMultName, type: 'base', value: lvl => lvl * featureMult * 0.01},
@@ -119,7 +119,6 @@ export default {
         },
         applyLevelEffects({ state, dispatch }, o) {
             let level = state[o.feature].level[o.subfeature];
-            if(level >= 50) level = 0 // 禁止改冷冻100级
             if (level > 0) {
                 state[o.feature].effect[o.subfeature].forEach(eff => {
                     dispatch('system/applyEffect', {

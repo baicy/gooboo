@@ -1271,6 +1271,28 @@ export default {
         name: 'Zeige Währungsschilder',
         description: 'Währungseinkommen und Zeit bis zur Kapazität werden ohne Herüberfahren mit der Maus angezeigt'
       }
+    },
+    cheat: {
+      name: 'Cheat',
+      topazReturn: {
+        name: 'Topaz return',
+        description: 'When big event ends, the unused currency which drop from topaz will back to topaz',
+      },
+      eventExtraShop: {
+        name: 'Big event modify',
+        description: 'Some modifies in big event',
+      },
+      horde2SkillReset: {
+        name: 'Skill points reset in horde 2',
+      },
+      galleryAccelerator: {
+        name: 'Cheat accelerator',
+        description: 'Cheat an accelerator in gallery shape minigame, need to unlock all the shapes(including special shapes)',
+      },
+      oldVillageCryolab: {
+        name: 'Village cryolab 100%',
+        description: '40%->100%(before v1.5.0), effect after save and reload game',
+      },
     }
   },
   statBreakdown: {

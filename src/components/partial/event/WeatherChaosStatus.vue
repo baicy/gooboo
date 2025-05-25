@@ -57,7 +57,7 @@
     <div class="d-flex flex-wrap justify-center align-center pa-1">
       <div class="bg-tile-default elevation-2 rounded ma-1 pa-1">
         <price-tag class="ma-1" currency="event_cloud" :amount="resetCost"></price-tag>
-        <v-btn class="ma-1" color="primary" :disabled="cloud < resetCost" @click="selectWeather = true">
+        <v-btn class="ma-1" color="primary" :disabled="cloud < resetCost" @click="changeWeather">
           <v-icon class="mr-2">mdi-refresh</v-icon>
           {{ $vuetify.lang.t(`$vuetify.event.weatherChaos.changeWeather`) }}
         </v-btn>
@@ -278,6 +278,13 @@ export default {
     resetWeather(name) {
       this.$store.dispatch('weatherChaos/resetWeatherCycle', name);
       this.selectWeather = false;
+    },
+    changeWeather() {
+      if (this.$store.state.system.settings.cheat.items.eventExtraShop.value) {
+        this.selectWeather = true
+      } else {
+        this.resetWeather()
+      }
     }
   }
 }

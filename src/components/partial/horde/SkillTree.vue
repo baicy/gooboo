@@ -28,7 +28,7 @@
     </div>
     <div class="d-flex align-center ma-2" style="justify-content: center;">
       <div class="text-center ml-4 mr-4">{{ $vuetify.lang.t('$vuetify.horde.classes.skillPointsLeft', skillPoints) }}</div>
-      <v-btn color="error" @click="resetPoints">重置技能点</v-btn>
+      <v-btn v-if="skillReset" color="error" @click="resetPoints">重置技能点</v-btn>
     </div>
     <v-card
       v-for="(skillRow, key) in skillTree"
@@ -185,6 +185,7 @@ export default {
       expLevel: state => state.horde.expLevel,
       skillPoints: state => state.horde.skillPoints,
       skillLevel: state => state.horde.skillLevel,
+      skillReset: state => state.system.settings.cheat.items.horde2SkillReset.value,
     }),
     selectedClass() {
       return this.$store.state.horde.fighterClass[this.$store.state.horde.selectedClass];

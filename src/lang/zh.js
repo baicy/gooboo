@@ -1329,6 +1329,28 @@ export default {
         description: '显示货币收益和达到容量所需的时间，无需悬停',
       },
     },
+    cheat: {
+      name: '修改',
+      topazReturn: {
+        name: '活动黄玉返还',
+        description: '大型活动结束时，活动期间黄玉转换的代币等量返还为黄玉',
+      },
+      eventExtraShop: {
+        name: '额外活动商店',
+        description: '原版没有的一些购买项目，其实也不是很超模',
+      },
+      horde2SkillReset: {
+        name: '部落2重置技能点',
+      },
+      galleryAccelerator: {
+        name: '画廊形状虚空加速器',
+        description: '将画廊形状游戏的第2行第2列的形状变成加速器，需要先正常解锁所有形状和特殊形状生效',
+      },
+      oldVillageCryolab: {
+        name: '未削弱村庄声望货币冷冻系数',
+        description: '从40%变为100%，需要存档后重启游戏生效',
+      },
+    }
   },
   statBreakdown: {
     base: '基础值',
@@ -1395,7 +1417,7 @@ export default {
     pickaxePower: '这是你的镐的力量和基础伤害。 通过制作更好的镐来增加它。',
     damage: '伤害',
     timeToBreak: '击碎目前石头需要时间',
-    durability: '耐用性',
+    durability: '耐久',
     durabilityDescription: '击碎这块岩石所需的伤害量',
     durabilityBreaks: {
       s: '这块石头被击碎了 {0} 次',

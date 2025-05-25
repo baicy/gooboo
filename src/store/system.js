@@ -409,7 +409,47 @@ export default {
                         defaultValue: false
                     }
                 }
-            }
+            },
+            cheat: {
+                unlock: null,
+                items: {
+                    topazReturn: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    eventExtraShop: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    horde2SkillReset: {
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    galleryAccelerator: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    oldVillageCryolab: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                }
+            },
         },
         keybinds: {
             prevMainFeature: null,

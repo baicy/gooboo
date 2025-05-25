@@ -543,7 +543,9 @@ export default {
             }
             if (getters.eventIsBig(name)) {
                 // 在重置前将活动期间代替黄玉的货币返还为黄玉
-                dispatch('currency/gain', {feature: 'gem', name: 'topaz', amount: rootState.currency['event_' + state.big[name].currency].value}, {root: true});
+                if (rootState.system.settings.cheat.items.topazReturn.value) {
+                    dispatch('currency/gain', {feature: 'gem', name: 'topaz', amount: rootState.currency['event_' + state.big[name].currency].value}, {root: true});
+                }
 
                 // Reset all event currencies
                 dispatch('currency/reset', {feature: 'event', type: name}, {root: true});

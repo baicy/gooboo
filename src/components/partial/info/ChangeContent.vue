@@ -2,7 +2,7 @@
   <v-card class="ma-2">
     <v-card-title class="justify-center">修改版声明</v-card-title>
     <v-card-subtitle class="text-center">修改者是 Whiteberry Lee</v-card-subtitle>
-    <v-card-text>汉化继承自锅巴汉化组，功能修改点可在下方查看。</v-card-text>
+    <v-card-text>汉化继承自锅巴汉化组，功能修改点可在下方查看，默认关闭的可选修改请在设置-修改里自选是否开启。</v-card-text>
     <v-card-actions class="flex-wrap justify-end">
       <v-spacer></v-spacer>
       <v-badge :value="importantNotice" color="red" overlap dot>
@@ -44,10 +44,6 @@ const changeLogs = [
     {
     day: '2025-05-24 ~ 2025-05-25',
     content: {
-      cheat: [
-        '活动结束时未使用的假黄玉将等量返还为黄玉',
-        '天气混乱事件150云更改天气从随机改为可选',
-      ],
       qol: [
         '农场过度生长剩余时间显示',
         '农场稀有掉落显示掉落作物',
@@ -69,9 +65,6 @@ const changeLogs = [
         '可直接复制存档文本，避免无法导出文件',
       ],
       cheat: [
-        '部落2可以重置技能点分配',
-        '画廊虚空生产加速器（解锁完所有形状后出现）',
-        '村庄冻结收益 40% -> 100%（作者于v1.5.0削弱）',
         '学校点击“参加考试”即可以满分通过考试',
         '未采用v1.5.5的画廊重大削弱（画布等级和灵感“订购大量保险箱”提供的鼓数量和画布速度）',
       ],
