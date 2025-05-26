@@ -1274,6 +1274,7 @@ export default {
     },
     cheat: {
       name: 'Cheat',
+      error: 'Just some cheating. Enable them at your own risk',
       topazReturn: {
         name: 'Topaz return',
         description: 'When big event ends, the unused currency which drop from topaz will back to topaz',
@@ -1292,6 +1293,14 @@ export default {
       oldVillageCryolab: {
         name: 'Village cryolab 100%',
         description: '40%->100%(before v1.5.0), effect after save and reload game',
+      },
+      cheatSchoolExam: {
+        name: 'School exam cheating',
+        description: 'Skip the minigame and get full score after click the exam button',
+      },
+      oldGalleryUpgrade: {
+        name: 'Old gallery version',
+        description: 'Very large difference between canvas, drum and shape(before v1.5.5), effect after save and reload game',
       },
     }
   },

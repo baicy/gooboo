@@ -78,7 +78,7 @@ export default {
         }
     },
     unlock: [
-        'eventFeature', 'bloomPoppyFlower', 'bloomIrisFlower', 'bloomLilyFlower', 'bloomOrchidFlower', 'bloomCornflowerFlower', 'summerFestivalTerraform',
+        'eventFeature', 'bloomPoppyFlower', 'bloomIrisFlower', 'bloomLilyFlower', 'bloomOrchidFlower', 'bloomCornflowerFlower', 'weatherChaosLocationOcean', 'summerFestivalTerraform',
         'cindersEvent', 'bloomEvent', 'weatherChaosEvent', 'summerFestivalEvent', 'nightHuntEvent', 'snowdownEvent',
         'merchantEvent', 'bingoCasinoEvent', 'wheelOfFortuneCasinoEvent', 'bankEvent',
     ],

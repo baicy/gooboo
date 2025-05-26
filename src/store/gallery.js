@@ -593,13 +593,13 @@ export default {
                 commit('updateColorDataKey', {name, key: 'cacheSpace', value: state.colorData[name].cacheSpace - 1});
             }
         },
-        applyCanvasLevel({ state, dispatch }, o) {
+        applyCanvasLevel({ state, dispatch, rootState }, o) {
             let trigger = o.onLevel ?? false;
             const level = Math.floor(state.colorData[o.name].progress);
             if (level > 0) {
                 dispatch('system/applyEffect', {type: 'mult', name: `currencyGallery${ capitalize(o.name) }Gain`, multKey: `galleryCanvas_${o.name}`, value: Math.pow(2, level), trigger}, {root: true});
                 dispatch('system/applyEffect', {type: 'mult', name: `gallery${ capitalize(o.name) }Conversion`, multKey: `galleryCanvas_${o.name}`, value: Math.pow(2, level), trigger}, {root: true});
-                dispatch('system/applyEffect', {type: 'base', name: `currencyGallery${ capitalize(o.name) }DrumCap`, multKey: `galleryCanvas_${o.name}`, value: 25 * level, trigger}, {root: true});
+                dispatch('system/applyEffect', {type: 'base', name: `currencyGallery${ capitalize(o.name) }DrumCap`, multKey: `galleryCanvas_${o.name}`, value: (rootState.system.settings.cheat.items.oldGalleryUpgrade.value ? 25 : 10) * level, trigger}, {root: true});
             } else {
                 dispatch('system/resetEffect', {type: 'mult', name: `currencyGallery${ capitalize(o.name) }Gain`, multKey: `galleryCanvas_${o.name}`}, {root: true});
                 dispatch('system/resetEffect', {type: 'mult', name: `gallery${ capitalize(o.name) }Conversion`, multKey: `galleryCanvas_${o.name}`}, {root: true});

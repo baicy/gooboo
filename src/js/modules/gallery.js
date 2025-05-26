@@ -8,6 +8,7 @@ import relic from "./gallery/relic";
 import shape from "./gallery/shape";
 import upgrade from "./gallery/upgrade";
 import upgradeShape from "./gallery/upgradeShape";
+import upgradeShapeModify from "./gallery/upgradeShapeModify";
 import upgradePremium from "./gallery/upgradePremium";
 import upgradePrestige from "./gallery/upgradePrestige";
 import bookGallery from "./school/bookGallery";
@@ -204,6 +205,14 @@ export default {
         return obj;
     },
     loadGame(data) {
+        const oldVersionCheat = store.state.system.settings.cheat.items.oldGalleryUpgrade.value;
+        if (oldVersionCheat) {
+            for (const [key, elem] of Object.entries(upgradeShapeModify)) {
+                store.commit('upgrade/updateKey', {name: `gallery_${key}`, key: 'effect', value: elem.effect});
+                store.dispatch('upgrade/apply', {name: `gallery_${key}`});
+            }
+        }
+
         if (data.shapeGrid) {
             store.commit('gallery/updateKey', {key: 'shapeGrid', value: data.shapeGrid});
         }
@@ -235,6 +244,11 @@ export default {
             for (const [key, elem] of Object.entries(data.idea)) {
                 if (store.state.gallery.idea[key] !== undefined) {
                     store.commit('gallery/updateIdeaKey', {name: key, key: 'owned', value: true});
+                    if (oldVersionCheat && key === 'orderMassiveSafe') {
+                        store.commit('gallery/updateIdeaKey', {name: key, key: 'effect', value: [
+                            {name: 'galleryColorDrumCap', type: 'base', value: lvl => getSequence(3, lvl)}
+                        ]});
+                    }
                     if (elem > 0) {
                         store.commit('gallery/updateIdeaKey', {name: key, key: 'level', value: elem});
                         store.dispatch('gallery/applyIdea', {name: key});

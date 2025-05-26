@@ -413,14 +413,28 @@ export default {
             cheat: {
                 unlock: null,
                 items: {
-                    topazReturn: {
+                    cheatSchoolExam: {
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
                         value: false,
                         defaultValue: false
                     },
-                    eventExtraShop: {
+                    oldVillageCryolab: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    oldGalleryUpgrade: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    galleryAccelerator: {
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -434,14 +448,14 @@ export default {
                         value: false,
                         defaultValue: false
                     },
-                    galleryAccelerator: {
+                    eventExtraShop: {
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
                         value: false,
                         defaultValue: false
                     },
-                    oldVillageCryolab: {
+                    topazReturn: {
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',

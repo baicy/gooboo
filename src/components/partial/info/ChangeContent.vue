@@ -1,37 +1,56 @@
+<style scoped>
+.qrcode {
+  background-size: contain;
+  width: 200px;
+  height: 275px;
+}
+.alipay-qrcode {
+  background-image: url('/public/img/alipay.png');
+}
+.wxpay-qrcode {
+  background-image: url('/public/img/wxpay.png');
+}
+</style>
+
 <template>
   <v-card class="ma-2">
     <v-card-title class="justify-center">修改版声明</v-card-title>
     <v-card-subtitle class="text-center">修改者是 Whiteberry Lee</v-card-subtitle>
-    <v-card-text>汉化继承自锅巴汉化组，功能修改点可在下方查看，默认关闭的可选修改请在设置-修改里自选是否开启。</v-card-text>
+    <v-card-text>具体内容请查看公告，有重要通知时也会提醒您。如果觉得有帮助到您的话可以请我喝一杯柠檬水哦。</v-card-text>
     <v-card-actions class="flex-wrap justify-end">
       <v-spacer></v-spacer>
       <v-badge :value="importantNotice" color="red" overlap dot>
         <v-btn class="ma-1" color="primary" @click="viewChange">
-          <v-icon class="mr-2">mdi-vector-difference</v-icon>
-          修改点
+          <v-icon class="mr-2">mdi-bulletin-board</v-icon>
+          公告
         </v-btn>
       </v-badge>
       <v-btn class="ma-1" color="primary" target="_blank" href="https://github.com/baicy/gooboo/">
         <v-icon class="mr-2">mdi-github</v-icon>
         {{ $vuetify.lang.t("$vuetify.info.socials.viewCode") }}
       </v-btn>
+      <v-btn class="ma-1" color="primary" id="reward-coffee"><v-icon class="mr-2">mdi-coffee</v-icon>打赏</v-btn>
+      <v-dialog activator="#reward-coffee" max-width="400">
+          <v-card class="default-card d-flex">
+            <v-sheet class="qrcode alipay-qrcode"></v-sheet>
+            <v-sheet class="qrcode wxpay-qrcode"></v-sheet>
+          </v-card>
+        </v-dialog>
     </v-card-actions>
     <v-dialog max-width="400" v-model="viewed">
-      <v-sheet class="overflow-auto pa-4" max-height="calc(60vh)">
-        <div v-for="logs in changeLogs" :key="logs.day">
-          <div>{{ logs.day }}</div>
-          <div>
-            <template v-for="(content, type) in logs.content">
-              <span v-for="(log, index) in content" :key="`${logs.day}${type}${index}`" class="d-flex mt-2" :class="{ 'flex-wrap': $vuetify.breakpoint.xsOnly }">
-                <v-chip label small class="flex-shrink-0 mr-2 px-2" :color="labels[type].color">
-                  <v-icon class="mr-1">{{ labels[type].icon }}</v-icon>
-                  {{ labels[type].text }}
-                </v-chip>
-                <span>{{ log }}</span>
-              </span>
-            </template>
-          </div>
-        </div>
+      <v-sheet class="overflow-auto pa-8" max-height="calc(60vh)">
+        本网站属于个人网站，所有对gooboo游戏的修改的目的都参考自身需求。<br/>
+        默认情况下，本网站只有不会影响任何游戏本身的辅助显示优化。<br/>
+        修改功能请在“设置 - 修改”里自选是否开启。<br/>
+        默认开启的显示如果您不满意，可以使用其他网站或者联系我进行修改。<br/>
+        联系方式可选源码按钮去Github留言，或者加入QQ群468760729。<br/>
+        本网站有2个地址可以访问：<br/>
+        <a href="https://baicy.github.io/gooboo/" target="_blank">https://baicy.github.io/gooboo/</a><br/>
+        <a href="https://gooboo.terrakeeper.top" target="_blank">https://gooboo.terrakeeper.top</a><br/>
+        可以根据您的网络情况选择访问。（存档需要重新导入，也可以使用云存档）<br/>
+        云存档功能是群友Zding提供的API，另外他也提供了一个非常棒的在线Gooboo <a href="https://gooboo.0nz.de/" target="_blank">https://gooboo.0nz.de/</a> <br>
+        汉化继承自锅巴汉化组版本，链接在下方“社交”。<br/>
+        感谢阅读。
       </v-sheet>
     </v-dialog>
   </v-card>
@@ -40,46 +59,8 @@
 <script>
 import { mapGetters } from 'vuex';
 
-const changeLogs = [
-    {
-    day: '2025-05-24 ~ 2025-05-25',
-    content: {
-      qol: [
-        '农场过度生长剩余时间显示',
-        '农场稀有掉落显示掉落作物',
-        '购买列表增加材料提示和进度显示'
-      ]
-    },
-  },
-  {
-    day: 'xxxx-xx-xx',
-    content: {
-      qol: [
-        '购买列表可按是否可购买和容量是否足够筛选',
-        '在画廊声望页显示画廊的全局等级进度',
-        '显示画廊的灵感每层已使用数',
-        '画廊的形状游戏显示各个形状的个数',
-        '村庄-工匠显示每个制品的基础价格和预计销售时间之比和当前里程碑升级所需时间（以不间断制作计算）',
-        '冷冻实验室显示升级所需天数',
-        '采矿冶炼可自定义输入个数',
-        '可直接复制存档文本，避免无法导出文件',
-      ],
-      cheat: [
-        '学校点击“参加考试”即可以满分通过考试',
-        '未采用v1.5.5的画廊重大削弱（画布等级和灵感“订购大量保险箱”提供的鼓数量和画布速度）',
-      ],
-    }
-  }
-];
-const labels = {
-  qol: { text:'体验', color: 'teal', icon: 'mdi-sofa' },
-  cheat: { text:'作弊', color: 'red', icon: 'mdi-screwdriver' },
-};
-
 export default {
   data: () => ({
-    changeLogs,
-    labels,
     viewed: false,
   }),
   computed: {

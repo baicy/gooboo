@@ -86,5 +86,6 @@ export default {
   bloomLilyFlower: 'Lily',
   bloomOrchidFlower: 'Orchid',
   bloomCornflowerFlower: 'Cornflower',
-  summerFestivalTerraform: 'Terraforming'
+  summerFestivalTerraform: 'Terraforming',
+  weatherChaosLocationOcean: 'Location Ocean (Plastic weight x3)',
 };

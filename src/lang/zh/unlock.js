@@ -86,5 +86,6 @@ export default {
   bloomLilyFlower: '百合',
   bloomOrchidFlower: '兰花',
   bloomCornflowerFlower: '矢车菊',
-  summerFestivalTerraform: '地形改造'
+  summerFestivalTerraform: '地形改造',
+  weatherChaosLocationOcean: '地点 海洋（塑料比重x3）'
 };

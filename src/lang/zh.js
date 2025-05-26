@@ -323,7 +323,7 @@ export default {
       steam: '您使用的是steam版本。 更新是通过 steam 处理的。',
     },
     testingDescription: {
-      0: '您正在玩测试版本。 功能可能未完成或有错误，游戏机制可能随时改变。 你可以玩发布版在 ',
+      0: '您正在玩测试版本。功能可能未完成或有错误，游戏机制可能随时改变。您可以玩发布版在 ',
       1: '这里',
       2: ' (测试版本中的保存文件无法在游戏的发布版本中使用)',
     },
@@ -342,15 +342,15 @@ export default {
     },
     socials: {
       title: '社交',
-      text: 'Gooboo 可以独自玩，无需外部指南。但如果你想和其他玩家一起玩，你可以访问这些地方:',
+      text: 'Gooboo 可以独自玩，无需外部指南。但如果您想和其他玩家一起玩，您可以访问这些地方：',
       viewCode: '源码',
       patreon: 'Patreon',
       reddit: 'Reddit',
       discord: 'Discord',
     },
     supportMe: {
-      title: '支持开发',
-      text: '该游戏是免费的，没有微交易或广告。 如果您想支持开发，请查看原作者的 patreon 页面或者修改者的收款码:',
+      title: '支持我',
+      text: '该游戏是免费的，没有微交易或广告。如果您想支持开发，请查看我的 patreon 页面：',
       patreon: 'Patreon',
     },
     tech: {
@@ -390,7 +390,7 @@ export default {
         description: '修改游戏参数或者使用工具实现不可能得结果或预测/改变结果',
       },
       selfMark: '标记自己为cheater',
-      selfMarkDescription: '你可以标记自己为cheater。 这是纯粹的视觉效果，可以随时更改',
+      selfMarkDescription: '你可以标记自己为cheater。这是纯粹的视觉效果，可以随时更改',
       noDetected: '没有检测到作弊行为',
       featureDetected: '在以下功能中检测到作弊行为:',
       featureDetected2: '你可以通过完全重置这些功能来移除cheater标记',
@@ -1331,13 +1331,14 @@ export default {
     },
     cheat: {
       name: '修改',
+      error: '这些设置属于修改游戏内容，可能会改变游戏的平衡性，请在确定了解影响后慎重开启，建议使用前备份存档。启用它们的风险自行承担，概不负责！',
       topazReturn: {
         name: '活动黄玉返还',
-        description: '大型活动结束时，活动期间黄玉转换的代币等量返还为黄玉',
+        description: '大型活动结束时，未使用的活动期间黄玉转换的代币等量返还为黄玉',
       },
       eventExtraShop: {
-        name: '额外活动商店',
-        description: '原版没有的一些购买项目，其实也不是很超模',
+        name: '额外活动修改',
+        description: '原版大型活动没有的一些购买项目和改动，其实都比较蚊子腿',
       },
       horde2SkillReset: {
         name: '部落2重置技能点',
@@ -1347,8 +1348,16 @@ export default {
         description: '将画廊形状游戏的第2行第2列的形状变成加速器，需要先正常解锁所有形状和特殊形状生效',
       },
       oldVillageCryolab: {
-        name: '未削弱村庄声望货币冷冻系数',
-        description: '从40%变为100%，需要存档后重启游戏生效',
+        name: '未削弱村庄冷冻系数',
+        description: '使用v1.5.0之前的冷冻系数，增益从40%变为100%，需要存档后重启游戏生效',
+      },
+      cheatSchoolExam: {
+        name: '学校代考满分',
+        description: '点击“参加考试”即可跳过小游戏直接获得本次考试满分',
+      },
+      oldGalleryUpgrade: {
+        name: '未削弱画廊',
+        description: '使用v1.5.5之前的画廊增益，画布和鼓和形状差距非常大，需要存档后重启游戏生效',
       },
     }
   },
@@ -1612,14 +1621,14 @@ export default {
       name: '供品',
       description: {
         0: '牺牲 ',
-        1: ' 花费 ',
-        2: ' 并增加下一次牺牲的成本。 声望时牺牲成本重置.',
+        1: ' 获得 ',
+        2: ' 并提升供品增益',
+        3: '/小时'
       },
       sacrifice: '牺牲',
       notUnlocked:
-        '此产品尚未解锁。 您仍然可以花费产品，但不能牺牲，并且在解锁产品之前不会应用资源容量',
-      notUnlockedHint: '该产品尚未解锁，因此资源容量尚未适用',
-      autoGen: '每小时生成本轮游戏 ({0}) 获得的产品的 1%',
+        '该供品尚未解锁。您仍然可以供奉，但在解锁供品之前牺牲不生效，即提升的资源容量不会生效',
+      notUnlockedHint: '该供品尚未解锁，因此资源容量尚未生效',
     },
     material: '材料',
     food: '食物',

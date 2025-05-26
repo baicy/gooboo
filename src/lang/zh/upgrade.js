@@ -815,6 +815,7 @@ export default {
   event_rodIronclad: '鱼竿加固',
   event_baitBonus: '连锁',
   event_entangle: '缠绕',
+  event_incredibleTrip: '不可思议的旅行',
 
   event_extraBuildingSlot: '额外的建筑槽位',
   event_doubleTime: '双倍时间',

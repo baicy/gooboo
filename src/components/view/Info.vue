@@ -15,17 +15,6 @@
   vertical-align: super;
   font-size: 66%;
 }
-.qrcode {
-  background-size: contain;
-  width: 200px;
-  height: 275px;
-}
-.alipay-qrcode {
-  background-image: url('/public/img/alipay.png');
-}
-.wxpay-qrcode {
-  background-image: url('/public/img/wxpay.png');
-}
 </style>
 
 <template>
@@ -82,13 +71,6 @@
       <v-card-text>{{ $vuetify.lang.t('$vuetify.info.supportMe.text') }}</v-card-text>
       <v-card-actions class="flex-wrap justify-end">
         <v-btn class="ma-1" color="#f1465a" target="_blank" href="https://patreon.com/Tendsty"><v-icon class="mr-2">mdi-open-in-new</v-icon>{{ $vuetify.lang.t('$vuetify.info.supportMe.patreon') }}</v-btn>
-        <v-btn class="ma-1" color="primary" id="reward-coffee"><v-icon class="mr-2">mdi-coffee</v-icon>打赏</v-btn>
-        <v-dialog activator="#reward-coffee" max-width="400">
-          <v-card class="default-card d-flex">
-            <v-sheet class="qrcode alipay-qrcode"></v-sheet>
-            <v-sheet class="qrcode wxpay-qrcode"></v-sheet>
-          </v-card>
-        </v-dialog>
       </v-card-actions>
     </v-card>
     <v-card class="ma-2">

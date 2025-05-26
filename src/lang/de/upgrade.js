@@ -814,6 +814,7 @@ export default {
   event_rodIronclad: 'Rod Ironclad',
   event_baitBonus: 'Köderbonus',
   event_entangle: 'Verwickeln',
+  event_incredibleTrip: 'Unglaubliche Reise',
 
   event_extraBuildingSlot: 'Extra-Bauplatz',
   event_doubleTime: 'Doppel-Zeit',

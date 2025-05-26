@@ -33,6 +33,9 @@
       <div v-if="tab === 'experiment'" class="d-flex justify-center ma-2">
         <alert-text type="warning" style="max-width: 600px;">{{ $vuetify.lang.t(`$vuetify.settings.experiment.warning`) }}</alert-text>
       </div>
+      <div v-if="tab === 'cheat'" class="d-flex justify-center ma-2">
+        <alert-text type="error" style="max-width: 600px;">{{ $vuetify.lang.t(`$vuetify.settings.cheat.error`) }}</alert-text>
+      </div>
     </div>
   </div>
 </template>
