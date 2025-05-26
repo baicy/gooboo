@@ -55,6 +55,29 @@
           只显示当前材料容量足够但库存不足暂时无法购买的升级
         </gb-tooltip>
       </v-btn-toggle>
+      <gb-tooltip>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="error" fab small tile class="ml-2" v-bind="attrs" v-on="on" @click="viewUnlockItems">
+          <v-icon>mdi-eye-lock-open</v-icon>
+        </v-btn>
+        </template>
+        <div>提前查看未解锁升级项，无法购买</div>
+        <div>另外会自动将左侧选择的过滤项去除</div>
+      </gb-tooltip>
+      <v-dialog v-model="viewUnlock">
+        <v-card class="default-card">
+          <v-card-title class="text-center">未解锁项目</v-card-title>
+          <v-card-text>
+            <v-row class="pa-1" no-gutters>
+              <v-col class="pa-1" v-for="(item, key) in unlockItems" :key="`${feature}-${type}-${key}`" sm="6" md="4" lg="3">
+                <unlock-upgrade :name="item" :translation-set="translationSet">
+                  <slot :upgrade-name="item"></slot>
+                </unlock-upgrade>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </div>
     <div v-if="items.length > 0">
       <div class="d-flex upgrade-pagination justify-center align-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'upgrade-pagination-mobile': $vuetify.breakpoint.smAndDown && !noTabs, 'upgrade-pagination-mobile-notabs': $vuetify.breakpoint.smAndDown && noTabs, 'pr-10': showQueueSpeed}" v-if="pages > 1 || requirementStat.length > 0">
@@ -99,9 +122,10 @@ import { capitalize } from '../../js/utils/format';
 import AlertText from '../partial/render/AlertText.vue';
 import StatBreakdown from './StatBreakdown.vue';
 import Upgrade from './Upgrade.vue';
+import UnlockUpgrade from './UnlockUpgrade.vue';
 
 export default {
-  components: { Upgrade, StatBreakdown, AlertText },
+  components: { Upgrade, StatBreakdown, AlertText, UnlockUpgrade },
   props: {
     feature: {
       type: String,
@@ -145,6 +169,7 @@ export default {
   },
   data: () => ({
     page: 1,
+    viewUnlock: false,
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -197,6 +222,9 @@ export default {
       });
       return mats;
     },
+    unlockItems() {
+      return this.baseItems.filter(item=>!this.items.includes(item));
+    },
     upgradeLimit() {
       return ['smeltery', 'cindersProducer'].includes(this.type) && this.$vuetify.breakpoint.xlOnly ? 12 : this.$store.state.system.settings.performance.items.upgradeListItems.value;
     },
@@ -248,7 +276,11 @@ export default {
   methods: {
     setListFilter(value) {
       this.$store.commit('system/updateKey', {key: 'listFilter', value});
-    }
+    },
+    viewUnlockItems() {
+      this.setListFilter('');
+      this.viewUnlock = true;
+    },
   },
   watch: {
     page(newVal) {

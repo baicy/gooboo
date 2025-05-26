@@ -143,7 +143,8 @@ export default {
                 collapse: false,
                 note: o.note ?? null,
                 hideCap: o.hideCap ?? false,
-                onBuy: o.onBuy ?? (() => {})
+                onBuy: o.onBuy ?? (() => {}),
+                cheat: o.cheat ?? false,
             });
 
             // init queue if needed
