@@ -47,7 +47,7 @@
         本网站有2个地址可以访问：<br/>
         <a href="https://baicy.github.io/gooboo/" target="_blank">https://baicy.github.io/gooboo/</a><br/>
         <a href="https://gooboo.terrakeeper.top" target="_blank">https://gooboo.terrakeeper.top</a><br/>
-        可以根据您的网络情况选择访问。（存档需要重新导入，也可以使用云存档）<br/>
+        可以根据您的网络情况选择访问。（存档需要重新导入，云存档不支持跨站）<br/>
         云存档功能是群友Zding提供的API，另外他也提供了一个非常棒的在线Gooboo <a href="https://gooboo.0nz.de/" target="_blank">https://gooboo.0nz.de/</a> <br>
         汉化继承自锅巴汉化组版本，链接在下方“社交”。<br/>
         感谢阅读。
