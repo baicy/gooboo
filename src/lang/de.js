@@ -1302,6 +1302,10 @@ export default {
         name: 'Old gallery version',
         description: 'Very large difference between canvas, drum and shape(before v1.5.5), effect after save and reload game',
       },
+      autoBreak: {
+        name: 'Auto mining',
+        description: 'For niter getting, effect when offline',
+      },
     }
   },
   statBreakdown: {

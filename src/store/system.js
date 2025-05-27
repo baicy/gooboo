@@ -420,6 +420,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    autoBreak: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     oldVillageCryolab: {
                         unlock: null,
                         hasDescription: true,

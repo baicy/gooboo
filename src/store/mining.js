@@ -30,6 +30,9 @@ export default {
         beacon: {},
         beaconPlaced: {},
         beaconCooldown: 0,
+        autoBreak: {
+            active: false,
+        },
     },
     getters: {
         damage: (state, getters, rootState, rootGetters) => {
@@ -456,6 +459,7 @@ export default {
             commit('updateKey', {key: 'breaks', value: []});
             commit('updateKey', {key: 'enhancementBars', value: 0});
             commit('updateKey', {key: 'enhancementIngredient', value: null});
+            commit('updateKey', {key: 'autoBreak', value: {active: false}});
             for (const [key] of Object.entries(state.smeltery)) {
                 commit('updateSmelteryKey', {name: key, key: 'progress', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'stored', value: 0});
@@ -671,6 +675,46 @@ export default {
                 state.beacon[beacon].effect.forEach(effect => {
                     dispatch('system/applyEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ beacon }`, value: effect.value(state.beacon[beacon].level), trigger: false}, {root: true});
                 });
+            }
+        },
+        toggleAutoBreak({ state, commit, getters }, config) {
+            const { active, startDepth, endDepth, targetBreaks } = config;
+            if (active) {
+                let cursor = Math.max(startDepth, 1);
+                while (cursor < endDepth) {
+                    if(state.breaks[cursor-1] < targetBreaks) {
+                        break;
+                    }
+                    cursor++;
+                }
+                if (cursor > endDepth) {
+                    return;
+                }
+                if (cursor !== state.depth) {
+                    commit('updateKey', {key: 'depth', value: cursor});
+                    commit('updateKey', {key: 'durability', value: getters.currentDurability});
+                }
+                commit('system/addNotification', {color: 'info', timeout: 5000, message: {
+                    type: 'common',
+                    message: '开始自动挖矿',
+                    icon: 'mdi-pickaxe'
+                }}, { root: true});
+                commit('updateKey', {key: 'autoBreak', value: {
+                    active: true,
+                    startDepth: cursor,
+                    endDepth,
+                    targetBreaks
+                }});
+            } else {
+                commit('updateSubkey', {name: 'autoBreak', key: 'active', value: false});
+                if (endDepth) {
+                    commit('updateSubkey', {name: 'autoBreak', key: 'endDepth', value: endDepth});
+                }
+                commit('system/addNotification', {color: 'success', timeout: -1, message: {
+                    type: 'common',
+                    message: `自动挖矿：${state.autoBreak.startDepth} ~ ${state.autoBreak.endDepth}已完成`,
+                    icon: 'mdi-pickaxe'
+                }}, { root: true});
             }
         }
     }

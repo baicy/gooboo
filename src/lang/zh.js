@@ -1359,6 +1359,10 @@ export default {
         name: '未削弱画廊',
         description: '使用v1.5.5之前的画廊增益，画布和鼓和形状差距非常大，需要存档后重启游戏生效',
       },
+      autoBreak: {
+        name: '自动挖矿',
+        description: '主要是辅助挖硝，离线可用',
+      },
     }
   },
   statBreakdown: {

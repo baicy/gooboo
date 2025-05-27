@@ -480,6 +480,7 @@
         <prize-message v-else-if="message.type === 'prize'" :message="message"></prize-message>
         <school-message v-else-if="message.type === 'school'" :message="message"></school-message>
         <update-message v-else-if="message.type === 'update'" :message="message"></update-message>
+        <common-message v-else-if="message.type === 'common'" :message="message"></common-message>
       </template>
       <template v-slot:action="{ close }">
         <v-btn icon @click="close()"><v-icon>mdi-close</v-icon></v-btn>
@@ -600,6 +601,7 @@ import SchoolMessage from './components/partial/snackbar/SchoolMessage.vue';
 import GoldenDustMenu from './components/render/GoldenDustMenu.vue';
 import Currency from './components/render/Currency.vue';
 import UpdateMessage from './components/partial/snackbar/UpdateMessage.vue';
+import CommonMessage from './components/partial/snackbar/CommonMessage.vue';
 import { APP_ENV } from './js/constants';
 import ImportMessage from './components/partial/snackbar/ImportMessage.vue';
 const semverCompare = require('semver/functions/compare');
@@ -649,7 +651,8 @@ export default {
     GoldenDustMenu,
     Currency,
     UpdateMessage,
-    ImportMessage
+    ImportMessage,
+    CommonMessage
   },
   data: () => ({
     dialogDust: false,

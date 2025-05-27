@@ -211,6 +211,44 @@ export default {
                         newDurability = store.getters['mining/currentDurability'];
                         store.dispatch('mining/applyBeaconEffects');
                     } else {
+                        // 自动挖掘
+                        if (store.state.mining.autoBreak.active) {
+                            const currentDepth = store.state.mining.depth;
+                            const { startDepth, endDepth, targetBreaks } = store.state.mining.autoBreak;
+                            if (store.state.mining.depth >= startDepth && store.state.mining.depth <= endDepth) {
+                                const currentBreaks = store.getters['mining/currentBreaks'];
+                                const neededBreaks = targetBreaks - currentBreaks;
+                                if (neededBreaks <= 0) {
+                                    if (currentDepth + 1 > endDepth) {
+                                        store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: currentDepth});
+                                    } else {
+                                        awardLoot(breaks, loots, preHits);
+                                        store.commit('mining/updateKey', { key: 'depth', value: currentDepth + 1 });
+                                        store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
+                                        continue;
+                                    }
+                                } else {
+                                    const hitsPerBreak = store.getters['mining/hitsNeeded'];
+                                    const secondsNeeded = hitsPerBreak * neededBreaks;
+                                    if (secondsLeft >= secondsNeeded) {
+                                        store.commit('stat/add', {feature: 'mining', name: 'totalDamage', value: secondsNeeded * store.getters['mining/currentDamage']});
+                                        breaks += neededBreaks;
+                                        loots += secondsNeeded;
+                                        secondsLeft -= secondsNeeded;
+                                        if (currentDepth + 1 > endDepth) {
+                                            store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: currentDepth});
+                                        } else {
+                                            awardLoot(breaks, loots, loots);
+                                            store.commit('mining/updateKey', { key: 'depth', value: currentDepth + 1 });
+                                            store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
+                                            continue;
+                                        }
+                                    }
+                                }
+                            } else {
+                                store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: currentDepth});
+                            }
+                        }
                         store.commit('stat/add', {feature: 'mining', name: 'totalDamage', value: secondsLeft * store.getters['mining/currentDamage']});
                         breaks += Math.floor(secondsLeft / store.getters['mining/hitsNeeded']);
                         loots += secondsLeft;
@@ -485,6 +523,7 @@ export default {
         if (store.state.mining.resin > 0) {
             obj.resin = store.state.mining.resin;
         }
+        obj.autoBreak = store.state.mining.autoBreak;
 
         let smelteryData = {};
         for (const [key, elem] of Object.entries(store.state.mining.smeltery)) {
@@ -516,7 +555,7 @@ export default {
         return obj;
     },
     loadGame(data) {
-        ['depth', 'durability', 'pickaxePower', 'breaks', 'ingredientList', 'enhancementBars', 'enhancementIngredient', 'resin', 'beaconPlaced', 'beaconCooldown'].forEach(elem => {
+        ['depth', 'durability', 'pickaxePower', 'breaks', 'ingredientList', 'enhancementBars', 'enhancementIngredient', 'resin', 'beaconPlaced', 'beaconCooldown', 'autoBreak'].forEach(elem => {
             if (data[elem] !== undefined) {
                 store.commit('mining/updateKey', {key: elem, value: data[elem]});
             }
