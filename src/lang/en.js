@@ -1306,6 +1306,9 @@ export default {
         name: 'Auto mining',
         description: 'For niter getting, effect when offline',
       },
+      scientificNotation: {
+        name: 'Scientific notation'
+      },
     }
   },
   statBreakdown: {

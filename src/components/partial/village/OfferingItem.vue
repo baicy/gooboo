@@ -49,7 +49,9 @@
       </v-chip>
       <v-spacer></v-spacer>
       <price-tag class="ma-1" currency="village_offering" :amount="upgradeCost"></price-tag>
-      <v-btn small class="ma-1" color="primary" :disabled="!canAffordUpgrade || disabled" @click="buyUpgrade(true)">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
+      <v-btn small class="ma-1" color="primary" :disabled="!canAffordUpgrade || affordableSteps < buyBatch || disabled" @click="buyUpgrade(true)">
+        {{ buyBatch===-1 ? $vuetify.lang.t('$vuetify.gooboo.max') : `+${buyBatch}` }}
+      </v-btn>
       <gb-tooltip>
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on">
@@ -88,7 +90,8 @@ export default {
   },
   computed: {
     ...mapState({
-      currency: state => state.currency
+      currency: state => state.currency,
+      buyBatch: state => state.village.offeringBuyBatch
     }),
     offering() {
       return this.$store.state.village.offering[this.name];
@@ -104,6 +107,18 @@ export default {
     },
     canAffordUpgrade() {
       return this.$store.getters['currency/value']('village_offering') >= this.upgradeCost;
+    },
+    affordableSteps() {
+      const offering = this.$store.state.village.offering[this.name];
+      const offeringOwned = this.$store.getters['currency/value']('village_offering');
+      let amount = 0;
+      let step = 0;
+      while(amount <= offeringOwned) {
+        const cost = offering.amount + offering.increment * (offering.upgradeBought + step);
+        amount += cost;
+        step++;
+      }
+      return step - 1;
     },
     capName() {
       return 'currencyVillage' + capitalize(this.name) + 'Cap';
@@ -129,7 +144,7 @@ export default {
       this.$store.dispatch('village/buyOffering', this.name);
     },
     buyUpgrade(max) {
-      this.$store.dispatch('village/upgradeOffering', {name: this.name, buyMax: max});
+      this.$store.dispatch('village/upgradeOffering', {name: this.name, batch: max ? this.buyBatch : 1});
     }
   }
 }

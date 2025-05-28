@@ -47,23 +47,6 @@ export default {
             }
             return price;
         },
-        ableAfford: (state, getters, rootState) => (feature, name, amount = 1) => {
-            const upgrade = state.item[feature + '_' + name];
-            if (upgrade.cap !== null && (upgrade.bought + amount) > upgrade.cap) {
-                return false;
-            }
-            let ableAfford = true;
-            for (const [key, elem] of Object.entries(getters.priceList(feature, name, amount))) {
-                if (rootState.currency[key].cap !== null && rootState.currency[key].cap < elem) {
-                    ableAfford = false;
-                }
-                // 没有解锁的材料
-                if (rootState.stat[key].total <= 0) {
-                    ableAfford = false;
-                }
-            }
-            return ableAfford;
-        },
         canAfford: (state, getters, rootState, rootGetters) => (feature, name, amount = 1) => {
             const upgrade = state.item[feature + '_' + name];
             if (upgrade.cap !== null && (upgrade.bought + amount) > upgrade.cap) {
@@ -145,6 +128,7 @@ export default {
                 hideCap: o.hideCap ?? false,
                 onBuy: o.onBuy ?? (() => {}),
                 cheat: o.cheat ?? false,
+                buyProgress: 0,
             });
 
             // init queue if needed
@@ -444,6 +428,19 @@ export default {
 
             // Update global level for housing
             dispatch('meta/globalLevelPart', {key: 'village_0', amount: totalHousing}, {root: true});
+        },
+        updateProgress({state, rootState, commit}, name) {
+            const upgrade = state.item[name];
+            const pricePercents = [];
+            const capPercents = [];
+            Object.entries(upgrade.price(upgrade.bought)).forEach(([key, elem]) => {
+                const currency = rootState.currency[key];
+                pricePercents.push(currency.value < elem ? currency.value / elem : 1);
+                capPercents.push(currency.cap && currency.cap < elem ? currency.cap / elem : 1);
+            });
+            const priceProgress = pricePercents.reduce((a, b) => a + b, 0) / pricePercents.length;
+            const capProgress = capPercents.reduce((a, b) => a + b, 0) / capPercents.length;
+            commit('updateKey', { name, key: 'buyProgress', value: capProgress===1 ? priceProgress : capProgress - 1 });
         },
         tickDelay({ state, commit, dispatch }, o) {
             let seconds = o.seconds ?? 0;

@@ -36,10 +36,8 @@
       <v-btn icon :disabled="isDeepest || isFrozen || autoBreak.active" @click="depthMax"><v-icon>mdi-skip-forward</v-icon></v-btn>
       <v-btn v-if="canAutoBreak" :color="autoBreak.active ? 'success' : 'secondary'" @click="autoBreakToggle" small min-width="30" :disabled="isFrozen">
         <v-icon size="20">mdi-cached</v-icon>
-        <div class="d-flex" v-if="autoBreak.active">
+        <div v-if="autoBreak.active">
           <span class="text-caption">{{ autoBreak.startDepth }} ~ {{ autoBreak.endDepth }}</span>
-          <v-divider vertical class="mx-2"></v-divider>
-          <span class="text-caption">{{ autoBreak.targetBreaks }}</span>
         </div>
       </v-btn>
     </div>
@@ -47,7 +45,7 @@
       <template v-slot:activator="{ on, attrs }">
         <div class="ma-1">
           <v-progress-linear color="red" height="25" class="balloon-text-dynamic rounded" v-bind="attrs" v-on="on" :value="durabilityPercent">
-            {{ $formatNum(durability) }} / {{ $formatNum(maxDurability) }} x {{ $formatNum(currentBreaks) }}
+            {{ $formatNum(durability) }} / {{ $formatNum(maxDurability) }} x {{ $formatNum(currentBreaks) }} {{ autoBreak.active ? `/ ${autoBreak.targetBreaks}` : '' }}
           </v-progress-linear>
         </div>
       </template>

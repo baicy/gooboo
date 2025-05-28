@@ -12,7 +12,8 @@ export default {
         policy: {},
         crafting: {},
         explorerProgress: 0,
-        offeringGen: 0
+        offeringGen: 0,
+        offeringBuyBatch: -1
     },
     getters: {
         employed: (state) => {
@@ -87,7 +88,7 @@ export default {
         sharesGain: (state, getters, rootState, rootGetters) => {
             const val = rootState.currency.village_copperCoin.value / 1000;
             return val >= 10 ? rootGetters['mult/get']('currencyVillageSharesGain', val) : 0;
-        }
+        },
     },
     mutations: {
         initJob(state, o) {
@@ -182,6 +183,7 @@ export default {
             }
             commit('updateKey', {key: 'explorerProgress', value: 0});
             commit('updateKey', {key: 'offeringGen', value: 0});
+            commit('updateKey', {key: 'offeringfBuyBatch', value:-1});
         },
         addWorker({ state, getters, dispatch }, jobName) {
             const job = state.job[jobName];
@@ -267,13 +269,14 @@ export default {
         },
         upgradeOffering({ state, rootState, rootGetters, commit, dispatch }, o) {
             const offering = state.offering[o.name];
-            const buyMax = o.buyMax ?? false;
+            const batch = o.batch ?? 1;
+            const buyMax = batch===-1;
             const baseCost = offering.amount + offering.increment * offering.upgradeBought;
             const offeringOwned = rootGetters['currency/value']('village_offering');
 
             if (offeringOwned >= baseCost) {
-                // Buy one or all if buyMax is enabled
-                let amount = buyMax ? Math.floor(offeringOwned / offering.amount) : 1;
+                // Buy custom number or all if buyMax is enabled
+                let amount = buyMax ? Math.floor(offeringOwned / offering.amount) : batch;
                 if (buyMax && offering.increment > 0) {
                     let step = 1;
                     while (offeringOwned >= deltaLinear(offering.amount, offering.increment, step, offering.upgradeBought)) {

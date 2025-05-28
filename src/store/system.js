@@ -455,6 +455,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    scientificNotation: {
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     eventExtraShop: {
                         unlock: null,
                         hasDescription: true,
@@ -502,7 +509,7 @@ export default {
         playerId: null,
         playerName: null,
         extraVersion: 0,
-        listFilter: '',
+        listSort: false,
     },
     getters: {
         mainFeatures: (state, getters, rootState) => {
@@ -778,7 +785,7 @@ export default {
             commit('updateKey', {key: 'playerId', value: null});
             commit('updateKey', {key: 'playerName', value: null});
             commit('updateKey', {key: 'extraVersion', value: 0});
-            commit('updateKey', {key: 'listFilter', value: ''});
+            commit('updateKey', {key: 'listSort', value: false});
 
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {

@@ -48,7 +48,12 @@
     <gb-tooltip key="upgrade-buy-collapse">
       <template v-slot:activator="{ on, attrs }">
         <div class="ma-1 rounded" v-bind="attrs" v-on="on" style="position: relative;">
-          <div class="buy-progress rounded" v-if="!canAfford" :class="[ableAfford?'primary':'error']" :style="{ width: `${affordProgress}%` }"></div>
+          <div
+            class="buy-progress rounded"
+            v-if="!canAfford"
+            :class="[upgrade.buyProgress < 0 ? 'error' : 'primary']"
+            :style="{ width: `${(upgrade.buyProgress < 0 ? 1 + upgrade.buyProgress : upgrade.buyProgress) * 100}%` }"
+          ></div>
           <v-btn class="px-2" v-if="!isMax" color="primary" :disabled="!canAfford || disabled" @click="buy">{{ $vuetify.lang.t(upgradeTranslation) }}</v-btn>
         </div>
       </template>
@@ -151,7 +156,12 @@
       <v-spacer></v-spacer>
       <v-btn key="upgrade-buy-max" small v-if="!isMax" color="primary" :disabled="!canAfford || disabled" @click="buyMax">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
       <div class="ma-1 rounded" style="position: relative;">
-        <div class="buy-progress rounded" v-if="!canAfford" :class="[ableAfford?'primary':'error']" :style="{ width: `${affordProgress}%` }"></div>
+        <div
+          class="buy-progress rounded"
+          v-if="!canAfford"
+          :class="[upgrade.buyProgress < 0 ? 'error' : 'primary']"
+          :style="{ width: `${(upgrade.buyProgress < 0 ? 1 + upgrade.buyProgress : upgrade.buyProgress) * 100}%` }"
+        ></div>
         <v-btn key="upgrade-buy" v-if="!isMax" :data-cy="`upgrade-${ name }-buy`" color="primary" :disabled="!canAfford || disabled" @click="buy">{{ $vuetify.lang.t(upgradeTranslation) }}</v-btn>
       </div>
     </v-card-actions>
@@ -219,22 +229,6 @@ export default {
     },
     canAfford() {
       return this.$store.getters['upgrade/canAfford'](this.upgrade.feature, this.splitName);
-    },
-    ableAfford() {
-      return this.$store.getters['upgrade/ableAfford'](this.upgrade.feature, this.splitName);
-    },
-    affordProgress() {
-      const percents = [];
-      if (this.ableAfford) {
-        for(const c in this.price) {
-          percents.push(this.currency[c].value < this.price[c] ? this.currency[c].value / this.price[c] : 1);
-        }
-      } else {
-        for(const c in this.price) {
-          percents.push(this.currency[c].cap < this.price[c] ? this.currency[c].cap / this.price[c] : 1);
-        }
-      }
-      return percents.reduce((a, b) => a + b, 0) / percents.length * 100;
     },
     isMax() {
       return this.upgrade.cap !== null && this.upgrade.bought >= this.upgrade.cap;

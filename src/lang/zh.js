@@ -1363,6 +1363,9 @@ export default {
         name: '自动挖矿',
         description: '主要是辅助挖硝，离线可用',
       },
+      scientificNotation: {
+        name: '使用科学计数法'
+      },
     }
   },
   statBreakdown: {

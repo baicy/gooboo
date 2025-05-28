@@ -44,6 +44,12 @@ function formatNum(amount, showDecimals = false) {
         return negativePrefix + '∞';
     }
 
+    if (store.state.system.settings.cheat.items.scientificNotation.value && amount > 0) {
+        if (Math.abs(numBase) >= 4) {
+            return negativePrefix + (amount / Math.pow(10, numBase)).toPrecision(4) + 'e' + numBase;
+        }
+    }
+
     if (showDecimals) {
         if (numBase === -Infinity) {
             return '0';

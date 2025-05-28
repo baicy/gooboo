@@ -206,10 +206,11 @@ export default {
     canvasDisplay() {
       const level = this.canvasLevel;
       const nextLevel = this.canvasLevel + 1;
+      const drumPerLevel = this.$store.state.system.settings.cheat.items.oldGalleryUpgrade.value ? 25 : 10;
       return [
         {type: 'mult', name: `currencyGallery${ capitalize(this.name) }Gain`, before: level > 0 ? Math.pow(2, level) : null, after: Math.pow(2, nextLevel)},
         {type: 'mult', name: `gallery${ capitalize(this.name) }Conversion`, before: level > 0 ? Math.pow(2, level) : null, after: Math.pow(2, nextLevel)},
-        {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (10 * level) : null, after: 10 * nextLevel}
+        {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (drumPerLevel * level) : null, after: drumPerLevel * nextLevel}
       ];
     },
     canvasUntilNext() {

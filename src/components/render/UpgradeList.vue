@@ -19,51 +19,26 @@
 <template>
   <div>
     <div class="upgrade-pagination" :class="{'upgrade-pagination-mobile': $vuetify.breakpoint.smAndDown && !noTabs, 'upgrade-pagination-mobile-notabs': $vuetify.breakpoint.smAndDown && noTabs}">
-      <div class="d-flex mx-2 py-1 bg-tile-default align-center">
-        <div class="d-flex px-1 overflow-x-auto overflow-y-hidden">
-          <gb-tooltip v-for="mat in neededMaterials" :key="mat" :min-width="0">
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon :color="currency[mat].color" v-bind="attrs" v-on="on" small>{{ currency[mat].icon }}</v-icon>
-            </template>
-            {{ $vuetify.lang.t(`$vuetify.currency.${mat}.name`) }}
-          </gb-tooltip>
-        </div>
+      <div class="d-flex mx-2 py-1 bg-tile-default align-center justify-center">
         <gb-tooltip :min-width="0">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on" icon x-small text>
-              <v-icon>mdi-help-circle-outline</v-icon>
+            <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" :color="viewFilter ? 'primary' : ''" @click="() => { viewFilter = !viewFilter; filter = ''; }">
+              <v-icon>mdi-filter</v-icon>
             </v-btn>
           </template>
-          <div>左侧显示下列升级项需要用到的材料</div>
-          <div>将升级项收起可将其加入黑名单</div>
+          <div>点击显示升级项需要用到的材料</div>
+          <div>升级项收起可将其加入黑名单</div>
         </gb-tooltip>
-        <v-spacer></v-spacer>
-        <v-btn-toggle :value="listFilter" color="primary" dense @change="setListFilter">
-          <gb-tooltip :min-width="0">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn value="price" v-bind="attrs" v-on="on" :class="{'primary': listFilter==='price'}" min-width="36" width="36">
-                <v-icon :color="listFilter==='price'?'white':''">mdi-cash-check</v-icon>
-              </v-btn>
-            </template>
-            只显示当前能够购买的升级
-          </gb-tooltip>
-          <gb-tooltip>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn value="cap" v-bind="attrs" v-on="on" :class="{'primary': listFilter==='cap'}" min-width="36" width="36">
-                <v-icon :color="listFilter==='cap'?'white':''">mdi-package-variant-closed-check</v-icon>
-              </v-btn>
-            </template>
-            只显示当前材料容量足够但库存不足暂时无法购买的升级
-          </gb-tooltip>
-        </v-btn-toggle>
-        <gb-tooltip>
+        <v-btn :color="listSort ? 'primary' : ''" class="mx-1" @click="setListSort" min-width="36" width="36" elevation="5">
+          <v-icon>mdi-order-bool-descending-variant</v-icon>
+        </v-btn>
+        <gb-tooltip v-if="unlockItems.length">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="error" class="ml-2" v-bind="attrs" v-on="on" @click="viewUnlockItems" width="36" min-width="36">
-            <v-icon size="30">mdi-eye-lock-open</v-icon>
+            <v-btn color="error" v-bind="attrs" v-on="on" @click="viewUnlockItems" width="36" min-width="36" elevation="5">
+            <v-icon>mdi-eye-lock-open</v-icon>
           </v-btn>
           </template>
           <div>提前查看未解锁升级项，无法购买</div>
-          <div>另外会自动将左侧选择的过滤项去除</div>
         </gb-tooltip>
         <v-dialog v-model="viewUnlock">
           <v-card class="default-card">
@@ -80,7 +55,26 @@
           </v-card>
         </v-dialog>
       </div>
-      <div v-if="items.length > 0 && (pages > 1 || requirementStat.length > 0)" class="d-flex justify-center align-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'pr-10': showQueueSpeed}">
+      <div v-if="viewFilter" class="d-flex flex-wrap bg-tile-background px-2 justify-center my-1" style="gap: 8px">
+        <gb-tooltip v-for="mat in materials" :key="mat" :min-width="0" :title-text="$vuetify.lang.t(`$vuetify.currency.${mat}.name`)" >
+          <template v-slot:activator="{ on, attrs }">
+            <div v-bind="attrs" v-on="on" class="rounded" :class="{'selected-primary': filter === mat}">
+              <v-btn
+                :color="currency[mat].color"
+                class="balloon-text-dynamic opacity-40"
+                :class="[$vuetify.theme.dark ? 'theme--dark darken-3' : 'theme--light lighten-3']"
+                :style="{ opacity: neededMaterials.has(mat) ? 1 : 0.5 }"
+                min-width="30" width="30" height="30"
+                elevation="3"
+                @click="() => filter = filter===mat ? '' : mat"
+              >
+                <v-icon size="16">{{ currency[mat].icon }}</v-icon>
+              </v-btn>
+            </div>
+          </template>
+        </gb-tooltip>
+      </div>
+      <div v-if="filterItems.length > 0 && (pages > 1 || requirementStat.length > 0)" class="d-flex justify-center align-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'pr-10': showQueueSpeed}">
         <v-pagination v-if="pages > 1" v-model="page" :length="pages" :total-visible="7"></v-pagination>
         <gb-tooltip v-for="item in requirementFiltered" :key="item.key" :min-width="0">
           <template v-slot:activator="{ on, attrs }">
@@ -101,9 +95,9 @@
           <stat-breakdown :name="speedMultName"></stat-breakdown>
         </gb-tooltip>
       </div>
-      <div v-else class="text-center">{{ $vuetify.lang.t(`$vuetify.upgrade.keyset.${ translationSet }.notFound`) }}</div>
+      <div v-if="filterItems.length === 0" class="text-center">{{ $vuetify.lang.t(`$vuetify.upgrade.keyset.${ translationSet }.notFound`) }}</div>
     </div>
-    <v-row v-if="items.length > 0"  class="pa-1" no-gutters>
+    <v-row v-if="filterItems.length > 0"  class="pa-1" no-gutters>
       <v-col class="pa-1" v-for="(item, key) in finalItems" :key="`${feature}-${type}-${key}`" :cols="cols">
         <upgrade :name="item" :disabled="isFrozen" :upgrade-translation="upgradeTranslation" :translation-set="translationSet">
           <slot :upgrade-name="item"></slot>
@@ -168,6 +162,9 @@ export default {
   data: () => ({
     page: 1,
     viewUnlock: false,
+    viewFilter: false,
+    filter: '',
+    mats: new Set(),
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -177,7 +174,7 @@ export default {
   },
   computed: {
     ...mapState({
-      listFilter: state => state.system.listFilter,
+      listSort: state => state.system.listSort,
       currency: state => state.currency,
       stat: state => state.stat,
     }),
@@ -185,27 +182,43 @@ export default {
       return [...this.$store.state.upgrade.cache[`${this.feature}_${this.subfeature}_${this.type}`]];
     },
     items() {
-      return this.baseItems.filter(elem => {
+      const list = this.baseItems.filter(elem => {
         const upgrade = this.$store.state.upgrade.item[elem];
-        if (this.listFilter) {
-          const [feature, name] = elem.split('_');
-          let result = false;
-          if (this.listFilter==='price') {
-            result  = this.$store.getters['upgrade/canAfford'](feature, name);
-          } else {
-            result  = this.$store.getters['upgrade/ableAfford'](feature, name);
-          }
-          if (result) return upgrade.requirement(upgrade.level);
-        } else {
-          return upgrade.requirement(upgrade.level);
-        }
+        return upgrade.requirement(upgrade.level);
       });
+      list.forEach(elem => {
+        this.$store.dispatch('upgrade/updateProgress', elem);
+      });
+      if (this.listSort) {
+        return list.sort((a, b) => this.$store.state.upgrade.item[b].buyProgress - this.$store.state.upgrade.item[a].buyProgress);
+      }
+      return list;
+    },
+    filterItems() {
+      const list = this.items;
+      if (this.filter) {
+        return list.filter(elem => {
+          const upgrade = this.$store.state.upgrade.item[elem];
+          const price = upgrade.price(upgrade.level);
+          return Object.keys(price).includes(this.filter);
+        });
+      }
+      return list;
     },
     finalItems() {
       if (this.upgradeLimit === null) {
         return this.items;
       }
-      return this.items.slice(this.upgradeLimit * (this.page - 1), this.upgradeLimit * this.page);
+      return this.filterItems.slice(this.upgradeLimit * (this.page - 1), this.upgradeLimit * this.page);
+    },
+    materials() {
+      const mats = new Set();
+      this.items.forEach(elem => {
+        const upgrade = this.$store.state.upgrade.item[elem];
+        const price = upgrade.price(upgrade.level);
+        Object.keys(price).forEach(mat => this.stat[mat].total > 0 && mats.add(mat));
+      });
+      return mats;
     },
     neededMaterials() {
       const mats = new Set();
@@ -213,9 +226,7 @@ export default {
         const upgrade = this.$store.state.upgrade.item[elem];
         if (!upgrade.collapse) {
           const price = upgrade.price(upgrade.level);
-          if (price) {
-            Object.keys(price).forEach(material => this.stat[material].total>0 && mats.add(material));
-          }
+          Object.keys(price).forEach(mat => this.stat[mat].total > 0 && mats.add(mat));
         }
       });
       return mats;
@@ -227,7 +238,7 @@ export default {
       return ['smeltery', 'cindersProducer'].includes(this.type) && this.$vuetify.breakpoint.xlOnly ? 12 : this.$store.state.system.settings.performance.items.upgradeListItems.value;
     },
     pages() {
-      return this.upgradeLimit === null ? null : Math.ceil(this.items.length / this.upgradeLimit);
+      return this.upgradeLimit === null ? null : Math.ceil(this.filterItems.length / this.upgradeLimit);
     },
     requirementNext() {
       return this.requirementStat.map(statName => {
@@ -272,11 +283,10 @@ export default {
     }
   },
   methods: {
-    setListFilter(value) {
-      this.$store.commit('system/updateKey', {key: 'listFilter', value});
+    setListSort() {
+      this.$store.commit('system/updateKey', {key: 'listSort', value: !this.listSort});
     },
     viewUnlockItems() {
-      this.setListFilter('');
       this.viewUnlock = true;
     },
   },

@@ -411,6 +411,9 @@ export default {
         if (store.state.village.offeringGen > 0) {
             obj.offeringGen = store.state.village.offeringGen;
         }
+        if (store.state.village.offeringBuyBatch > 0) {
+            obj.offeringBuyBatch = store.state.village.offeringBuyBatch;
+        }
 
         // Add crafting stuff
         let crafting = {};
@@ -480,6 +483,9 @@ export default {
         }
         if (data.offeringGen !== undefined) {
             store.commit('village/updateKey', {key: 'offeringGen', value: data.offeringGen});
+        }
+        if (data.offeringBuyBatch !== undefined) {
+            store.commit('village/updateKey', {key: 'offeringBuyBatch', value: data.offeringBuyBatch});
         }
         store.dispatch('village/applyAllJobs');
         store.dispatch('village/applyOfferingEffect');
