@@ -457,7 +457,7 @@ export default {
                     },
                     scientificNotation: {
                         unlock: null,
-                        hasDescription: false,
+                        hasDescription: true,
                         type: 'switch',
                         value: false,
                         defaultValue: false

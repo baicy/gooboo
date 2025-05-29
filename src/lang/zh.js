@@ -1344,8 +1344,8 @@ export default {
         name: '部落2重置技能点',
       },
       galleryAccelerator: {
-        name: '画廊形状虚空加速器',
-        description: '将画廊形状游戏的第2行第2列的形状变成加速器，需要先正常解锁所有形状和特殊形状生效',
+        name: '画廊形状游戏加速',
+        description: '可以选择对应形状直接消除。正常解锁所有形状和特殊形状后，还可以选择一个形状变成加速器',
       },
       oldVillageCryolab: {
         name: '未削弱村庄冷冻系数',

@@ -51,6 +51,12 @@
             </template>
             <div class="mt-0">{{ $vuetify.lang.t(`$vuetify.treasure.destroyDescription`) }}</div>
           </gb-tooltip>
+          <gb-tooltip :min-width="0">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn data-cy="treasure-delete-button" class="ma-1" color="secondary" @click="sortTreasures" v-bind="attrs" v-on="on"><v-icon>mdi-sort</v-icon></v-btn>
+            </template>
+            <div class="mt-0">整理宝藏。按照右侧显示顺序以及层级等级从高到低排序</div>
+          </gb-tooltip>
         </div>
       </div>
       <div class="d-flex flex-wrap ma-1">
@@ -69,7 +75,7 @@
       </div>
     </v-col>
     <v-col :class="{'scroll-container': $vuetify.breakpoint.mdAndUp}" cols="12" md="4" lg="3">
-      <stat-list></stat-list>
+    <stat-list></stat-list>
     </v-col>
   </v-row>
 </template>
@@ -154,6 +160,29 @@ export default {
     toggleDeleting() {
       this.$store.commit('treasure/updateKey', {key: 'upgrading', value: false});
       this.$store.commit('treasure/updateKey', {key: 'deleting', value: !this.$store.state.treasure.deleting});
+    },
+    sortTreasures() {
+      const effects = [];
+      for (const [key, elem] of Object.entries(this.$store.state.treasure.effect)) {
+        if (key === 'mining' || this.unlock[`${key}Feature`].see) {
+          for (const [subkey, subelem] of Object.entries(elem)) {
+            if ((subelem.unlock === null || this.unlock[subelem.unlock].see) && (subelem.type !== 'special' || this.unlock.treasureSpecialEffect.see)) {
+              effects.push(subkey);
+            }
+          }
+        }
+      }
+      const items = this.items.filter(item => item !== null);
+      items.sort((a, b) => {
+        if (a.effect[0] !== b.effect[0]) {
+          return effects.findIndex(v => v===a.effect[0]) - effects.findIndex(v => v===b.effect[0]);
+        }
+        if (a.tier !== b.tier) {
+          return b.tier - a.tier;
+        }
+        return b.level - a.level;
+      });
+      this.$store.commit('treasure/updateKey', {key: 'items', value: items});
     }
   }
 }

@@ -612,9 +612,6 @@ export default {
                 commit('stat/add', {feature: 'gallery', name: 'motivation', value: GALLERY_MOTIVATION_BUY_AMOUNT}, {root: true});
                 dispatch('currency/spend', {feature: 'gem', name: 'sapphire', amount: GALLERY_MOTIVATION_BUY_COST}, {root: true});
             }
-        },
-        cheatAccelerator({ commit }) {
-            commit('updateShapeCell', {x: 1, y: 1, value: 'accelerator'});
         }
     }
 }
