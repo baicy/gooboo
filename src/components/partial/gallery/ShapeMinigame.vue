@@ -347,8 +347,7 @@ export default {
       }
     },
     directCollect(stat) {
-      if (stat.amount < 5 || !this.accelerator) return;
-      let amount = 0;
+      if (stat.amount < 5 || !this.accelerator || this.$store.getters['currency/value']('gallery_motivation') < stat.amount * 5) return;
       let changedGrid = [];
       for (let y = 0; y < GALLERY_SHAPES_GRID_HEIGHT; y++) {
           changedGrid.push(Array(GALLERY_SHAPES_GRID_WIDTH).fill(false));
@@ -357,12 +356,11 @@ export default {
         for (let y = 0; y < GALLERY_SHAPES_GRID_WIDTH; y++) {
           if (this.shapeGrid[x][y] === stat.shape) {
             changedGrid[x][y] = true;
-            amount++;
           }
         }
       }
-      this.$store.dispatch('currency/gain', {feature: 'gallery', name: stat.shape, gainMult: true, amount: Math.pow(amount, 2)});
-      this.$store.dispatch('currency/spend', {feature: 'gallery', name: 'motivation', amount: 5 * amount});
+      this.$store.dispatch('currency/gain', {feature: 'gallery', name: stat.shape, gainMult: true, amount: Math.pow(stat.amount, 2)});
+      this.$store.dispatch('currency/spend', {feature: 'gallery', name: 'motivation', amount: 5 * stat.amount});
       this.$store.dispatch('gallery/rerollShapes', changedGrid);
     }
   }

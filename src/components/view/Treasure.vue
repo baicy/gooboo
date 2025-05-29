@@ -53,7 +53,7 @@
           </gb-tooltip>
           <gb-tooltip :min-width="0">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn data-cy="treasure-delete-button" class="ma-1" color="secondary" @click="sortTreasures" v-bind="attrs" v-on="on"><v-icon>mdi-sort</v-icon></v-btn>
+              <v-btn data-cy="treasure-delete-button" class="ma-1" color="secondary" @click="sortTreasures" v-bind="attrs" v-on="on"><v-icon>mdi-sort-variant</v-icon></v-btn>
             </template>
             <div class="mt-0">整理宝藏。按照右侧显示顺序以及层级等级从高到低排序</div>
           </gb-tooltip>
