@@ -141,6 +141,7 @@
       <v-btn class="ma-1" color="primary" :disabled="enhancementBars >= enhancementBarsNeeded || !canEnhanceBars" @click="performEnhancementBars">{{ $vuetify.lang.t('$vuetify.gooboo.add') }}</v-btn>
       <v-btn class="ma-1" color="primary" :disabled="enhancementBars < enhancementBarsNeeded || !canEnhanceFinal" @click="performEnhancementFinal">{{ $vuetify.lang.t('$vuetify.mining.enhance') }}</v-btn>
     </div>
+    <auto-enhance v-if="!isFrozen && unlock.miningEnhancement.use && subfeature === 0" />
     <smeltery v-if="unlock.miningSmeltery.see && subfeature === 0" class="mt-4 mt-lg-8"></smeltery>
   </div>
 </template>
@@ -154,9 +155,10 @@ import StatBreakdown from '../../render/StatBreakdown.vue';
 import AlertText from '../render/AlertText.vue';
 import Ingredient from './Ingredient.vue';
 import Smeltery from './Smeltery.vue';
+import AutoEnhance from './AutoEnhance.vue';
 
 export default {
-  components: { Currency, Ingredient, Consumable, StatBreakdown, PriceTag, Smeltery, AlertText },
+  components: { Currency, Ingredient, Consumable, StatBreakdown, PriceTag, Smeltery, AlertText, AutoEnhance },
   data: () => ({
     subfeatureCurrencies: [
       ['mining_resin', 'mining_granite', 'mining_salt', 'mining_coal', 'mining_sulfur', 'mining_niter', 'mining_obsidian', 'mining_deeprock', 'mining_glowshard'],
