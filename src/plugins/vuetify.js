@@ -35,9 +35,4 @@ export default new Vuetify({
         locales: { zh, en, de },
         current: 'zh'
     },
-    breakpoint: {
-        thresholds: {
-            lg: 1440,
-        },
-    }
 });

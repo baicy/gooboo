@@ -311,7 +311,7 @@ function loadFile(file) {
         return;
     }
 
-    ['timestamp', 'currentDay', 'lastPlayedDays', 'theme', 'backupTimer', 'playerId', 'noteHint', 'cheaterSelfMark', 'cheatDetected', 'extraVersion', 'listSort'].forEach(elem => {
+    ['timestamp', 'currentDay', 'lastPlayedDays', 'theme', 'backupTimer', 'playerId', 'noteHint', 'cheaterSelfMark', 'cheatDetected', 'extraVersion', 'listSort', 'forceXlLayout'].forEach(elem => {
         if (save[elem]) {
             store.commit('system/updateKey', {key: elem, value: save[elem]});
         }
@@ -578,6 +578,7 @@ function getSavefile() {
         cheatDetected: store.state.system.cheatDetected,
         extraVersion: store.state.system.extraVersion,
         listSort: store.state.system.listSort,
+        forceXlLayout: store.state.system.forceXlLayout,
 
         // Generic systems
         subfeature: {},

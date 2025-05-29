@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$vuetify.breakpoint.xlOnly">
+  <div v-if="$vuetify.breakpoint.xlOnly || $store.state.system.forceXlLayout">
     <v-tabs v-model="tab" grow show-arrows>
       <v-tab href="#horde"><tab-icon-text :text="$vuetify.lang.t('$vuetify.horde.horde')" icon="mdi-account-group"></tab-icon-text></v-tab>
       <v-tab href="#battlepass" v-if="canSeeBattlePass"><tab-icon-text :text="$vuetify.lang.t('$vuetify.horde.battlePass.name')" icon="mdi-passport"></tab-icon-text></v-tab>

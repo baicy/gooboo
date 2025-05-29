@@ -553,7 +553,7 @@ export default {
     description: '这些牛肯定过着美好的生活......对吧？',
   },
   village_loot0: {
-    name: '常见战利品',
+    name: '常见的战利品',
     description: '暂时必须做的事...',
   },
   village_loot1: {
@@ -561,19 +561,19 @@ export default {
     description: '稍微好一点，但我们可以做得更多!',
   },
   village_loot2: {
-    name: '稀有战利品',
+    name: '稀有的战利品',
     description: '终于有像样的东西了',
   },
   village_loot3: {
-    name: '史诗战利品',
+    name: '史诗的战利品',
     description: '现在情况正在好转',
   },
   village_loot4: {
-    name: '传说战利品',
+    name: '传说的战利品',
     description: '传说!',
   },
   village_loot5: {
-    name: '神话战利品',
+    name: '神话的战利品',
     description: '你以为这些已经永远消失了',
   },
   village_acidVial: {

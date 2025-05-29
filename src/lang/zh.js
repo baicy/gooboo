@@ -1364,7 +1364,8 @@ export default {
         description: '主要是辅助挖硝，离线可用',
       },
       scientificNotation: {
-        name: '使用科学计数法'
+        name: '使用科学计数法',
+        description: '效果不好，不建议使用',
       },
     }
   },

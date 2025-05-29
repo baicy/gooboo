@@ -510,6 +510,7 @@ export default {
         playerName: null,
         extraVersion: 0,
         listSort: false,
+        forceXlLayout: false,
     },
     getters: {
         mainFeatures: (state, getters, rootState) => {
@@ -786,6 +787,7 @@ export default {
             commit('updateKey', {key: 'playerName', value: null});
             commit('updateKey', {key: 'extraVersion', value: 0});
             commit('updateKey', {key: 'listSort', value: false});
+            commit('updateKey', {key: 'forceXlLayout', value: false});
 
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {

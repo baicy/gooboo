@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$vuetify.breakpoint.xlOnly">
+  <div v-if="$vuetify.breakpoint.xlOnly || $store.state.system.forceXlLayout">
     <v-tabs v-model="tab" grow show-arrows>
       <v-tab href="#village"><tab-icon-text :text="$vuetify.lang.t('$vuetify.village.village')" icon="mdi-home-group"></tab-icon-text></v-tab>
       <v-tab href="#offering" v-if="canSeeOffering"><tab-icon-text :text="$vuetify.lang.t('$vuetify.village.offering.name')" icon="mdi-candle"></tab-icon-text></v-tab>

@@ -20,9 +20,9 @@
     <div class="ma-2 mt-1 d-flex">
       <div class="mr-2" style="width: 100px">批量购买数量</div>
       <div>
-        <v-chip v-for="i in [-1, 5, 10, 100]" :key="i" color="primary" @click="changeBatch(i)" class="mr-1 mb-1" small label>
+        <v-btn v-for="i in [-1, 5, 10, 100]" :key="i" color="primary" @click="changeBatch(i)" class="mr-1 mb-1" small>
           {{ i===-1 ? $vuetify.lang.t('$vuetify.gooboo.max') : `+${i}` }}
-        </v-chip>
+        </v-btn>
       </div>
     </div>
   </div>

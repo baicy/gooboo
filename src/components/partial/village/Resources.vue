@@ -85,8 +85,69 @@
         <template v-for="item in loot">
           <currency :key="item" class="ma-1" :name="item"></currency>
         </template>
+        <v-btn color="warning" class="ma-2" v-if="lootWeights.length > 1" @click="exchangeLoot">置换</v-btn>
       </div>
     </template>
+    <v-dialog max-width="400" v-model="showExchange">
+      <v-card class="default-card pa-2">
+        <alert-text class="my-3">可以将战利品等量置换成质量更低的其他战利品</alert-text>
+        <v-card-text class="d-flex flex-column">
+          <div class="d-flex align-center justify-center mb-4">
+            <v-select outlined dense hide-details :items="exchange.sourceList" v-model="exchange.source" @change="getExchangeTargetList">
+              <template #item="{ item }">
+                <v-icon small class="mr-1" :color="currency[`village_loot${item}`].color">{{ currency[`village_loot${item}`].icon }}</v-icon>
+                <div class="text-caption">{{ currency[`village_loot${item}`].value }}</div>
+              </template>
+              <template #selection="{ item }">
+                <v-icon small class="mr-1" :color="currency[`village_loot${item}`].color">{{ currency[`village_loot${item}`].icon }}</v-icon>
+                <div class="text-caption">{{ currency[`village_loot${item}`].value }}</div>
+              </template>
+            </v-select>
+            <div><v-icon class="ma-2">mdi-transfer-right</v-icon></div>
+            <v-select outlined dense hide-details :items="exchange.targetList" v-model="exchange.target">
+              <template #item="{ item }">
+                <v-icon small class="mr-1" :color="currency[`village_loot${item}`].color">{{ currency[`village_loot${item}`].icon }}</v-icon>
+                <div class="text-caption">{{ currency[`village_loot${item}`].value }}</div>
+              </template>
+              <template #selection="{ item }">
+                <v-icon small class="mr-1" :color="currency[`village_loot${item}`].color">{{ currency[`village_loot${item}`].icon }}</v-icon>
+                <div class="text-caption">{{ currency[`village_loot${item}`].value }}</div>
+              </template>
+            </v-select>
+          </div>
+          <div class="d-flex align-center">
+            <v-text-field
+              v-model.number="exchange.num"
+              type="number"
+              :min=0
+              :max="exchange.source===-1 ? 0 : currency[`village_loot${exchange.source}`].value"
+              label="数量"
+              hide-details
+              outlined
+              dense
+            ></v-text-field>
+            <v-btn
+              color="primary"
+              small
+              class="ml-2"
+              @click="() => { if(exchange.source!==-1) exchange.num = currency[`village_loot${exchange.source}`].value }">
+              最大
+            </v-btn>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            color="success"
+            :disabled="exchange.source===-1 || exchange.target===-1 || exchange.num <= 0 || exchange.num > currency[`village_loot${exchange.source}`].value"
+            @click="applyExchange"
+          >
+            {{ $vuetify.lang.t('$vuetify.gooboo.confirm') }}
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="showExchange = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <template v-if="subfeature === 1 && canSeeSpecialIngredients">
       <div class="text-center mt-2">{{ $vuetify.lang.t(`$vuetify.village.specialIngredient`) }}</div>
       <div class="d-flex flex-wrap justify-center ma-1">
@@ -108,7 +169,15 @@ import AlertText from '../render/AlertText.vue';
 export default {
   components: { Currency, StatBreakdown, AlertText, Consumable },
   data: () => ({
-    mental_premium: ['village_knowledge', 'village_science']
+    mental_premium: ['village_knowledge', 'village_science'],
+    showExchange: false,
+    exchange: {
+      source: -1,
+      target: -1,
+      sourceList: [],
+      targetList:[],
+      num: 0,
+    }
   }),
   computed: {
     ...mapState({
@@ -207,6 +276,17 @@ export default {
       } else {
         this.$store.dispatch('village/openIngredientBox');
       }
+    },
+    exchangeLoot() {
+      this.exchange.sourceList = Object.keys(this.lootWeights.slice(1)).map(i => Number(i) + 1);
+      this.showExchange = true;
+    },
+    getExchangeTargetList() {
+      this.exchange.targetList = [0, 1, 2, 3, 4, 5].filter(i => i < this.exchange.source);
+    },
+    applyExchange() {
+      this.$store.dispatch('currency/spend', {feature: 'village', name: 'loot' + this.exchange.source, amount: this.exchange.num});
+      this.$store.dispatch('currency/gain', {feature: 'village', name: 'loot' + this.exchange.target, amount: this.exchange.num});
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$vuetify.breakpoint.xlOnly">
+  <div v-if="$vuetify.breakpoint.xlOnly || $store.state.system.forceXlLayout">
     <v-tabs v-model="tab" grow show-arrows>
       <v-tab href="#calendar"><tab-icon-text :text="$vuetify.lang.t('$vuetify.event.calendar')" icon="mdi-calendar"></tab-icon-text></v-tab>
       <v-tab href="#rewards" v-if="eventReward"><tab-icon-text :text="$vuetify.lang.t('$vuetify.event.rewards')" icon="mdi-store"></tab-icon-text></v-tab>

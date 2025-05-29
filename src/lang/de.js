@@ -1307,7 +1307,8 @@ export default {
         description: 'For niter getting, effect when offline',
       },
       scientificNotation: {
-        name: 'Scientific notation'
+        name: 'Scientific notation',
+        description: 'Bad effect, no suggestion',
       },
     }
   },

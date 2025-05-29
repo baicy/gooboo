@@ -391,6 +391,16 @@
         </template>
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.cryolab.frozenFeature.description') }}</div>
       </gb-tooltip>
+      <gb-tooltip 
+        v-if="($vuetify.breakpoint.lgOnly && ['mining', 'village', 'horde', 'farm', 'gallery', 'event'].includes(screen)) || forceXlLayout"
+        key="xl-column-type"
+        title-text="使用超大屏幕分列"
+        :min-width="0"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon class="mx-2" :class="{'selected-primary': forceXlLayout}" v-bind="attrs" v-on="on" @click="changeLayout">mdi-view-column</v-icon>
+        </template>
+      </gb-tooltip>
       <gb-tooltip v-if="isEndOfFeature" key="end-of-content" :title-text="$vuetify.lang.t('$vuetify.endOfContent.name')">
         <template v-slot:activator="{ on, attrs }">
           <v-icon class="ml-2" v-bind="attrs" v-on="on">mdi-sign-caution</v-icon>
@@ -675,7 +685,8 @@ export default {
       snackbarPosition: state => state.system.settings.notification.items.position.value,
       cssShadows: state => state.system.settings.performance.items.cssShadows.value,
       goldenDust: state => state.currency.school_goldenDust,
-      updateCheckValue: state => state.system.settings.notification.items.updateCheck.value
+      updateCheckValue: state => state.system.settings.notification.items.updateCheck.value,
+      forceXlLayout: state => state.system.forceXlLayout
     }),
     ...mapGetters({
       mainFeatures: 'system/mainFeatures',
@@ -881,6 +892,9 @@ export default {
     },
     openDustDialog() {
       this.dialogDust = true;
+    },
+    changeLayout() {
+      this.$store.commit('system/updateKey', { key: 'forceXlLayout', value: !this.forceXlLayout })
     }
   },
   watch: {
