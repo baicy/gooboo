@@ -378,24 +378,24 @@ export default {
 
     cheater: {
       0: {
-        title: 'Honorable',
+        title: '光荣',
         description: '没有使用过下面提到的工具的玩家',
       },
       100: {
-        title: 'Automated',
+        title: '脚本',
         description: '使用过自动化工具但仍遵循游戏规则',
       },
       200: {
-        title: 'Cheater',
+        title: '作弊',
         description: '修改游戏参数或者使用工具实现不可能得结果或预测/改变结果',
       },
-      selfMark: '标记自己为cheater',
-      selfMarkDescription: '你可以标记自己为cheater。这是纯粹的视觉效果，可以随时更改',
+      selfMark: '标记自己为作弊',
+      selfMarkDescription: '你可以标记自己为作弊。这是纯粹的视觉效果，可以随时更改',
       noDetected: '没有检测到作弊行为',
       featureDetected: '在以下功能中检测到作弊行为:',
-      featureDetected2: '你可以通过完全重置这些功能来移除cheater标记',
+      featureDetected2: '你可以通过完全重置这些功能来移除作弊标记',
       globalDetected: '检测到作弊行为，你的存档已被永久标记',
-      selfMarkClick: '如果你在作弊但没被检测到，你可以点击标记自己为cheater',
+      selfMarkClick: '如果你在作弊但没被检测到，你可以点击标记自己为作弊',
     },
     statistics: {
       name: '统计',
@@ -496,7 +496,7 @@ export default {
     passiveTitle: '声望增益 (被动)',
     passiveDescription:
       '每天被动获得相当于您最佳声望的 {0}% 的声望货币。 仅当功能未冻结时此功能才有效。',
-    expDescription: '你有 {0} / {1} 经验，如果此功能被冻结，每天获得 {2} 经验，升级还需 {3} 天',
+    expDescription: '你有 {0} / {1} 经验，如果此功能被冻结，每天获得 {2} 经验',
     expDescription2: '经验获取基于您的最佳声望',
     expNext: '下一级效果：',
     expNoGain: '要获得此功能的经验，请先获得一些声望货币',
@@ -1164,6 +1164,12 @@ export default {
       nextMainFeature: {
         name: '下一个功能',
       },
+      prevTab: {
+        name: '上一个标签页'
+      },
+      nextTab: {
+        name: '下一个标签页'
+      },
       debugSkip1m: {
         name: '跳过 1 分钟',
       },
@@ -1366,6 +1372,14 @@ export default {
       scientificNotation: {
         name: '使用科学计数法',
         description: '效果不好，不建议使用',
+      },
+      lootExchange: {
+        name: '村庄战利品置换',
+        description: '战利品可以等量换成更低质量的战利品，后期可消耗失去用途的高质量战利品',
+      },
+      allSubfeatureCryolab: {
+        name: '双重冷冻',
+        description: '冷冻时所有子功能都生效',
       },
     }
   },

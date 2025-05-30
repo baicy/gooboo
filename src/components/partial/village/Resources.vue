@@ -4,19 +4,11 @@
       <currency v-if="subfeature === 0" large class="ma-1" name="village_coin" :baseArray="foodConversion">
         <alert-text type="info">{{ $vuetify.lang.t('$vuetify.village.coinNotAffected') }}</alert-text>
       </currency>
-      <currency v-else-if="subfeature === 1" large class="ma-1" name="village_copperCoin"></currency>
+      <currency v-else-if="subfeature === 1" large class="ma-1" name="village_copperCoin" :baseArray="craftConversation">
+        <alert-text type="info">100%容量铜币获得股票：{{ $formatNum(copperCoinCal.share) }}</alert-text>
+        <alert-text type="info">升级增益减少时间（达到100%容量）：{{ copperCoinCal.ratio.toFixed(2) }}%</alert-text>
+      </currency>
     </div>
-    <div v-if="subfeature===1" class="d-flex justify-center">
-      <v-card>
-        <v-card-text class="text-center">
-          <div>100%容量铜币获得股票：{{ $formatNum(copperCoinCal.share) }}</div>
-          <div>铜币增益：x {{ copperCoinCal.mult.toFixed(3) }}</div>
-          <div>收入：~{{ copperCoinCal.gain.toFixed(2) }}/秒 ~{{ $formatNum(copperCoinCal.gain*3600) }}/时 ~{{ $formatNum(copperCoinCal.gain*3600*24) }}/天</div>
-          <div>距离100%容量时间：~{{ $formatTime(copperCoinCal.time) }}</div>
-          <div>升级增益减少时间（达到100%容量）：{{ copperCoinCal.ratio.toFixed(2) }}%</div>
-        </v-card-text>
-      </v-card>
-  </div>
     <div v-if="stat.village_wood.total > 0" class="text-center mt-2">{{ $vuetify.lang.t(`$vuetify.village.material`) }}</div>
     <div class="d-flex flex-wrap justify-center ma-1">
       <template v-for="item in material">
@@ -85,7 +77,7 @@
         <template v-for="item in loot">
           <currency :key="item" class="ma-1" :name="item"></currency>
         </template>
-        <v-btn color="warning" class="ma-2" v-if="lootWeights.length > 1" @click="exchangeLoot">置换</v-btn>
+        <v-btn color="warning" class="ma-2" v-if="$store.getters['system/checkExtraCheated']('lootExchange') && lootWeights.length > 1" @click="exchangeLoot">置换</v-btn>
       </div>
     </template>
     <v-dialog max-width="400" v-model="showExchange">
@@ -241,25 +233,17 @@ export default {
         return {name: 'villageFood_' + food, value: Math.min(taxpayers, nextAmount) * VILLAGE_COINS_PER_FOOD};
       }).filter(elem => elem.value > 0);
     },
+    craftConversation() {
+      return Object.entries(this.$store.state.village.crafting).filter(([, elem]) => elem.isSelling && elem.owned).map(([name, elem]) => ({ name: `villageCraft_${name}`, value: elem.sellPrice * elem.cacheSellChance }));
+    },
     copperCoinCal() {
-      const { multCache: mult } = this.$store.state.mult.items.currencyVillageCopperCoinGain;
       const { cap, value } = this.$store.state.currency.village_copperCoin;
       const { level, price } = this.$store.state.upgrade.item.village_decoration;
       const { village_copperCoin: needed } = price(level);
       const amount = Math.max(value,needed);
       const ratio = (1 - (cap - amount + needed) / ((cap - amount) * 1.175)) * 100;
       const share = this.$store.getters['mult/get']('currencyVillageSharesGain', cap / 1000);
-      let gain = 0;
-      const crafts = this.$store.state.village.crafting;
-      for(const i in crafts) {
-        const { isSelling, sellPrice, cacheSellChance, owned } = crafts[i];
-        if(isSelling && owned) {
-          gain += sellPrice * cacheSellChance;
-        }
-      }
-      gain *= mult;
-      const time = (cap - value) / gain;
-      return { share, mult, ratio, gain, time }
+      return { share, ratio }
     }
   },
   methods: {

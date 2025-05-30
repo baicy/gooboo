@@ -1,13 +1,17 @@
 <template>
-  <status-template feature="gallery" :prestigeGain="prestigeGain"></status-template>
+  <div>
+    <status-template feature="gallery" :prestigeGain="prestigeGain"></status-template>
+    <global-level-status />
+  </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import StatusTemplate from '../prestige/StatusTemplate.vue';
+import GlobalLevelStatus from './GlobalLevelStatus';
 
 export default {
-  components: { StatusTemplate },
+  components: { StatusTemplate, GlobalLevelStatus },
   computed: {
     ...mapGetters({
       prestigeGainBase: 'gallery/prestigeGain'

@@ -317,6 +317,16 @@
               linear-gradient(#80C0FF, #80C0FF);
   animation: prismatic-navbar 20s linear infinite;
 }
+.v-item-group.v-bottom-navigation {
+  box-shadow: none;
+}
+.v-item-group.v-bottom-navigation .v-btn {
+  background: transparent;
+  height: auto;
+}
+:deep(.v-item-group.v-bottom-navigation .v-btn .v-btn__content) {
+  height: 100%;
+}
 </style>
 
 <template>
@@ -392,7 +402,7 @@
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.cryolab.frozenFeature.description') }}</div>
       </gb-tooltip>
       <gb-tooltip 
-        v-if="($vuetify.breakpoint.lgOnly && ['mining', 'village', 'horde', 'farm', 'gallery', 'event'].includes(screen)) || forceXlLayout"
+        v-if="(($vuetify.breakpoint.lgOnly || forceXlLayout) && ['mining', 'village', 'horde', 'farm', 'gallery', 'event'].includes(screen))"
         key="xl-column-type"
         title-text="使用超大屏幕分列"
         :min-width="0"
@@ -407,6 +417,13 @@
         </template>
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.endOfContent.description') }}</div>
       </gb-tooltip>
+      <v-spacer></v-spacer>
+      <v-bottom-navigation shift dark background-color="transparent" v-if="$vuetify.breakpoint.mdAndUp" v-model="currentBigFeature">
+        <v-btn v-for="feature in bigFeatures" :key="feature.name" :value="feature.name" @click="changeScreen(feature.name, true)">
+          <span>{{ feature.title }}</span>
+          <v-icon>{{ feature.icon }}</v-icon>
+        </v-btn>
+      </v-bottom-navigation>
       <v-spacer></v-spacer>
       <v-btn icon @click="changeScreen('info')">
         <v-badge :value="importantNotice" color="red" overlap dot>
@@ -671,7 +688,8 @@ export default {
     selectedSavefile: null,
     intervalId: null,
     isSaving: false,
-    showCloudLoadConfirm: false
+    showCloudLoadConfirm: false,
+    currentBigFeature: undefined
   }),
   computed: {
     ...mapState({
@@ -763,6 +781,36 @@ export default {
         ...saveFile,
         formattedText: `存档时间: ${saveFile.created_at}`,
       }));
+    },
+    bigFeatures() {
+      const features = {};
+      this.mainFeatures.forEach(f => {
+        features[f.name] = {
+          name: f.name,
+          icon: f.icon,
+          title: this.$vuetify.lang.t(`$vuetify.feature.${f.name}`)
+        }
+      });
+      const event = this.$store.getters['event/currentEvent'];
+      if (event) {
+        const eventIcon = {
+          merchant: 'mdi-account-tie',
+          casino: 'mdi-slot-machine',
+          bank: 'mdi-bank',
+          cinders: 'mdi-lightbulb-on',
+          bloom: 'mdi-flower-poppy',
+          weatherChaos: 'mdi-weather-lightning-rainy',
+          summerFestival: 'mdi-island',
+          nightHunt: 'mdi-weather-night',
+          snowdown: 'mdi-snowflake'
+        };
+        features.event = {
+          name: 'event',
+          icon: eventIcon[event],
+          title: this.$vuetify.lang.t(`$vuetify.event.${event}.name`)
+        };
+      }
+      return features;
     }
   },
   created() {
@@ -918,7 +966,13 @@ export default {
         }
       },
       immediate: false
-    }
+    },
+    screen: {
+      handler(newVal) {
+        this.currentBigFeature = Object.keys(this.bigFeatures).includes(newVal) ? newVal : undefined;
+      },
+      immediate: false
+    },
   }
 }
 </script>

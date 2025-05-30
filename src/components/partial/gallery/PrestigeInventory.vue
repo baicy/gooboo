@@ -1,17 +1,15 @@
 <template>
   <div>
     <inventory-template :currencies="currencies" :prestige-stones="prestigeStone" :disabled="isFrozen"></inventory-template>
-    <beauty></beauty>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import InventoryTemplate from '../prestige/InventoryTemplate.vue';
-import Beauty from './Beauty';
 
 export default {
-  components: { InventoryTemplate, Beauty },
+  components: { InventoryTemplate },
   data: () => ({
     currencies: ['gallery_cash']
   }),

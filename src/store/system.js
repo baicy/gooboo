@@ -434,6 +434,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    lootExchange: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     oldGalleryUpgrade: {
                         unlock: null,
                         hasDescription: true,
@@ -451,6 +458,13 @@ export default {
                     horde2SkillReset: {
                         unlock: null,
                         hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    allSubfeatureCryolab: {
+                        unlock: null,
+                        hasDescription: true,
                         type: 'switch',
                         value: false,
                         defaultValue: false
@@ -482,6 +496,8 @@ export default {
         keybinds: {
             prevMainFeature: null,
             nextMainFeature: null,
+            nextTab: null,
+            prevTab: null,
             debugSkip1m: null,
             debugSkip10m: null,
             debugSkip1h: null,
@@ -638,6 +654,9 @@ export default {
         },
         importantNotice: (state) => {
             return state.extraVersion !== EXTRA_VERSION;
+        },
+        checkExtraCheated: (state) => (name) => {
+            return state.settings.cheat.items[name].value;
         }
     },
     mutations: {
@@ -937,6 +956,24 @@ export default {
                             const mainFeatureList = getters.mainFeatures.map(elem => elem.name).filter(elem => !rootState.cryolab[elem]?.active);
                             const currentIndex = mainFeatureList.findIndex(elem => elem === state.screen);
                             commit('updateKey', {key: 'screen', value: mainFeatureList[(currentIndex + 1) >= mainFeatureList.length ? 0 : (currentIndex + 1)]});
+                            break;
+                        }
+                        case 'prevTab': {
+                            const tabList = document.querySelectorAll('.v-tab');
+                            if (tabList.length > 0) {
+                                const currentIndex = Array.from(tabList).findIndex(tab => tab.getAttribute('aria-selected') === 'true');
+                                const prevIndex = (currentIndex - 1) < 0 ? (tabList.length - 1) : (currentIndex - 1);
+                                tabList[prevIndex].click();
+                            }
+                            break;
+                        }
+                        case 'nextTab': {
+                            const tabList = document.querySelectorAll('.v-tab');
+                            if (tabList.length > 0) {
+                                const currentIndex = Array.from(tabList).findIndex(tab => tab.getAttribute('aria-selected') === 'true');
+                                const nextIndex = (currentIndex + 1) >= tabList.length ? 0 : (currentIndex + 1);
+                                tabList[nextIndex].click();
+                            }
                             break;
                         }
                         case 'debugSkip1m': {

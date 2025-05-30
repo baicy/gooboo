@@ -37,7 +37,7 @@ export default {
             const subfeature = rootState.system.features[feature].currentSubfeature;
             let obj = {};
             state[feature].data.forEach((data, index) => {
-                const gainMult = rootGetters['mult/get'](`${ feature }Cryolab${ ((rootGetters['system/isMe'] || subfeature === index) && state[feature].active) ? 'Active' : 'Passive' }${ index }`);
+                const gainMult = rootGetters['mult/get'](`${ feature }Cryolab${ ((rootGetters['system/checkExtraCheated']('allSubfeatureCryolab') || subfeature === index) && state[feature].active) ? 'Active' : 'Passive' }${ index }`);
                 if (gainMult > 0) {
                     for (const [currency, stat] of Object.entries(data)) {
                         const statValue = rootState.stat[stat].total;
@@ -98,7 +98,7 @@ export default {
         },
         gainExp({ state, rootState, getters, rootGetters, commit, dispatch }, o) {
             const { currentSubfeature, subfeatures } = rootState.system.features[o.feature];
-            const features = rootGetters['system/isMe'] ? [ 0, ...Object.keys(subfeatures).map( n=> parseInt(n)+1) ] : [ currentSubfeature ];
+            const features = rootGetters['system/checkExtraCheated']('allSubfeatureCryolab') ? [ 0, ...Object.keys(subfeatures).map( n=> parseInt(n)+1) ] : [ currentSubfeature ];
             features.forEach(sub => {
                 let exp = state[o.feature].exp[sub] + getters.expGain(o.feature, sub) * o.seconds / SECONDS_PER_DAY;
                 const oldLevel = state[o.feature].level[sub];

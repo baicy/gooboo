@@ -1109,6 +1109,12 @@ export default {
       nextMainFeature: {
         name: 'Next main feature'
       },
+      prevTab: {
+        name: 'Previous tab'
+      },
+      nextTab: {
+        name: 'Next tab'
+      },
       debugSkip1m: {
         name: 'Skip 1 minute'
       },
@@ -1309,6 +1315,14 @@ export default {
       scientificNotation: {
         name: 'Scientific notation',
         description: 'Bad effect, no suggestion',
+      },
+      lootExchange: {
+        name: 'Village loot exchange',
+        description: 'Change to lower quality',
+      },
+      allSubfeatureCryolab: {
+        name: 'All subfeatures cryolab',
+        description: 'Now single',
       },
     }
   },
