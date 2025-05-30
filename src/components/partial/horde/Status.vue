@@ -167,7 +167,7 @@
       <currency class="ma-1" name="horde_monsterPart"></currency>
       <currency class="ma-1" name="horde_corruptedFlesh"></currency>
       <currency class="ma-1" name="horde_mysticalShard"></currency>
-      <v-btn v-if="isMe" @click="cheatShards(200)" color="teal" class="mx-1 my-2 darken-2"><v-icon>mdi-billiards-rack</v-icon>+200</v-btn>
+      <v-btn v-if="$store.state.system.endmin && $store.state.currency.horde_mysticalShard.cap" @click="cheatShards(200)" color="teal" class="mx-1 my-2 balloon-text-dynamic"><v-icon>mdi-billiards-rack</v-icon>+200</v-btn>
       <currency class="ma-1" name="horde_soulCorrupted"></currency>
     </div>
     <div v-else-if="subfeature === 1" class="d-flex flex-wrap justify-center">
@@ -234,8 +234,7 @@ export default {
       comboRequired: 'horde/comboRequired',
       comboRequiredBase: 'horde/comboRequiredBase',
       itemsActiveList: 'horde/itemsActiveList',
-      canSpawnMiniboss: 'horde/canSpawnMiniboss',
-      isMe: 'system/isMe'
+      canSpawnMiniboss: 'horde/canSpawnMiniboss'
     }),
     isMaxZone() {
       return this.zone >= this.maxZone;

@@ -1381,6 +1381,10 @@ export default {
         name: '双重冷冻',
         description: '冷冻时所有子功能都生效',
       },
+      horde1AutoUtility: {
+        name: '部落1自动工具技能',
+        description: '就是右边的技能，离线可用，和自动施法槽独立（其实比那个好用',
+      },
     }
   },
   statBreakdown: {

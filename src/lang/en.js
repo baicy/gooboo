@@ -1324,6 +1324,10 @@ export default {
         name: 'All subfeatures cryolab',
         description: 'Now single',
       },
+      horde1AutoUtility: {
+        name: 'Horde 1 Auto Utility Skill',
+        description: 'Different from autocast',
+      },
     }
   },
   statBreakdown: {

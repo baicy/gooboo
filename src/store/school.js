@@ -56,9 +56,9 @@ export default {
                 dispatch('currency/spend', {feature: 'gem', name: 'sapphire', amount: SCHOOL_EXAM_PASS_PRICE}, {root: true});
             }
         },
-        convertPass({ getters, rootGetters, dispatch, rootState }) {
+        convertPass({ getters, rootGetters, dispatch }) {
             if (rootGetters['currency/value']('school_examPass') >= 1) {
-                const amount = rootGetters['system/isMe'] ? rootState.currency['school_goldenDust'].cap * getters.dustMult : SCHOOL_EXAM_DUST_MIN * getters.dustMult;
+                const amount = SCHOOL_EXAM_DUST_MIN * getters.dustMult;
                 dispatch('currency/gain', {feature: 'school', name: 'goldenDust', amount }, {root: true});
                 dispatch('currency/spend', {feature: 'school', name: 'examPass', amount: 1}, {root: true});
             }

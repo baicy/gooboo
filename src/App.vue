@@ -784,7 +784,7 @@ export default {
     },
     bigFeatures() {
       const features = {};
-      this.mainFeatures.forEach(f => {
+      this.mainFeatures.filter(f => this.$store.state.cryolab[f.name] && !this.$store.state.cryolab[f.name].active).forEach(f => {
         features[f.name] = {
           name: f.name,
           icon: f.icon,
@@ -971,7 +971,7 @@ export default {
       handler(newVal) {
         this.currentBigFeature = Object.keys(this.bigFeatures).includes(newVal) ? newVal : undefined;
       },
-      immediate: false
+      immediate: true
     },
   }
 }

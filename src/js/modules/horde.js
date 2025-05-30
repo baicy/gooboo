@@ -50,9 +50,9 @@ function playerDie() {
 
         if (store.state.horde.currentTower === null) {
             const respawnTimer = store.getters['mult/get']('hordeRespawn', store.getters['horde/baseRespawnTime']);
-            const me = store.getters['system/isMe'];
-            store.commit('horde/updateKey', {key: 'respawn', value: me ? Math.min(10, respawnTimer) : respawnTimer});
-            store.commit('horde/updateKey', {key: 'maxRespawn', value: me ? Math.min(10, respawnTimer) : respawnTimer});
+            const endmin = store.state.system.endmin;
+            store.commit('horde/updateKey', {key: 'respawn', value: endmin ? Math.min(10, respawnTimer) : respawnTimer});
+            store.commit('horde/updateKey', {key: 'maxRespawn', value: endmin ? Math.min(10, respawnTimer) : respawnTimer});
         } else {
             // No respawn time for tower deaths
             store.commit('horde/updateKey', {key: 'currentTower', value: null});
@@ -551,6 +551,19 @@ export default {
                             }
                         });
                     }
+
+                    // 部落1所有工具类技能自动使用，没做部落2是怕影响白嫖
+                    if (store.getters['system/checkExtraCheated']('horde1AutoUtility') && subfeature === 0) {
+                        const items = store.state.horde.items;
+                        Object.entries(items)
+                        .filter(([, item]) => item.activeType === 'utility' && item.equipped && !item.passive)
+                        .forEach(([name, item])=>{
+                            if (item.cooldownLeft <= 0) {
+                                store.dispatch('horde/useActive', name);
+                            }
+                        });
+                    }
+                    
                 }
                 if ((enemyHealth / enemyStats.maxHealth) <= playerStats.execute) {
                     if (enemyStats.revive) {

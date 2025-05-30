@@ -2,7 +2,7 @@
   <v-row no-gutters>
     <v-col cols="12" lg="6" v-if="$vuetify.breakpoint.smAndDown || $vuetify.breakpoint.lgAndUp" :class="$vuetify.breakpoint.mdAndUp ? 'scroll-container' : ''">
       <gem-list></gem-list>
-      <div class="d-flex justify-center" v-if="isMe">
+      <div class="d-flex justify-center" v-if="$store.state.system.endmin">
         <v-btn class="justify-start balloon-text-dynamic px-2" color="red" @click="cheatRuby">
           <v-icon class="mr-1">mdi-rhombus</v-icon>
           <span>+1000</span>
@@ -43,8 +43,7 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      mainFeatures: 'system/mainFeatures',
-      isMe: 'system/isMe'
+      mainFeatures: 'system/mainFeatures'
     }),
     gemShopFeatures() {
       let arr = [...this.mainFeatures];

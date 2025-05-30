@@ -1220,7 +1220,7 @@ export default {
                 }
             }
         },
-        useActive({ state, rootState, rootGetters, getters, commit, dispatch }, name) {
+        useActive({ state, rootState, getters, commit, dispatch }, name) {
             const subfeature = rootState.system.features.horde.currentSubfeature;
             let item = null;
             if (subfeature === 0) {
@@ -1245,7 +1245,7 @@ export default {
             ) {
                 if (item.activeType === 'utility') {
                     const cooldown = Math.ceil(item.cooldown(level) / ((subfeature === 0 && item.masteryLevel >= 4) ? 2 : 1));
-                    const charges = rootGetters['system/isMe'] ? (Math.floor(- cooldownLeft / cooldown) + 1) : Math.floor(logBase(2 - (cooldownLeft / cooldown), 2));
+                    const charges = Math.floor(logBase(2 - (cooldownLeft / cooldown), 2));
                     
                     item.active(level).forEach(elem => {
                         let value = 0;
@@ -1274,7 +1274,7 @@ export default {
                         dispatch('updateMana', state.player.mana - activeCost.mana);
                     }
 
-                    const newCooldown = rootGetters['system/isMe'] ? (cooldown * charges + cooldownLeft) : Math.ceil(cooldown * ((cooldownLeft / cooldown) - (2 - Math.pow(2, charges + 1))) / Math.pow(2, charges));
+                    const newCooldown = Math.ceil(cooldown * ((cooldownLeft / cooldown) - (2 - Math.pow(2, charges + 1))) / Math.pow(2, charges));
                     if (subfeature === 0) {
                         commit('updateItemKey', {name, key: 'cooldownLeft', value: newCooldown});
                     } else if (subfeature === 1) {

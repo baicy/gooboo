@@ -61,7 +61,7 @@
       <alert-text v-if="subfeature === 0 && cooldownLeft > 0 && (!item.equipped || item.passive)" type="info">{{ $vuetify.lang.t(`$vuetify.horde.items.inactive`, $formatNum(cooldownRecover * 100)) }}</alert-text>
     </gb-tooltip>
     <v-btn
-      v-if="canSeeAutocast"
+      v-if="canSeeAutocast && item.activeType !== 'utility'"
       class="mt-1"
       width="36"
       min-width="36"
@@ -73,11 +73,12 @@
       <v-icon size="16">mdi-cached</v-icon>
       <span v-if="autocastPrio > 0" style="font-size: 10px;">{{ autocastPrio }}</span>
     </v-btn>
+    <v-icon v-if="$store.getters['system/checkExtraCheated']('horde1AutoUtility') && item.activeType === 'utility' && item.equipped && !item.passive" size="16" color="success" class="mt-1">mdi-cached</v-icon>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import { HORDE_INACTIVE_ITEM_COOLDOWN } from '../../../js/constants';
 import { logBase } from '../../../js/utils/math';
 import AlertText from '../render/AlertText.vue';
@@ -108,9 +109,6 @@ export default {
       chosenActive: state => state.horde.chosenActive,
       subfeature: state => state.system.features.horde.currentSubfeature,
       isFrozen: state => state.cryolab.horde.active,
-    }),
-    ...mapGetters({
-      isMe: 'system/isMe'
     }),
     item() {
       if (this.subfeature === 1) {
@@ -168,10 +166,10 @@ export default {
       return HORDE_INACTIVE_ITEM_COOLDOWN;
     },
     charges() {
-      return this.isMe ? Math.floor(- this.cooldownLeft / this.cooldown)+1 : Math.floor(logBase(2 - (this.cooldownLeft / this.cooldown), 2));
+      return Math.floor(logBase(2 - (this.cooldownLeft / this.cooldown), 2));
     },
     nextChargeTime() {
-      return this.isMe ? this.cooldown * this.charges + this.cooldownLeft : (0 - (2 - Math.pow(2, this.charges + 1) - this.cooldownLeft / this.cooldown)) * this.cooldown;
+      return (0 - (2 - Math.pow(2, this.charges + 1) - this.cooldownLeft / this.cooldown)) * this.cooldown;
     },
     autocastPrio() {
       return this.$store.state.horde.autocast.findIndex(el => el === this.name) + 1;

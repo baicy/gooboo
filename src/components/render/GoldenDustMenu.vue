@@ -54,8 +54,7 @@ export default {
   computed: {
     ...mapGetters({
       mainFeatures: 'system/mainFeatures',
-      isOnMainFeature: 'system/isOnMainFeature',
-      isMe: 'system/isMe'
+      isOnMainFeature: 'system/isOnMainFeature'
     }),
     isValidTime() {
       return !isNaN(this.minutes) && this.minutes > 0;
@@ -73,7 +72,7 @@ export default {
       return this.$store.state.system.screen === 'school';
     },
     goldenDustMin() {
-      return this.$store.getters['system/isMe'] ? this.$store.state.currency['school_goldenDust'].cap : Math.round(SCHOOL_EXAM_DUST_MIN * this.$store.getters['school/dustMult']);
+      return Math.round(SCHOOL_EXAM_DUST_MIN * this.$store.getters['school/dustMult']);
     },
     canConvertPass() {
       return this.$store.getters['currency/value']('school_examPass') >= 1 && this.$store.state.currency.school_goldenDust.value < this.$store.state.currency.school_goldenDust.cap;
@@ -84,7 +83,7 @@ export default {
       if (this.canAfford) {
         const module = {mining, village, horde, farm, gallery}[this.$store.state.system.screen];
         module.tick(Math.round(this.minutes * 60 / module.tickspeed));
-        if(!this.isMe) {
+        if (!this.$store.state.system.endmin) {
           this.$store.dispatch('currency/spend', {feature: 'school', name: 'goldenDust', amount: this.dustCost});
         }
       }

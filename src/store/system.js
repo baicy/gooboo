@@ -455,6 +455,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    horde1AutoUtility: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     horde2SkillReset: {
                         unlock: null,
                         hasDescription: false,
@@ -527,6 +534,7 @@ export default {
         extraVersion: 0,
         listSort: false,
         forceXlLayout: false,
+        endmin: false,
     },
     getters: {
         mainFeatures: (state, getters, rootState) => {
@@ -648,9 +656,6 @@ export default {
                 }
             }
             return obj;
-        },
-        isMe: (state) => {
-            return state.playerName === 'BaiLee';
         },
         importantNotice: (state) => {
             return state.extraVersion !== EXTRA_VERSION;
@@ -807,6 +812,7 @@ export default {
             commit('updateKey', {key: 'extraVersion', value: 0});
             commit('updateKey', {key: 'listSort', value: false});
             commit('updateKey', {key: 'forceXlLayout', value: false});
+            commit('updateKey', {key: 'endmin', value: false});
 
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {
