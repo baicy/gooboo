@@ -36,7 +36,7 @@
         <v-card-text>
           <v-text-field
             v-model.number="smeltAmount"
-            :label="`${displayName}(最大 ${affordAmount})`"
+            :label="`${displayName}(最大 ${affordAmount}/${bookAmount})`"
             type="number"
             :min="0"
             outlined
@@ -60,7 +60,7 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="warning" @click="bookCustom" :disabled="smeltAmount <= 0">预定</v-btn>
+          <v-btn color="warning" @click="bookCustom" :disabled="smeltAmount <= 0 || smeltAmount > bookAmount">预定</v-btn>
           <v-btn color="primary" @click="buyCustom" :disabled="smeltAmount <= 0 || smeltAmount > affordAmount">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" @click="showSmeltCustom = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
@@ -128,6 +128,9 @@ export default {
     },
     customPriceBooked() {
       return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount + (this.smeltAmount > 0 ? this.smeltery.book : 0));
+    },
+    bookAmount() {
+      return this.$store.getters['mining/smelteryBookAmount'](this.name);
     }
   },
   methods: {

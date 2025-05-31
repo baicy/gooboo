@@ -326,19 +326,50 @@ export default {
             return rootGetters['currency/canAfford'](price, maxPrice);
         },
         smelteryAffordAmount: (state, getters) => (name) => {
-            let amount = 1;
-            let step = 1;
-            while (getters.smelteryCanAfford(name, step)) {
-                step *= 2;
-            }
-            amount = step / 2;
-            while (step > 1) {
-                step /= 2;
-                if(getters.smelteryCanAfford(name, amount + step)) {
-                    amount += step;
+            let amount = 0;  
+            if (getters.smelteryCanAfford(name)) {
+                amount = 1;
+                let step = 1;
+                while (getters.smelteryCanAfford(name, step)) {
+                    step *= 2;
+                }
+                amount = step / 2;
+                while (step > 1) {
+                    step /= 2;
+                    if(getters.smelteryCanAfford(name, amount + step)) {
+                        amount += step;
+                    }
                 }
             }
-            return Math.floor(amount);
+            return amount;
+        },
+        smelteryCanBook: (state, getters, rootState) => (name, amount = 1) => {
+            const smeltery = state.smeltery[name];
+            for (const [key, elem] of Object.entries(smeltery.price)) {
+                const maxPrice = deltaLinear(elem.base, elem.increment, 1, smeltery.total + amount - 1);
+                const cap = rootState.currency[key].cap ?? Infinity;
+                if (maxPrice > cap) return false;
+            }
+            return true;
+        },
+        smelteryBookAmount: (state, getters) => (name) => {
+            const booked = state.smeltery[name].book;
+            let amount = 0;  
+            if (getters.smelteryCanBook(name)) {
+                amount = 1;
+                let step = 1;
+                while (getters.smelteryCanBook(name, step + booked)) {
+                    step *= 2;
+                }
+                amount = step / 2;
+                while (step > 1) {
+                    step /= 2;
+                    if(getters.smelteryCanBook(name, amount + step + booked)) {
+                        amount += step;
+                    }
+                }
+            }
+            return amount;
         },
         enhancementLevel: (state) => {
             let level = 0;
