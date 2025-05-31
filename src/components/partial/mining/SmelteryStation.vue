@@ -27,10 +27,34 @@
       <price-tag class="ma-1" :currency="smeltery.output" :amount="1" add></price-tag>
       <v-spacer></v-spacer>
       <v-badge v-if="smeltery.stored > 0" inline color="secondary" :content="$formatNum(smeltery.stored)"></v-badge>
-      <v-btn class="ma-1" small color="primary" :disabled="isFrozen || !canAfford" @click="buyCustom">{{ $vuetify.lang.t('$vuetify.gooboo.custom') }}</v-btn>
+      <v-btn class="ma-1" small color="primary" :disabled="isFrozen || !canAfford" @click="showCustom">{{ $vuetify.lang.t('$vuetify.gooboo.custom') }}</v-btn>
       <v-btn class="ma-1" color="primary" :disabled="isFrozen || !canAfford" @click="buy">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
     </div>
     <v-progress-linear class="rounded-b" height="4" :indeterminate="isHighspeed" :value="isHighspeed ? undefined : (smeltery.progress * 100)"></v-progress-linear>
+    <v-dialog :max-width="400" v-model="showSmeltCustom">
+      <v-card class="default-card pa-2 pt-8">
+        <v-card-text>
+          <v-text-field
+            v-model.number="smeltAmount"
+            :label="displayName"
+            type="number"
+            :min="0"
+            :max="affordAmount"
+            outlined
+            hide-details
+            dense
+          ></v-text-field>
+          <div class="d-flex align-center mt-2">
+            <span>消耗：</span>
+            <price-tag v-for="(amount, currency) in customPrice" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="buyCustom" :disabled="smeltAmount <= 0 || smeltAmount > affordAmount">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -49,6 +73,10 @@ export default {
       required: true
     }
   },
+  data: () => ({
+    showSmeltCustom: false,
+    smeltAmount: 0
+  }),
   computed: {
     ...mapState({
       isFrozen: state => state.cryolab.mining.active,
@@ -73,33 +101,42 @@ export default {
     },
     isHighspeed() {
       return this.timeNeeded < 1 && this.smeltery.stored > 0;
-    }
-  },
-  methods: {
-    buy() {
-      this.$store.dispatch('mining/addToSmeltery', {name: this.name, max: false});
     },
-    buyCustom() {
+    displayName() {
+      return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`);
+    },
+    affordAmount() {
       let amount = 0;
-      if(this.$store.getters['mining/smelteryCanAfford'](this.name)) {
+      if (this.$store.getters['mining/smelteryCanAfford'](this.name)) {
         amount = 1;
         let step = 1;
         while (this.$store.getters['mining/smelteryCanAfford'](this.name, step)) {
           step *= 2;
         }
         amount = step / 2;
-        while(step > 1) {
+        while (step > 1) {
           step /= 2;
           if(this.$store.getters['mining/smelteryCanAfford'](this.name, amount + step)) {
             amount += step;
           }
         }
       }
-      const res = prompt(`冶炼${this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`)}：最大${amount}个`, amount)
-      const n = parseInt(res)
-      if(n && n > 0 && n <= amount) {
-        this.$store.dispatch('mining/addToSmelteryCustom', {name: this.name, amount: n});
-      }
+      return amount;
+    },
+    customPrice() {
+      return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount);
+    }
+  },
+  methods: {
+    buy() {
+      this.$store.dispatch('mining/addToSmeltery', {name: this.name, max: false});
+    },
+    showCustom() {
+      this.smeltAmount = this.affordAmount;
+      this.showSmeltCustom = true;
+    },
+    buyCustom() {
+      this.$store.dispatch('mining/addToSmelteryCustom', {name: this.name, amount: this.smeltAmount});
     }
   }
 }

@@ -159,7 +159,7 @@
         <v-card-text class="pa-0 pt-4">
           <v-text-field
             v-model.number="autoConfig.start"
-            min="1"
+            :min="1"
             :max="maxDepth-1"
             type="number"
             suffix="m"
@@ -170,7 +170,7 @@
           ></v-text-field>
           <v-text-field
             v-model.number="autoConfig.end"
-            min="1"
+            :min="1"
             :max="maxDepth-1"
             type="number"
             suffix="m"
