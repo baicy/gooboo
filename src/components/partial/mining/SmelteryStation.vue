@@ -36,7 +36,7 @@
         <v-card-text>
           <v-text-field
             v-model.number="smeltAmount"
-            :label="`${displayName}(最大 ${affordAmount}/${bookAmount})`"
+            :label="`${displayName}(最大 ${affordAmount}/${bookAmount}可预定)`"
             type="number"
             :min="0"
             outlined

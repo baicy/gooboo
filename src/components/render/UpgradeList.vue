@@ -22,8 +22,8 @@
       <div class="d-flex mx-2 py-1 bg-tile-default align-center justify-center">
         <gb-tooltip :min-width="0">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" :color="viewFilter ? 'primary' : ''" @click="() => { viewFilter = !viewFilter; filter = ''; }">
-              <v-icon>mdi-filter</v-icon>
+            <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" :color="filter ? currency[filter].color : ''" @click="viewFilter = !viewFilter;">
+              <v-icon>{{ filter ? currency[filter].icon : 'mdi-filter' }}</v-icon>
             </v-btn>
           </template>
           <div>点击显示升级项需要用到的材料</div>

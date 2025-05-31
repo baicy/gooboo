@@ -346,9 +346,14 @@ export default {
         smelteryCanBook: (state, getters, rootState) => (name, amount = 1) => {
             const smeltery = state.smeltery[name];
             for (const [key, elem] of Object.entries(smeltery.price)) {
+                const price = deltaLinear(elem.base, elem.increment, amount, smeltery.total);
                 const maxPrice = deltaLinear(elem.base, elem.increment, 1, smeltery.total + amount - 1);
                 const cap = rootState.currency[key].cap ?? Infinity;
-                if (maxPrice > cap) return false;
+                if (cap === Infinity) {
+                    if (price > rootState.currency[key].value) return false;
+                } else {
+                    if (maxPrice > cap) return false;
+                }
             }
             return true;
         },
