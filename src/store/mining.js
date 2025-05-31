@@ -325,6 +325,21 @@ export default {
             }
             return rootGetters['currency/canAfford'](price, maxPrice);
         },
+        smelteryAffordAmount: (state, getters) => (name) => {
+            let amount = 1;
+            let step = 1;
+            while (getters.smelteryCanAfford(name, step)) {
+                step *= 2;
+            }
+            amount = step / 2;
+            while (step > 1) {
+                step /= 2;
+                if(getters.smelteryCanAfford(name, amount + step)) {
+                    amount += step;
+                }
+            }
+            return Math.floor(amount);
+        },
         enhancementLevel: (state) => {
             let level = 0;
             for (const [, elem] of Object.entries(state.enhancement)) {
@@ -398,6 +413,7 @@ export default {
                 progress: 0,
                 stored: 0,
                 total: 0,
+                book: 0,
                 timeNeeded: o.timeNeeded,
                 minTemperature: o.minTemperature
             });
@@ -464,6 +480,7 @@ export default {
                 commit('updateSmelteryKey', {name: key, key: 'progress', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'stored', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'total', value: 0});
+                commit('updateSmelteryKey', {name: key, key: 'book', value: 0});
             }
             for (const [key] of Object.entries(state.enhancement)) {
                 commit('updateEnhancementKey', {name: key, key: 'level', value: 0});
@@ -541,6 +558,7 @@ export default {
                 commit('updateSmelteryKey', {name: key, key: 'progress', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'stored', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'total', value: 0});
+                commit('updateSmelteryKey', {name: key, key: 'book', value: 0});
             }
             for (const [key, elem] of Object.entries(state.enhancement)) {
                 if (elem.level > 0) {
@@ -596,6 +614,9 @@ export default {
                 dispatch('currency/spend', {feature: key.split('_')[0], name: key.split('_')[1], amount: elem}, {root: true});
             }
             commit('updateSmelteryKey', {name: o.name, key: 'stored', value: smeltery.stored + o.amount});
+            if (o.book) {
+                commit('updateSmelteryKey', {name: o.name, key: 'book', value: smeltery.book - o.amount});
+            }
             commit('updateSmelteryKey', {name: o.name, key: 'total', value: smeltery.total + o.amount});
         },
         enhanceBars({ state, getters, rootGetters, commit, dispatch }) {

@@ -26,8 +26,8 @@
       <v-icon class="ma-1">mdi-transfer-right</v-icon>
       <price-tag class="ma-1" :currency="smeltery.output" :amount="1" add></price-tag>
       <v-spacer></v-spacer>
-      <v-badge v-if="smeltery.stored > 0" inline color="secondary" :content="$formatNum(smeltery.stored)"></v-badge>
-      <v-btn class="ma-1" small color="primary" :disabled="isFrozen || !canAfford" @click="showCustom">{{ $vuetify.lang.t('$vuetify.gooboo.custom') }}</v-btn>
+      <v-badge v-if="smeltery.stored + smeltery.book > 0" inline color="secondary" :content="$formatNum(smeltery.stored + smeltery.book)"></v-badge>
+      <v-btn class="ma-1" small color="primary" :disabled="isFrozen" @click="showCustom">{{ $vuetify.lang.t('$vuetify.gooboo.custom') }}</v-btn>
       <v-btn class="ma-1" color="primary" :disabled="isFrozen || !canAfford" @click="buy">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
     </div>
     <v-progress-linear class="rounded-b" height="4" :indeterminate="isHighspeed" :value="isHighspeed ? undefined : (smeltery.progress * 100)"></v-progress-linear>
@@ -48,10 +48,19 @@
             <span>消耗：</span>
             <price-tag v-for="(amount, currency) in customPrice" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
           </div>
+          <div class="d-flex flex-wrap mt-2">
+            <span>库存：{{ smeltery.total - smeltery.stored }}</span>
+            <v-spacer></v-spacer>
+            <span>制作中：{{ smeltery.stored }}</span>
+            <v-spacer></v-spacer>
+            <span>预定中: {{ smeltery.book }}</span>
+          </div>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-btn color="warning" @click="bookCustom" :disabled="smeltAmount <= 0">预定</v-btn>
           <v-btn color="primary" @click="buyCustom" :disabled="smeltAmount <= 0 || smeltAmount > affordAmount">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="showSmeltCustom = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -102,26 +111,11 @@ export default {
     isHighspeed() {
       return this.timeNeeded < 1 && this.smeltery.stored > 0;
     },
-    displayName() {
-      return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`);
-    },
     affordAmount() {
-      let amount = 0;
-      if (this.$store.getters['mining/smelteryCanAfford'](this.name)) {
-        amount = 1;
-        let step = 1;
-        while (this.$store.getters['mining/smelteryCanAfford'](this.name, step)) {
-          step *= 2;
-        }
-        amount = step / 2;
-        while (step > 1) {
-          step /= 2;
-          if(this.$store.getters['mining/smelteryCanAfford'](this.name, amount + step)) {
-            amount += step;
-          }
-        }
-      }
-      return amount;
+      return this.$store.getters['mining/smelteryAffordAmount'](this.name);
+    },
+    displayName() {
+      return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`) + '(最大 ' + this.affordAmount + ')';
     },
     customPrice() {
       return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount);
@@ -137,6 +131,9 @@ export default {
     },
     buyCustom() {
       this.$store.dispatch('mining/addToSmelteryCustom', {name: this.name, amount: this.smeltAmount});
+    },
+    bookCustom() {
+      this.$store.commit('mining/updateSmelteryKey', {name: this.name, key: 'book', value: this.smeltery.book + this.smeltAmount});
     }
   }
 }

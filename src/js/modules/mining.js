@@ -130,6 +130,10 @@ export default {
 
         // Smeltery
         for (const [key, elem] of Object.entries(store.state.mining.smeltery)) {
+            if (elem.book > 0) {
+                const affordAmount = store.getters['mining/smelteryAffordAmount'](key);
+                store.dispatch('mining/addToSmelteryCustom', {name: key, amount: Math.min(elem.book, affordAmount), book: true});
+            }
             if (elem.stored > 0) {
                 let newProgress = elem.progress + seconds / store.getters['mining/smelteryTimeNeeded'](key);
                 const bars = Math.min(elem.stored, Math.floor(newProgress));
@@ -528,7 +532,7 @@ export default {
         let smelteryData = {};
         for (const [key, elem] of Object.entries(store.state.mining.smeltery)) {
             if (elem.total > 0) {
-                smelteryData[key] = [elem.progress, elem.stored, elem.total];
+                smelteryData[key] = [elem.progress, elem.stored, elem.total, elem.book];
             }
         }
         if (Object.keys(smelteryData).length > 0) {
@@ -566,6 +570,7 @@ export default {
                     store.commit('mining/updateSmelteryKey', {name: key, key: 'progress', value: elem[0]});
                     store.commit('mining/updateSmelteryKey', {name: key, key: 'stored', value: elem[1]});
                     store.commit('mining/updateSmelteryKey', {name: key, key: 'total', value: elem[2]});
+                    store.commit('mining/updateSmelteryKey', {name: key, key: 'book', value: elem[3]});
                 }
             }
         }
