@@ -36,20 +36,23 @@
         <v-card-text>
           <v-text-field
             v-model.number="smeltAmount"
-            :label="displayName"
+            :label="`${displayName}(最大 ${affordAmount})`"
             type="number"
             :min="0"
-            :max="affordAmount"
             outlined
             hide-details
             dense
           ></v-text-field>
-          <div class="d-flex align-center mt-2">
+          <div class="d-flex flex-wrap align-center mt-2">
             <span>消耗：</span>
             <price-tag v-for="(amount, currency) in customPrice" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
           </div>
+          <div class="d-flex flex-wrap align-center mt-2">
+            <span>算预定消耗：</span>
+            <price-tag v-for="(amount, currency) in customPriceBooked" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
+          </div>
           <div class="d-flex flex-wrap mt-2">
-            <span>库存：{{ smeltery.total - smeltery.stored }}</span>
+            <span>库存：{{ statAmount }}</span>
             <v-spacer></v-spacer>
             <span>制作中：{{ smeltery.stored }}</span>
             <v-spacer></v-spacer>
@@ -114,11 +117,17 @@ export default {
     affordAmount() {
       return this.$store.getters['mining/smelteryAffordAmount'](this.name);
     },
+    statAmount() {
+      return this.$store.getters['currency/value'](`mining_bar${capitalize(this.name)}`);
+    },
     displayName() {
-      return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`) + '(最大 ' + this.affordAmount + ')';
+      return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`);
     },
     customPrice() {
       return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount);
+    },
+    customPriceBooked() {
+      return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount + (this.smeltAmount > 0 ? this.smeltery.book : 0));
     }
   },
   methods: {
