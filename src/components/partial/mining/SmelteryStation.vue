@@ -60,7 +60,7 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="warning" @click="bookCustom" :disabled="smeltAmount <= 0 || smeltAmount > bookAmount">预定</v-btn>
+          <v-btn color="warning" @click="bookCustom" :disabled="smeltAmount <= 0">预定</v-btn>
           <v-btn color="primary" @click="buyCustom" :disabled="smeltAmount <= 0 || smeltAmount > affordAmount">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" @click="showSmeltCustom = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>

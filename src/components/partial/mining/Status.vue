@@ -34,7 +34,7 @@
       <v-btn icon :disabled="isDeepest || isFrozen || autoBreak.active" @click="depthNext"><v-icon>mdi-step-forward</v-icon></v-btn>
       <v-btn icon :disabled="isDeepest || isFrozen || autoBreak.active" @click="depthNext10"><v-icon>mdi-step-forward-2</v-icon></v-btn>
       <v-btn icon :disabled="isDeepest || isFrozen || autoBreak.active" @click="depthMax"><v-icon>mdi-skip-forward</v-icon></v-btn>
-      <v-btn v-if="canAutoBreak" :color="autoBreak.active ? 'success' : 'secondary'" @click="autoBreakToggle" small min-width="30" :disabled="isFrozen">
+      <v-btn v-if="$store.getters['system/checkExtraCheated']('autoBreak')" :color="autoBreak.active ? 'success' : 'secondary'" @click="showAutoBreak = !showAutoBreak" small min-width="30" :disabled="isFrozen">
         <v-icon size="20">mdi-cached</v-icon>
         <div v-if="autoBreak.active">
           <span class="text-caption">{{ autoBreak.startDepth }} ~ {{ autoBreak.endDepth }}</span>
@@ -81,6 +81,9 @@
         <stat-breakdown :base="baseScrap" name="currencyMiningScrapGain"></stat-breakdown>
         <div>{{ $vuetify.lang.t('$vuetify.mining.gainSummary', $formatNum(scrap), $formatNum(scrapOnBreak), scrapBreakMult, $formatNum(scrapPerSecond !== null ? scrapPerSecond : 0)) }}</div>
       </gb-tooltip>
+      <v-btn class="mt-2" color="info" icon @click="showOverview = true">
+        <v-icon>mdi-list-box</v-icon>
+      </v-btn>
     </div>
     <div class="d-flex flex-wrap">
       <template v-if="subfeature === 0">
@@ -152,51 +155,11 @@
     </div>
     <alert-text v-if="showScrapHint" class="ma-1" type="info">{{ $vuetify.lang.t('$vuetify.mining.scrapGainHint') }}</alert-text>
     
-    <overview ref="overview" />
-
-    <v-dialog v-model="autoConfig.visible" max-width="400">
-      <v-card class="default-card px-4 py-2">
-        <v-card-text class="pa-0 pt-4">
-          <v-text-field
-            v-model.number="autoConfig.start"
-            :min="1"
-            :max="maxDepth-1"
-            type="number"
-            suffix="m"
-            label="起始深度"
-            dense
-            outlined
-            @input="autoConfig.start = Math.min(maxDepth-1, autoConfig.start)"
-          ></v-text-field>
-          <v-text-field
-            v-model.number="autoConfig.end"
-            :min="1"
-            :max="maxDepth-1"
-            type="number"
-            suffix="m"
-            label="目标深度"
-            dense
-            outlined
-            @input="autoConfig.end = Math.min(maxDepth-1, autoConfig.end)"
-          ></v-text-field>
-          <v-select
-            :items="[10, 100, 1000, 10000]"
-            v-model="autoConfig.breaks"
-            label="击碎次数"
-            dense
-            outlined
-            suffix="次"
-          ></v-select>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions class="px-0">
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="startAutoBreak" :disabled="autoConfig.start > autoConfig.end">
-            开始
-            <v-icon class="mt-1" right>mdi-play</v-icon>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+    <v-dialog v-if="showAutoBreak" v-model="showAutoBreak" max-width="400">
+      <auto-break @close="showAutoBreak = false" />
+    </v-dialog>
+    <v-dialog v-if="showOverview" v-model="showOverview">
+      <overview @close="showOverview = false" />
     </v-dialog>
     <div class="d-flex justify-space-around mt-8 mt-lg-12">
       <gb-tooltip v-if="unlock.miningPickaxeCrafting.see" :min-width="0">
@@ -263,10 +226,11 @@ import StatBreakdown from '../../render/StatBreakdown.vue';
 import AlertText from '../render/AlertText.vue';
 import DisplayRow from '../upgrade/DisplayRow.vue';
 import BeaconSector from './BeaconSector.vue';
+import AutoBreak from './AutoBreak.vue';
 import Overview from './Overview.vue';
 
 export default {
-  components: { StatBreakdown, CurrencyIcon, AlertText, DisplayRow, BeaconSector, Overview },
+  components: { StatBreakdown, CurrencyIcon, AlertText, DisplayRow, BeaconSector, AutoBreak, Overview },
   data: () => ({
     rareEarthType: {
       granite: 'both',
@@ -289,10 +253,8 @@ export default {
       glowshard: MINING_GLOWSHARD_DEPTH,
     },
     showBeacons: false,
+    showAutoBreak: false,
     showOverview: false,
-    autoConfig: {
-      visible: false,
-    },
   }),
   computed: {
     ...mapState({
@@ -306,7 +268,6 @@ export default {
       beacon: state => state.mining.beacon,
       isFrozen: state => state.cryolab.mining.active,
       autoBreak: state => state.mining.autoBreak,
-      canAutoBreak: state => state.system.settings.cheat.items.autoBreak.value,
     }),
     ...mapGetters({
       damage: 'mining/damage',
@@ -445,25 +406,6 @@ export default {
       this.$store.commit('system/updateTutorialKey', {name: 'miningDepth', key: 'completed', value: true});
       this.resetDurability();
     },
-    autoBreakToggle() {
-      if (this.autoBreak.active) {
-        this.$store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: this.depth});
-      } else {
-        this.autoConfig.visible = true;
-        this.autoConfig.start = this.autoConfig.start || Math.max(...[1, 50, 130].filter(l => l < this.maxDepth-1));
-        this.autoConfig.end = this.autoConfig.end || this.$refs.overview.allDepths.maxFlashBreak;
-        this.autoConfig.breaks = this.autoConfig.breaks || this.autoBreak.targetBreaks || 1000;
-      }
-    },
-    startAutoBreak() {
-      this.autoConfig.visible = false;
-      this.$store.dispatch('mining/toggleAutoBreak', {
-        active: true,
-        startDepth: this.autoConfig.start,
-        endDepth: this.autoConfig.end,
-        targetBreaks: this.autoConfig.breaks,
-      });
-    }
   }
 }
 </script>

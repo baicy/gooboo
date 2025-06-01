@@ -223,11 +223,11 @@ export default {
                                 const currentBreaks = store.getters['mining/currentBreaks'];
                                 const neededBreaks = targetBreaks - currentBreaks;
                                 if (neededBreaks <= 0) {
-                                    if (currentDepth + 1 > endDepth) {
-                                        store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: currentDepth});
+                                    if (currentDepth - 1 < startDepth) {
+                                        store.dispatch('mining/toggleAutoBreak', {active: false});
                                     } else {
                                         awardLoot(breaks, loots, preHits);
-                                        store.commit('mining/updateKey', { key: 'depth', value: currentDepth + 1 });
+                                        store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
                                         store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
                                         continue;
                                     }
@@ -239,18 +239,18 @@ export default {
                                         breaks += neededBreaks;
                                         loots += secondsNeeded;
                                         secondsLeft -= secondsNeeded;
-                                        if (currentDepth + 1 > endDepth) {
-                                            store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: currentDepth});
+                                        if (currentDepth - 1 < startDepth) {
+                                            store.dispatch('mining/toggleAutoBreak', {active: false});
                                         } else {
                                             awardLoot(breaks, loots, loots);
-                                            store.commit('mining/updateKey', { key: 'depth', value: currentDepth + 1 });
+                                            store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
                                             store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
                                             continue;
                                         }
                                     }
                                 }
                             } else {
-                                store.dispatch('mining/toggleAutoBreak', {active: false, endDepth: currentDepth});
+                                store.dispatch('mining/toggleAutoBreak', {active: false});
                             }
                         }
                         store.commit('stat/add', {feature: 'mining', name: 'totalDamage', value: secondsLeft * store.getters['mining/currentDamage']});

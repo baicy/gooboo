@@ -735,16 +735,17 @@ export default {
             }
         },
         toggleAutoBreak({ state, commit, getters }, config) {
-            const { active, startDepth, endDepth, targetBreaks } = config;
+            const { active } = config;
             if (active) {
-                let cursor = Math.max(startDepth, 1);
-                while (cursor < endDepth) {
+                const { startDepth, endDepth, targetBreaks } = config;
+                let cursor = endDepth;
+                while (cursor > startDepth) {
                     if(state.breaks[cursor-1] < targetBreaks) {
                         break;
                     }
-                    cursor++;
+                    cursor--;
                 }
-                if (cursor > endDepth) {
+                if (cursor < startDepth) {
                     return;
                 }
                 if (cursor !== state.depth) {
@@ -758,20 +759,21 @@ export default {
                 }}, { root: true});
                 commit('updateKey', {key: 'autoBreak', value: {
                     active: true,
-                    startDepth: cursor,
-                    endDepth,
+                    startDepth,
+                    endDepth: cursor,
+                    finalDepth: endDepth,
                     targetBreaks
                 }});
             } else {
+                const { depth, stay } = config;
                 commit('updateSubkey', {name: 'autoBreak', key: 'active', value: false});
-                if (endDepth) {
-                    commit('updateSubkey', {name: 'autoBreak', key: 'endDepth', value: endDepth});
-                }
-                commit('system/addNotification', {color: 'success', timeout: -1, message: {
+                commit('system/addNotification', {color: depth ? 'error' : 'success', timeout: -1, message: {
                     type: 'common',
-                    message: `自动挖矿：${state.autoBreak.startDepth} ~ ${state.autoBreak.endDepth}已完成`,
+                    message: `自动挖矿${ depth ? '已取消' : ''}` + (depth===state.autoBreak.endDepth ? '' : ` 完成 [${state.autoBreak.targetBreaks}次] [${depth ? depth + 1 : state.autoBreak.startDepth} ~ ${state.autoBreak.endDepth}]`),
                     icon: 'mdi-pickaxe'
                 }}, { root: true});
+                commit('updateKey', {key: 'depth', value: stay ? depth : state.autoBreak.finalDepth});
+                commit('updateKey', {key: 'durability', value: getters.currentDurability});
             }
         }
     }
