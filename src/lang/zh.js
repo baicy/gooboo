@@ -1401,7 +1401,7 @@ export default {
     zone: '区域',
     hordeMaxDifficulty: '通关的最高难度',
     hordeBasicLoot: '基础战利品',
-    hordeItemPermanent: '永久效果',
+    hordeItemPermanent: '装备效果',
     hordeMastery: '装备精通',
     hordeRest: '休眠',
     hordeNostalgia: '怀旧之情',

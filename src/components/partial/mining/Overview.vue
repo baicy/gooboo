@@ -34,6 +34,8 @@ import { digitSum } from '../../../js/utils/math';
 export default {
   data: ()=> ({
     depths: [],
+    headers: [],
+    ores: [],
   }),
   computed: {
     ...mapState({
@@ -51,46 +53,10 @@ export default {
     maxDepth() {
       return this.$store.state.stat[`mining_maxDepth${this.subfeature}`].value;
     },
-    ores() {
-      return [...Object.entries(this.ingredients)
-      .filter(([, elem]) => (elem.minDepth <= this.maxDepth + 1))
-      .map(([ore]) => ore), 'salt', 'deeprock'];
-    },
-    headers() {
-      let columns = [
-        {
-          text: '深度',
-          value: 'id',
-          sortable: true,
-          divider: true,
-        },
-        {
-          text: '击碎次数',
-          value: 'break',
-          sortable: true,
-          divider: true,
-        },
-        {
-          text: '击碎时间',
-          value: 'time',
-          sortable: true,
-          divider: true,
-        },
-      ];
-      if (this.subfeature === 0) {
-        this.ores.forEach(ore => {
-          columns.push({
-            text: this.$vuetify.lang.t(`$vuetify.currency.mining_${ore}.name`),
-            value: ore,
-            sortable: true,
-            divider: true,
-          })
-        });
-      }
-      return columns;
-    }
   },
   mounted() {
+    this.getOres();
+    this.getHeaders();
     this.getDepths();
   },
   methods: {
@@ -114,6 +80,46 @@ export default {
         depths.unshift(d);
       }
       this.depths = depths;
+    },
+    getOres() {
+      this.ores =  [...Object.entries(this.ingredients)
+      .filter(([, elem]) => (elem.minDepth <= this.maxDepth + 1))
+      .map(([ore]) => ore), 'salt', 'deeprock'];
+    },
+    getHeaders() {
+      let columns = [
+        {
+          text: '深度',
+          value: 'id',
+          sortable: true,
+          divider: true,
+        },
+        {
+          text: '击碎次数',
+          value: 'break',
+          sortable: true,
+          divider: true,
+        },
+        {
+          text: '击碎时间',
+          value: 'time',
+          sortable: true,
+          divider: true,
+        },
+      ];
+      if (this.subfeature === 0) {
+        this.ores.forEach(ore => {
+          if (!(ore==='salt' && this.maxDepth < MINING_SALT_DEPTH) && !(ore==='deeprock' && this.maxDepth < MINING_DEEPROCK_DEPTH)) {
+            columns.push({
+              text: this.$vuetify.lang.t(`$vuetify.currency.mining_${ore}.name`),
+              value: ore,
+              sortable: true,
+              divider: true,
+            })
+          }
+        });
+      }
+      this.headers = columns;
     },
     depthTo(depth) {
       this.$store.commit('mining/updateKey', {key: 'depth', value: depth});

@@ -52,7 +52,7 @@
             <price-tag v-for="(amount, currency) in customPriceBooked" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
           </div>
           <div class="d-flex flex-wrap mt-2">
-            <span>库存：{{ statAmount }}</span>
+            <span>已制作：{{ smeltery.total }}</span>
             <v-spacer></v-spacer>
             <span>制作中：{{ smeltery.stored }}</span>
             <v-spacer></v-spacer>
@@ -116,9 +116,6 @@ export default {
     },
     affordAmount() {
       return this.$store.getters['mining/smelteryAffordAmount'](this.name);
-    },
-    statAmount() {
-      return this.$store.getters['currency/value'](`mining_bar${capitalize(this.name)}`);
     },
     displayName() {
       return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`);

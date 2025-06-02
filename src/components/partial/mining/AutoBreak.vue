@@ -21,7 +21,7 @@
         class="mt-3"
         type="number"
         suffix="m"
-        :label="`目标深度(1~${maxDepth - 1}${maxFlashDepth ? `/最大1s深度${maxFlashDepth + 1})` : ''})`"
+        :label="`目标深度(1~${maxDepth - 1}${maxFlashDepth ? `/最大1s深度${maxFlashDepth + 1}` : ''})`"
         dense
         outlined
         hide-details
@@ -41,7 +41,7 @@
         @change="getNiter"
       ></v-select>
     </v-card-text>
-    <div class="d-flex justify-center mb-2">
+    <div class="d-flex justify-center my-2">
       <span>用时：{{ $formatTime(totalTime) }}</span>
       <v-divider vertical class="mx-2"></v-divider>
       <span>获得硝: {{ $formatNum(totalNiter) }}</span>
