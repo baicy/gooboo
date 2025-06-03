@@ -178,7 +178,7 @@ export default {
       const color = this.$store.state.currency[Object.keys(price)[0]].value;
       const mult = this.$store.getters['mult/get']('currencyGalleryConverterGain');
       const transfer = this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`) * (color / priceColor);
-      for(let i = 0; i < 10; i++) {
+      for(let i = 0; i < 30; i++) {
         const stage = i;
         const percent = stage ? 0.75 * Math.pow(0.95, stage - 1) : 1
         const gain = (mult + cap * GALLERY_CONVERTER_EXPONENT) * percent;
@@ -196,7 +196,7 @@ export default {
         });
       }
       const cstage = Math.floor(converter.value / cap);
-      const overloadMult = (list[cstage].overload - (cstage ? list[cstage-1].overload : 1)) / list[cstage].ctime;
+      const overloadMult = list[cstage] ? ((list[cstage].overload - (cstage ? list[cstage-1].overload : 1)) / list[cstage].ctime) : 0;
       const best = list.sort((a, b) => b.avg - a.avg)[0];
       return {
         stage: best.stage,
