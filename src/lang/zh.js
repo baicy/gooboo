@@ -1383,7 +1383,7 @@ export default {
       },
       horde1AutoUtility: {
         name: '部落1自动工具技能',
-        description: '就是右边的技能，离线可用，和自动施法槽独立（其实比那个好用',
+        description: '就是右边的技能，离线基本不可用这是底层代码问题，和自动施法槽独立（其实比那个好用',
       },
     }
   },

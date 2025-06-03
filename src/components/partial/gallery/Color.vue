@@ -90,13 +90,15 @@
         </div>
         <alert-text type="info">{{ $vuetify.lang.t('$vuetify.gallery.allConverterInfo') }}</alert-text>
         <alert-text v-if="canAfford && converterOverload > 1" type="info">{{ $vuetify.lang.t('$vuetify.gallery.converterOverload', $formatNum(converterOverload, true)) }}</alert-text>
-        <alert-text v-if="canAfford && converterOverload > 1 && overloadMult > 0" type="info">
-          转换器已满，提供过载转换 ~ {{ $formatNum(overloadMult, true) }}/s
+        <alert-text v-if="canAfford && converterOverload > 1" type="info">
+          最佳转换阶段 x{{ overloadStatus.stage }} 当前过载转换 ~ {{ $formatNum(overloadStatus.overloadMult, true) }}/s
         </alert-text>
       </gb-tooltip>
       <v-icon v-if="showTransferArrow" class="color-generate-arrow">mdi-transfer-up</v-icon>
     </template>
-    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus"></currency>
+    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus">
+        <alert-text type="info">0 -> 100%需要 {{ $formatTime(conversionCapTime) }}</alert-text>
+    </currency>
   </div>
 </template>
 
@@ -162,20 +164,44 @@ export default {
     conversionGain() {
       return this.canAfford ? this.$store.getters['gallery/conversionGain'](this.name) : this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`);
     },
-    overloadMult() {
+    conversionCapTime() {
+      const cap = this.$store.state.currency.gallery_converter.cap;
+      const mult = this.$store.getters['mult/get']('currencyGalleryConverterGain');
+      return Math.log(cap * GALLERY_CONVERTER_EXPONENT / mult + 1) / Math.log(1 + GALLERY_CONVERTER_EXPONENT);
+    },
+    overloadStatus() {
+      const list = [];
       const converter = this.$store.state.currency.gallery_converter;
-      const stage =  Math.floor(converter.value / converter.cap);
+      const cap = converter.cap;
       const price = this.$store.getters['gallery/conversionPrice'](this.name);
       const [priceColor, priceConverter] = Object.values(price);
       const color = this.$store.state.currency[Object.keys(price)[0]].value;
-      const nextOverload = Math.pow(converter.cap * (stage + 1) / priceConverter / (color / priceColor), 0.25);
-      const currentOverload = Math.pow(converter.cap * stage / priceConverter / (color / priceColor), 0.25);
-      if (stage < 1) return 0;
       const mult = this.$store.getters['mult/get']('currencyGalleryConverterGain');
-      const gain = (mult + converter.cap * GALLERY_CONVERTER_EXPONENT) * 0.75 * Math.pow(0.95, stage - 1);
-      const time = converter.cap / gain;
-      const transfer = this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`);
-      return (nextOverload - currentOverload) * (color / priceColor) * transfer / time;
+      const transfer = this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`) * (color / priceColor);
+      for(let i = 0; i < 10; i++) {
+        const stage = i;
+        const percent = stage ? 0.75 * Math.pow(0.95, stage - 1) : 1
+        const gain = (mult + cap * GALLERY_CONVERTER_EXPONENT) * percent;
+        const ctime = stage < 1 ? this.conversionCapTime : (cap / gain);
+        const time = ctime + (i ? list[i-1].time : 0);
+        const next = Math.pow(cap * (stage + 1) / priceConverter / (color / priceColor), 0.25);
+        const overload = next * transfer;
+        const avg = overload / time;
+        list.push({
+          stage,
+          ctime,
+          time,
+          overload,
+          avg,
+        });
+      }
+      const cstage = Math.floor(converter.value / cap);
+      const overloadMult = (list[cstage].overload - (cstage ? list[cstage-1].overload : 1)) / list[cstage].ctime;
+      const best = list.sort((a, b) => b.avg - a.avg)[0];
+      return {
+        stage: best.stage,
+        overloadMult, 
+      };
     },
     isPremium() {
       if (this.name === 'beauty') {
