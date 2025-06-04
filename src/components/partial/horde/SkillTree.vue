@@ -29,12 +29,14 @@
         <template v-slot:activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on">mdi-crystal-ball</v-icon>
         </template>
-        <div v-for="(predict, key) in timePrediction" :key="key" class="d-flex align-center">
-          <div style="font-size: 20px;">{{ predict.level }}</div>
-          <div class="bg-tile-background flex-grow-1 rounded pa-2 ml-4">
-            {{ $formatTime(predict.time) }}
+        <v-sheet class="d-flex flex-column flex-wrap" :height="235" color="transparent">
+          <div v-for="(predict, key) in timePrediction" :key="key" class="d-flex align-center ma-1">
+            <div style="font-size: 20px;">{{ predict.level }}</div>
+            <div class="bg-tile-background flex-grow-1 rounded pa-2 ml-4">
+              {{ $formatTime(predict.time) }}
+            </div>
           </div>
-        </div>
+        </v-sheet>
       </gb-tooltip>
     </div>
     <div class="d-flex align-center ma-2" style="justify-content: center;">
