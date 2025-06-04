@@ -91,12 +91,14 @@
         <alert-text type="info">{{ $vuetify.lang.t('$vuetify.gallery.allConverterInfo') }}</alert-text>
         <alert-text v-if="canAfford && converterOverload > 1" type="info">{{ $vuetify.lang.t('$vuetify.gallery.converterOverload', $formatNum(converterOverload, true)) }}</alert-text>
         <alert-text v-if="canAfford && converterOverload > 1" type="info">
-          最佳转换阶段 x{{ overloadStatus.stage }} 当前过载转换 ~ {{ $formatNum(overloadStatus.overloadMult, true) }}/s
+          最佳转换阶段 x{{ bestOverloadStage }} 当前过载转换 ~{{ $formatNum(currentOverload, true) }}/s
         </alert-text>
       </gb-tooltip>
       <v-icon v-if="showTransferArrow" class="color-generate-arrow">mdi-transfer-up</v-icon>
     </template>
-    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus"></currency>
+    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus">
+      <alert-text type="info">下阶段 ~{{ $formatTime(converterNeededTime) }}</alert-text>
+    </currency>
   </div>
 </template>
 
@@ -162,39 +164,36 @@ export default {
     conversionGain() {
       return this.canAfford ? this.$store.getters['gallery/conversionGain'](this.name) : this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`);
     },
-    overloadStatus() {
-      const list = [];
+    converterStage() {
+      const converter = this.$store.state.currency.gallery_converter;
+      return Math.floor(converter.value / converter.cap);
+    },
+    converterNeededTime() {
+      const mult = this.$store.getters['mult/get']('currencyGalleryConverterGain');
       const converter = this.$store.state.currency.gallery_converter;
       const cap = converter.cap;
-      const price = this.$store.getters['gallery/conversionPrice'](this.name);
-      const [priceColor, priceConverter] = Object.values(price);
-      const color = this.$store.state.currency[Object.keys(price)[0]].value;
-      const mult = this.$store.getters['mult/get']('currencyGalleryConverterGain');
-      const transfer = this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`) * (color / priceColor);
-      for(let i = 0; i < 30; i++) {
+      const stage = this.converterStage;
+      const current = converter.value - cap * stage;
+      const percent = stage ? 0.75 * Math.pow(0.95, stage - 1) : 1;
+      const gain = (mult + cap * GALLERY_CONVERTER_EXPONENT) * percent;
+      return stage < 1 ?
+        (this.$store.getters['gallery/converterCapTime'](0) - Math.log(current * GALLERY_CONVERTER_EXPONENT / mult + 1) / Math.log(1 + GALLERY_CONVERTER_EXPONENT)) :
+        ((cap - current) / gain);
+    },
+    bestOverloadStage() {
+      const list = [];
+      for(let i = 0; i < 10; i++) {
         const stage = i;
-        const percent = stage ? 0.75 * Math.pow(0.95, stage - 1) : 1
-        const gain = (mult + cap * GALLERY_CONVERTER_EXPONENT) * percent;
-        const ctime = stage < 1 ? this.conversionCapTime : (cap / gain);
+        const ctime = this.$store.getters['gallery/converterCapTime'](stage);
         const time = ctime + (i ? list[i-1].time : 0);
-        const next = Math.pow(cap * (stage + 1) / priceConverter / (color / priceColor), 0.25);
-        const overload = next * transfer;
+        const overload = this.$store.getters['gallery/converterOverloadAmount'](this.name, stage);
         const avg = overload / time;
-        list.push({
-          stage,
-          ctime,
-          time,
-          overload,
-          avg,
-        });
+        list.push({stage, time, avg});
       }
-      const cstage = Math.floor(converter.value / cap);
-      const overloadMult = list[cstage] ? ((list[cstage].overload - (cstage ? list[cstage-1].overload : 1)) / list[cstage].ctime) : 0;
-      const best = list.sort((a, b) => b.avg - a.avg)[0];
-      return {
-        stage: best.stage,
-        overloadMult, 
-      };
+      return list.sort((a, b) => b.avg - a.avg)[0].stage;
+    },
+    currentOverload() {
+      return this.$store.getters['gallery/converterOverloadMult'](this.name, this.converterStage);
     },
     isPremium() {
       if (this.name === 'beauty') {

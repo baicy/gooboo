@@ -61,6 +61,25 @@ export default {
                 rootState.currency[colorPrice.name].value / colorPrice.amount
             ) * getters.converterOverload(toColor) * rootGetters['mult/get'](`gallery${ capitalize(toColor) }Conversion`);
         },
+        converterCapTime: (state, getters, rootState, rootGetters) => (stage) => {
+            const mult = rootGetters['mult/get']('currencyGalleryConverterGain');
+            const cap = rootState.currency.gallery_converter.cap;
+            const percent = stage ? 0.75 * Math.pow(0.95, stage - 1) : 1;
+            const gain = (mult + cap * GALLERY_CONVERTER_EXPONENT) * percent;
+            return stage ? (cap / gain) : (Math.log(cap * GALLERY_CONVERTER_EXPONENT / mult + 1) / Math.log(1 + GALLERY_CONVERTER_EXPONENT));
+        },
+        converterOverloadAmount: (state, getters, rootState, rootGetters) => (toColor, stage) => {
+            const cap = rootState.currency.gallery_converter.cap;
+            const price = getters.conversionPrice(toColor);
+            const [priceColor, priceConverter] = Object.values(price);
+            const color = rootState.currency[Object.keys(price)[0]].value;
+            const transfer = rootGetters['mult/get'](`gallery${ capitalize(toColor) }Conversion`) * (color / priceColor);
+            const next = Math.pow(cap * (stage + 1) / priceConverter / (color / priceColor), 0.25);
+            return next * transfer;
+        },
+        converterOverloadMult: (state, getters) => (toColor, stage) => {
+            return (getters.converterOverloadAmount(toColor, stage) - (stage ? getters.converterOverloadAmount(toColor, stage - 1) : 1)) / getters.converterCapTime(stage);
+        },
         prestigeGainBase: (state, getters, rootState) => {
             if (rootState.stat.gallery_beauty.value < buildNum(1, 'T')) {
                 return 0;

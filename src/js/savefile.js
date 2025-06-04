@@ -85,7 +85,7 @@ const saveFileData = async () => {
 
         const res = await saveData(goobooSavefile, userId, tokenId); 
         if (res.success){
-            store.commit('system/addNotification', { color: 'info', timeout: 2000, message: { type: 'common', message: '云存档已上传' } });
+            store.commit('system/addNotification', { color: 'info', timeout: 2000, message: { type: 'common', message: '云存档已上传', icon: 'mdi-cloud-arrow-up' } });
         }
     } catch (error) {
         store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档上传错误', icon: 'mdi-cloud-arrow-up' } });
