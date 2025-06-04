@@ -24,7 +24,18 @@
   <div>
     <div class="d-flex align-center ma-2">
       <div class="class-level-current red rounded-circle d-flex justify-center align-center balloon-text-dynamic flex-shrink-0">{{ currentLevel }}</div>
-      <v-progress-linear class="rounded-r ml-n1" color="red" height="20" :value="expProgress * 100">{{ $formatTime(expTime) }} ({{ $formatNum(expProgress * 100) }}%)</v-progress-linear>
+      <v-progress-linear class="rounded-r ml-n1" color="red" height="20" :value="expProgress * 100">{{ $formatTime(expTime) }} ({{ $formatNum(expProgress * 100) }}%) / {{ $formatTime(currentTime) }}</v-progress-linear>
+      <gb-tooltip :min-width="0" :title-text="$vuetify.lang.t('$vuetify.upgrade.nextLevels')">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on">mdi-crystal-ball</v-icon>
+        </template>
+        <div v-for="(predict, key) in timePrediction" :key="key" class="d-flex align-center">
+          <div style="font-size: 20px;">{{ predict.level }}</div>
+          <div class="bg-tile-background flex-grow-1 rounded pa-2 ml-4">
+            {{ $formatTime(predict.time) }}
+          </div>
+        </div>
+      </gb-tooltip>
     </div>
     <div class="d-flex align-center ma-2" style="justify-content: center;">
       <div class="text-center ml-4 mr-4">{{ $vuetify.lang.t('$vuetify.horde.classes.skillPointsLeft', skillPoints) }}</div>
@@ -208,8 +219,22 @@ export default {
     expProgress() {
       return this.expLevel - this.currentLevel;
     },
+    currentTime() {
+      return this.$store.getters['horde/expDifficulty'](this.currentLevel);
+    },
     expTime() {
-      return Math.ceil((1 - this.expProgress) * this.$store.getters['horde/expDifficulty'](this.currentLevel));
+      return Math.ceil((1 - this.expProgress) * this.currentTime);
+    },
+    timePrediction() {
+      const arr = [];
+      let lvl = this.currentLevel + 1;
+      for (let i = 0; i < 10; i++) {
+        arr.push({
+          level: lvl + i,
+          time: this.$store.getters['horde/expDifficulty'](lvl + i)
+        })
+      }
+      return arr;
     }
   },
   methods: {
