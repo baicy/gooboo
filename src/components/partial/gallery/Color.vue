@@ -96,9 +96,7 @@
       </gb-tooltip>
       <v-icon v-if="showTransferArrow" class="color-generate-arrow">mdi-transfer-up</v-icon>
     </template>
-    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus">
-        <alert-text type="info">0 -> 100%需要 {{ $formatTime(conversionCapTime) }}</alert-text>
-    </currency>
+    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus"></currency>
   </div>
 </template>
 
@@ -163,11 +161,6 @@ export default {
     },
     conversionGain() {
       return this.canAfford ? this.$store.getters['gallery/conversionGain'](this.name) : this.$store.getters['mult/get'](`gallery${ capitalize(this.name) }Conversion`);
-    },
-    conversionCapTime() {
-      const cap = this.$store.state.currency.gallery_converter.cap;
-      const mult = this.$store.getters['mult/get']('currencyGalleryConverterGain');
-      return Math.log(cap * GALLERY_CONVERTER_EXPONENT / mult + 1) / Math.log(1 + GALLERY_CONVERTER_EXPONENT);
     },
     overloadStatus() {
       const list = [];

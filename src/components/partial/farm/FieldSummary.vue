@@ -8,8 +8,8 @@
               <div v-for="item in predicateHarvest.exp" :key="item.name">
                 <v-icon :color="crop[item.name].color">{{ crop[item.name].icon }}</v-icon>
                 {{ $vuetify.lang.t(`$vuetify.farm.crop.${item.name}`) }}:
-                {{ item.leveled ? item.before : $formatNum(item.before, true)+'%' }} -> 
-                {{ item.leveled ? item.after : $formatNum(item.after, true)+'%' }}
+                {{ item.leveled ? item.before : $formatNum(item.before * 100, true)+'%' }} -> 
+                {{ item.leveled ? item.after : $formatNum(item.after * 100, true)+'%' }}
               </div>
             </v-col>
             <v-col cols="12" md="6" class="d-flex flex-wrap align-start">
