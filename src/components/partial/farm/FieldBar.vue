@@ -36,20 +36,29 @@
         </template>
         <div class="mt-0">{{ $vuetify.lang.t(`$vuetify.farm.button.color`) }}</div>
       </gb-tooltip>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn class="ma-1" min-width="36" :color="showSummary ? 'primary' : 'secondary'" @click="showSummary = !showSummary" v-bind="attrs" v-on="on"><v-icon>mdi-chart-box-outline</v-icon></v-btn>
+        </template>
+        <div class="mt-0">收获统计预测，仅供参考，概率在收获时判断</div>
+        <alert-text v-if="selectedColor" :type="selectedColor" icon-name="info">仅统计该颜色的地块</alert-text>
+      </gb-tooltip>
     </div>
     <div v-if="showColors" class="d-flex flex-wrap justify-center ma-1">
       <v-btn x-small min-width="24" v-for="color in colors" :key="color" class="mr-1" :color="color" @click="selectColor(color)"></v-btn>
       <v-btn x-small min-width="24" class="ml-2 px-0" :color="selectedColor === 0 ? 'error' : 'secondary'" @click="selectColor(0)"><v-icon small>mdi-delete</v-icon></v-btn>
     </div>
+    <field-summary v-if="showSummary" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import AlertText from '../render/AlertText.vue';
+import FieldSummary from './FieldSummary.vue';
 
 export default {
-  components: { AlertText },
+  components: { AlertText, FieldSummary },
   computed: {
     ...mapState({
       selectedCropName: state => state.farm.selectedCropName,
@@ -65,7 +74,8 @@ export default {
     }
   },
   data: () => ({
-    colors: ['brown', 'green', 'light-green', 'yellow', 'orange', 'red', 'pink', 'purple', 'indigo', 'blue']
+    colors: ['brown', 'green', 'light-green', 'yellow', 'orange', 'red', 'pink', 'purple', 'indigo', 'blue'],
+    showSummary: false
   }),
   methods: {
     deleteMode() {

@@ -50,6 +50,7 @@
     <div>
       <div>{{ $vuetify.lang.t('$vuetify.unlock.farmFertilizer') }}: {{ item.fertilizer?$vuetify.lang.t(`$vuetify.consumable.farm_${ item.fertilizer }.name`):'无' }}</div>
       <div>下阶段: {{ $formatTime(nextStage) }}</div>
+      <div>随机数: {{ $formatNum(rng, true) }}</div>
     </div>
   </gb-tooltip>
 </template>
@@ -94,6 +95,9 @@ export default {
       const stageMult = stage > 0 ? Math.pow(this.item.cache.overgrow, stage) : 1;
       const time = left * stageMult * 60 / this.item.cache.grow;
       return time;
+    },
+    rng() {
+      return this.$store.getters['system/getRngById']('farmCrop_undefined', this.item.rng)();
     }
   }
 }
