@@ -18,7 +18,7 @@ import v1_1_0 from "./modules/migration/v1_1_0";
 import { getDay } from "./utils/date";
 import v1_1_2 from "./modules/migration/v1_1_2";
 import v1_3_0 from "./modules/migration/v1_3_0";
-import {loadGame} from "@/js/init";
+import { loadGame } from "@/js/init";
 import { APP_TESTING, LOCAL_STORAGE_NAME } from "./constants";
 import { saveData, getLatestDataList, getLatestData, loadSaveFile } from "./cloud"
 import v1_3_4 from "./modules/migration/v1_3_4";
@@ -65,7 +65,7 @@ function saveLocal() {
 
 const saveFileData = async () => {
     if (isSaving) {
-        console.log("正在上传存档，请稍候...");
+        store.commit('system/addNotification', { color: 'error', timeout: 2000, message: { type: 'common', message: '正在上传云存档', icon: 'mdi-cloud-arrow-up' } });
         return;
     }
     isSaving = true;
@@ -75,8 +75,7 @@ const saveFileData = async () => {
         let tokenId = store.state.system.settings.general.items.cloudpwd.value;
 
         if (!userId || !tokenId) {
-            console.error("clouduser or cloudpwd error");
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'save', name: 'auto', error: "clouduser or cloudpwd error" } });
+            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码错误', icon: 'mdi-cloud-alert' } });
             isSaving = false;
             return; 
         }
@@ -86,10 +85,10 @@ const saveFileData = async () => {
 
         const res = await saveData(goobooSavefile, userId, tokenId); 
         if (res.success){
-            store.commit('system/addNotification', { color: 'info', timeout: 2000, message: { type: 'save', name: 'auto' } });
+            store.commit('system/addNotification', { color: 'info', timeout: 2000, message: { type: 'common', message: '云存档已上传' } });
         }
     } catch (error) {
-        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'save', name: 'auto', error: "cloudsave error" } });
+        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档上传错误', icon: 'mdi-cloud-arrow-up' } });
     } finally {
         isSaving = false;
     }
@@ -111,7 +110,6 @@ const loadLatestFileData = async (userId = null, tokenId = null) => {
         }
 
         const res = await getLatestData(effectiveUserId, effectiveTokenId);
-        //console.log('saveFileData res:', res.save_data);
         if (res.save_data) {
             cleanStore();
             loadGame(res.save_data);
@@ -141,7 +139,6 @@ const getCloudSaveFileList = async () => {
             return null;
         }
         const saveFiles = await getLatestDataList(userId, tokenId);
-        console.log('saveFileData res:', saveFiles);
         return saveFiles;
     } catch (error) {
         store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'load', name: 'cloud', error: error.data.message } });
@@ -160,7 +157,6 @@ const loadSelectedFileData = async (selectedSavefile) => {
         }
 
         const saveData = await loadSaveFile(selectedSavefile.id, userId, tokenId);
-        console.log('saveFileData res:', saveData);
         if (saveData) {
             cleanStore();
             loadGame(saveData);
