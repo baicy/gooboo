@@ -57,6 +57,10 @@
     <div class="horde-item-pagination text-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'horde-item-pagination-mobile': $vuetify.breakpoint.xsOnly}" v-if="pages > 1">
       <v-pagination v-model="page" :length="pages"></v-pagination>
     </div>
+    <div class="px-2 d-flex justify-center">
+      <v-checkbox label="已装备" v-model="equipped" dense hide-details></v-checkbox>
+      <v-checkbox label="可升级" v-model="canUpgrade" class="ml-2" dense hide-details></v-checkbox>
+    </div>
     <item v-for="item in finalItems" :key="'item-' + item.name" :name="item.name" :disabled="itemsBlocked" :active-disabled="isFrozen" class="ma-2"></item>
   </div>
 </template>
@@ -72,7 +76,9 @@ export default {
   data: () => ({
     page: 1,
     cacheKey: 'horde_0_equipment',
-    showLoadouts: false
+    showLoadouts: false,
+    equipped: false,
+    canUpgrade: false
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -96,6 +102,12 @@ export default {
       let arr = [];
       for (const [key, elem] of Object.entries(this.itemsList)) {
         arr.push({...elem, name: key});
+      }
+      if (this.equipped) {
+        arr = arr.filter(item => item.equipped);
+      }
+      if (this.canUpgrade) {
+        arr = arr.filter(item => item.cap < item.level && item.price(item.level) <= this.$store.getters['currency/value']('horde_monsterPart'));
       }
       return arr;
     },
