@@ -223,14 +223,10 @@ export default {
                                 const currentBreaks = store.getters['mining/currentBreaks'];
                                 const neededBreaks = targetBreaks - currentBreaks;
                                 if (neededBreaks <= 0) {
-                                    if (currentDepth - 1 < startDepth) {
-                                        store.dispatch('mining/toggleAutoBreak', {active: false});
-                                    } else {
-                                        awardLoot(breaks, loots, preHits);
-                                        store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
-                                        store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
-                                        continue;
-                                    }
+                                    awardLoot(breaks, loots, preHits);
+                                    store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
+                                    store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
+                                    continue;
                                 } else {
                                     const hitsPerBreak = store.getters['mining/hitsNeeded'];
                                     const secondsNeeded = hitsPerBreak * neededBreaks;
@@ -239,14 +235,10 @@ export default {
                                         breaks += neededBreaks;
                                         loots += secondsNeeded;
                                         secondsLeft -= secondsNeeded;
-                                        if (currentDepth - 1 < startDepth) {
-                                            store.dispatch('mining/toggleAutoBreak', {active: false});
-                                        } else {
-                                            awardLoot(breaks, loots, loots);
-                                            store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
-                                            store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
-                                            continue;
-                                        }
+                                        awardLoot(breaks, loots, loots);
+                                        store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
+                                        store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
+                                        continue;
                                     }
                                 }
                             } else {
