@@ -734,10 +734,10 @@ export default {
                 });
             }
         },
-        toggleAutoBreak({ state, commit, getters }, config) {
+        toggleAutoBreak({ state, commit, getters, dispatch }, config) {
             const { active } = config;
             if (active) {
-                const { startDepth, endDepth, targetBreaks } = config;
+                const { startDepth, endDepth, targetBreaks, finalDepth } = config;
                 let cursor = endDepth;
                 while (cursor > startDepth) {
                     if(state.breaks[cursor-1] < targetBreaks) {
@@ -761,19 +761,20 @@ export default {
                     active: true,
                     startDepth,
                     endDepth: cursor,
-                    finalDepth: endDepth,
+                    finalDepth,
                     targetBreaks
                 }});
             } else {
-                const { depth, stay } = config;
+                const { depth } = config;
                 commit('updateSubkey', {name: 'autoBreak', key: 'active', value: false});
                 commit('system/addNotification', {color: depth ? 'error' : 'success', timeout: -1, message: {
                     type: 'common',
                     message: `自动挖矿${ depth ? '已取消' : ''}` + (depth===state.autoBreak.endDepth ? '' : ` 完成 [${state.autoBreak.targetBreaks}次] [${depth ? depth + 1 : state.autoBreak.startDepth} ~ ${state.autoBreak.endDepth}]`),
                     icon: 'mdi-pickaxe'
                 }}, { root: true});
-                commit('updateKey', {key: 'depth', value: stay ? depth : state.autoBreak.finalDepth});
+                commit('updateKey', {key: 'depth', value: state.autoBreak.finalDepth});
                 commit('updateKey', {key: 'durability', value: getters.currentDurability});
+                dispatch('applyBeaconEffects');
             }
         }
     }

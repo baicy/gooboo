@@ -548,6 +548,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
+          <v-btn color="info" target="_blank" href="https://gamesaves.ggff.eu.org/listweb">管理</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" @click="dialogSaveList = false">
             {{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}

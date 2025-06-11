@@ -46,7 +46,19 @@
       <v-divider vertical class="mx-2"></v-divider>
       <span>获得硝: {{ $formatNum(totalNiter) }}</span>
     </div>
-    <v-divider></v-divider>
+    <v-text-field
+      v-model.number="final"
+      :min="1"
+      :max="maxDepth"
+      class="mt-3"
+      type="number"
+      suffix="m"
+      :label="`完成后前往深度(1~${maxDepth})`"
+      dense
+      outlined
+      hide-details
+      :disabled="autoBreak.active"
+      ></v-text-field>
     <v-card-actions class="px-0">
       <v-btn
         :color="autoBreak.active? 'error': 'primary'"
@@ -55,7 +67,6 @@
       >
         {{ autoBreak.active ? '停止' : '开始' }}
       </v-btn>
-      <v-checkbox v-if="autoBreak.active" label="停留在当前深度" v-model="stayCurrent" class="ml-1"></v-checkbox>
       <v-spacer></v-spacer>
       <v-btn color="error" @click="$emit('close')">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
     </v-card-actions>
@@ -71,10 +82,10 @@ export default {
     start: 1,
     end: 1,
     breaks: 10,
+    final: 1,
     maxFlashDepth: 0,
     totalTime: 0,
     totalNiter: 0,
-    stayCurrent: false,
   }),
   computed: {
     ...mapState({
@@ -95,6 +106,7 @@ export default {
     this.start = this.autoBreak.startDepth || Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth-1));
     this.end = this.autoBreak.finalDepth || this.maxFlashDepth + 1;
     this.breaks = this.autoBreak.targetBreaks || 1000;
+    this.final = this.autoBreak.finalDepth || this.maxDepth;
     this.getNiter();
   },
   methods: {
@@ -128,13 +140,14 @@ export default {
     },
     toggleAutoBreak() {
       if (this.autoBreak.active) {
-        this.toggle({active: false, depth: this.depth, stay: this.stayCurrent});
+        this.toggle({active: false, depth: this.depth});
       } else {
         this.toggle({
           active: true,
           startDepth: this.start,
           endDepth: this.end,
           targetBreaks: this.breaks,
+          finalDepth: this.final,
         });
         this.$emit('close');
       }
