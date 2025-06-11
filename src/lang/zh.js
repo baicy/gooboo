@@ -1406,7 +1406,7 @@ export default {
     hordeRest: '休眠',
     hordeNostalgia: '怀旧之情',
     hordeNostalgiaLost: '发现传家宝',
-    hordeClassMult: '职业倍数',
+    hordeClassMult: '职业系数',
     hordeClassLevel: '职业等级',
     hordeBattlePass: '战役通行证',
     hordeEnergy: '能量',
@@ -1429,7 +1429,7 @@ export default {
     ritualIngredient: '仪式成分',
     snowdownRevenge: '复仇',
     interest: '利息',
-    multiplier: '倍数',
+    multiplier: '系数',
   },
 
   // Feature specific translations

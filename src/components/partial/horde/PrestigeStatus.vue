@@ -20,6 +20,14 @@
             <fighter-prestige-stats :item="item"></fighter-prestige-stats>
           </template>
         </v-select>
+        <v-row class="mt-1">
+          <v-col cols="12" sm="6">
+            <v-text-field label="期望等级" outlined dense hide-details v-model.number="expectLevel" type="number"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field label="预计时间" outlined dense hide-details readonly :value="$formatTime(expectTime)"></v-text-field>
+          </v-col>
+        </v-row>
       </div>
     </template>
   </status-template>
@@ -30,13 +38,15 @@ import { mapState } from 'vuex';
 import StatusTemplate from '../prestige/StatusTemplate.vue';
 import DisplayRow from '../upgrade/DisplayRow.vue';
 import FighterPrestigeStats from './FighterPrestigeStats.vue';
+import { HORDE_LEVEL_MIN_SECONDS } from '../../../js/constants';
 
 export default {
   components: { StatusTemplate, FighterPrestigeStats, DisplayRow },
   data: () => ({
     selectedClass: null,
     selectedSubfeature: 0,
-    sacrificeLevel: 0
+    sacrificeLevel: 0,
+    expectLevel: 0,
   }),
   computed: {
     ...mapState({
@@ -91,6 +101,15 @@ export default {
     },
     sacrificeEffect() {
       return this.sacrificeLevel <= 0 ? [] : this.$store.getters['horde/sacrificeEffectAtLevel'](this.sacrificeLevel);
+    },
+    expectTime() {
+      let total = 0;
+      for (let i = 0; i < this.expectLevel; i++) {
+        const base = this.$store.state.horde.fighterClass[this.selectedClass].exp.base;
+        const time = Math.pow(this.$store.getters['horde/expIncrement'](this.selectedClass), i) * this.$store.getters['mult/get']('hordeExpBase', base);
+        total += Math.max(HORDE_LEVEL_MIN_SECONDS, time);
+      }
+      return total;
     }
   },
   mounted() {
