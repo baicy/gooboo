@@ -542,7 +542,9 @@
               @click="selectedSavefile = file"
               active-class="primary--text"
             >
-              {{ file.formattedText }}
+              <span>备注: {{ file.memo || '无'  }}</span>
+              <v-spacer></v-spacer>
+              <span>{{ file.formattedText }}</span>
             </v-list-item>
           </v-list>
         </v-card-text>

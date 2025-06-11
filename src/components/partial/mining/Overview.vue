@@ -15,9 +15,9 @@
         <v-btn v-if="!isFrozen && !autoBreak.active && item.id <= maxDepth && item.id !== depth" x-small fab text class="ml-2" @click="depthTo(item.id)">
           <v-icon>mdi-arrow-right-bold</v-icon>
         </v-btn>
-        <gb-tooltip :min-width="0">
+        <gb-tooltip :min-width="0" v-if="beaconPlaced[item.id]">
           <template v-slot:activator="{ on, attrs }">
-            <v-icon v-if="beaconPlaced[item.id]" v-bind="attrs" v-on="on" :color="beacon[beaconPlaced[item.id]].color" class="ml-2">mdi-spotlight</v-icon>
+            <v-icon v-bind="attrs" v-on="on" :color="beacon[beaconPlaced[item.id]].color" class="ml-2">mdi-spotlight</v-icon>
           </template>
           <div class="mt-0">{{ $vuetify.lang.t(`$vuetify.mining.beacon.${beaconPlaced[item.id]}`) }}</div>
         </gb-tooltip>
