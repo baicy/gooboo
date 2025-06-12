@@ -1177,7 +1177,8 @@ export default {
         description: 'Please remember, recovery is not provided.'
       },
       cloudautosaveTimer: {
-        name: 'Cloud-Autospeicherung'
+        name: 'Cloud-Autospeicherung',
+        description: 'Abandom'
       }
     },
     automation: {
@@ -1327,6 +1328,10 @@ export default {
       horde1AutoUtility: {
         name: 'Horde 1 Auto Utility Skill',
         description: 'Different from autocast',
+      },
+      cloudSave: {
+        name: 'Cloud save',
+        description: 'Save across devices'
       },
     }
   },

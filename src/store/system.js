@@ -175,7 +175,7 @@ export default {
                     },
                     cloudautosaveTimer: {
                         unlock: null,
-                        hasDescription: false,
+                        hasDescription: true,
                         type: 'number',
                         min: 30,
                         max: 604800,
@@ -185,7 +185,7 @@ export default {
                         defaultValue: null,
                         clearable: true
                     },
-                     lang: {
+                    lang: {
                         unlock: null,
                         hasDescription: false,
                         type: 'select',
@@ -413,6 +413,13 @@ export default {
             cheat: {
                 unlock: null,
                 items: {
+                    cloudSave: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: true,
+                        defaultValue: true,
+                    },
                     cheatSchoolExam: {
                         unlock: null,
                         hasDescription: true,
@@ -512,7 +519,8 @@ export default {
         },
         keybindCurrent: null,
         autosaveTimer: null,
-        cloudautosaveTimer: null,
+        cloudSave: {autoTime: null},
+        cloudAutosaveTimer: null,
         backupTimer: 0,
         autoplayData: [],
         autoplayChoice: {},
@@ -741,8 +749,8 @@ export default {
             Vue.set(state, 'autosaveTimer', timer !== null ? parseInt(timer) : timer);
         },
         resetCloudAutosaveTimer(state) {
-            const timer = state.settings.general.items.cloudautosaveTimer.value;
-            Vue.set(state, 'cloudautosaveTimer', timer !== null ? parseInt(timer) : timer);
+            const timer = state.cloudSave.autoTime;
+            Vue.set(state, 'cloudAutosaveTimer', timer !== null ? parseInt(timer) : timer);
         },
         addAutoplayData(state, data) {
             state.autoplayData.push(data);
@@ -794,7 +802,7 @@ export default {
             commit('updateKey', {key: 'notification', value: []});
             commit('updateKey', {key: 'keybindCurrent', value: null});
             commit('updateKey', {key: 'autosaveTimer', value: null});
-            commit('updateKey', {key: 'cloudautosaveTimer', value: null});
+            commit('updateKey', {key: 'cloudAutosaveTimer', value: null});
             commit('updateKey', {key: 'backupTimer', value: 0});
             commit('updateKey', {key: 'autoplayData', value: []});
             commit('updateKey', {key: 'autoplayChoice', value: {}});
@@ -813,6 +821,7 @@ export default {
             commit('updateKey', {key: 'listSort', value: false});
             commit('updateKey', {key: 'forceXlLayout', value: false});
             commit('updateKey', {key: 'endmin', value: false});
+            commit('updateKey', {key: 'cloudSave', value: {autoTime: null}});
 
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {
@@ -1020,9 +1029,6 @@ export default {
             commit('updateSetting', o);
             if (o.category === 'general' && o.name === 'autosaveTimer') {
                 commit('resetAutosaveTimer');
-            }
-            if (o.category === 'general' && o.name === 'cloudautosaveTimer') {
-                commit('resetCloudAutosaveTimer');
             }
             if (o.category === 'general' && o.name === 'lang') {
                 commit('mult/clearCache', null, {root: true});

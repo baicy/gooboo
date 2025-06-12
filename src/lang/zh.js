@@ -1225,14 +1225,15 @@ export default {
       },
       clouduser: {
         name: '云端用户名',
-        description: '请谨记，不提供找回'
+        description: '此处设置已废弃，请使用云存档加载处的设置，账号不变'
       },
       cloudpwd: {
         name: '云端密码',
-        description: '请谨记，不提供找回'
+        description: '此处设置已废弃，请使用云存档加载处的设置，账号不变'
       },
       cloudautosaveTimer: {
-        name: '云端自动保存'
+        name: '云端自动保存',
+        description: '此处设置已废弃，请使用云存档加载处的设置'
       },
     },
     automation: {
@@ -1384,6 +1385,10 @@ export default {
       horde1AutoUtility: {
         name: '部落1自动工具技能',
         description: '就是右边的技能，离线基本不可用这是底层代码问题，和自动施法槽独立（其实比那个好用',
+      },
+      cloudSave: {
+        name: '云存档',
+        description: '热心玩家提供的专门服务器，账号密码独立'
       },
     }
   },

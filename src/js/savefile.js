@@ -20,7 +20,7 @@ import v1_1_2 from "./modules/migration/v1_1_2";
 import v1_3_0 from "./modules/migration/v1_3_0";
 import { loadGame } from "@/js/init";
 import { APP_TESTING, LOCAL_STORAGE_NAME } from "./constants";
-import { saveData, getLatestDataList, getLatestData, loadSaveFile } from "./cloud"
+import { saveData, getLatestDataList, loadSaveFile } from "./cloud"
 import v1_3_4 from "./modules/migration/v1_3_4";
 import v1_3_5 from "./modules/migration/v1_3_5";
 import v1_4_0 from "./modules/migration/v1_4_0";
@@ -47,7 +47,7 @@ const migrations = {
     '1.5.6': v1_5_6,
 };
 
-export { checkLocal, saveLocal, loadFile, exportFile, exportFileString, cleanStore, getSavefile, getSavefileName, encodeFile, decodeFile, saveFileData, loadLatestFileData, getCloudSaveFileList, loadSelectedFileData }
+export { checkLocal, saveLocal, loadFile, exportFile, exportFileString, cleanStore, getSavefile, getSavefileName, encodeFile, decodeFile, saveCloud, getCloudList, loadCloud }
 const semverCompare = require('semver/functions/compare');
 
 /**
@@ -63,7 +63,10 @@ function saveLocal() {
     localStorage.setItem(LOCAL_STORAGE_NAME, getSavefile());
 }
 
-const saveFileData = async () => {
+/**
+ * 云存档
+ */
+const saveCloud = async () => {
     if (isSaving) {
         store.commit('system/addNotification', { color: 'error', timeout: 2000, message: { type: 'common', message: '正在上传云存档', icon: 'mdi-cloud-arrow-up' } });
         return;
@@ -71,21 +74,25 @@ const saveFileData = async () => {
     isSaving = true;
 
     try {
-        let userId = store.state.system.settings.general.items.clouduser.value;
-        let tokenId = store.state.system.settings.general.items.cloudpwd.value;
+        let userId = store.state.system.cloudSave.user;
+        let tokenId = store.state.system.cloudSave.pwd;
 
         if (!userId || !tokenId) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码错误', icon: 'mdi-cloud-alert' } });
+            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码未填写完整', icon: 'mdi-cloud-alert' } });
             isSaving = false;
             return; 
         }
         
         const goobooSavefile = localStorage.getItem('goobooSavefile');
-        if (!goobooSavefile) return;
+        if (!goobooSavefile) {
+            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '未获取本地存档', icon: 'mdi-content-save-alert' } });
+            isSaving = false;
+            return;
+        }
 
         const res = await saveData(goobooSavefile, userId, tokenId); 
         if (res.success){
-            store.commit('system/addNotification', { color: 'info', timeout: 2000, message: { type: 'common', message: '云存档已上传', icon: 'mdi-cloud-arrow-up' } });
+            store.commit('system/addNotification', { color: 'info', timeout: 3000, message: { type: 'common', message: '云存档已上传', icon: 'mdi-cloud-arrow-up' } });
         }
     } catch (error) {
         store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档上传错误', icon: 'mdi-cloud-arrow-up' } });
@@ -95,77 +102,42 @@ const saveFileData = async () => {
 
 };
 
-const loadLatestFileData = async (userId = null, tokenId = null) => {
+const getCloudList = async () => {
     try {
-        const effectiveUserId = userId !== null ? userId : store.state.system.settings.general.items.clouduser.value;
-        const effectiveTokenId = tokenId !== null ? tokenId : store.state.system.settings.general.items.cloudpwd.value;
-
-        if (!effectiveUserId || !effectiveTokenId) {
-            store.commit('system/addNotification', { 
-                color: 'error', 
-                timeout: 5000, 
-                message: { type: 'load', name: 'cloud', error: 'clouduser or cloudpwd error' } 
-            });
-            return;
-        }
-
-        const res = await getLatestData(effectiveUserId, effectiveTokenId);
-        if (res.save_data) {
-            cleanStore();
-            loadGame(res.save_data);
-        } else {
-            store.commit('system/addNotification', { 
-                color: 'warning', 
-                timeout: 5000, 
-                message: { type: 'load', name: 'cloud', error: 'No cloud save found' } 
-            });
-        }
-    } catch (error) {
-        store.commit('system/addNotification', { 
-            color: 'error', 
-            timeout: 5000, 
-            message: { type: 'load', name: 'cloud', error: error.data?.message || 'Failed to load cloud save' } 
-        });
-    }
-};
-
-const getCloudSaveFileList = async () => {
-    try {
-        let userId = store.state.system.settings.general.items.clouduser.value;
-        let tokenId = store.state.system.settings.general.items.cloudpwd.value;
+        let userId = store.state.system.cloudSave.user;
+        let tokenId = store.state.system.cloudSave.pwd;
 
         if (!userId || !tokenId) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'load', name: 'cloud', error: 'clouduser or cloudpwd error' } });
+            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码未填写完整', icon: 'mdi-cloud-alert' } });
             return null;
         }
-        const saveFiles = await getLatestDataList(userId, tokenId);
-        return saveFiles;
+        return await getLatestDataList(userId, tokenId);
     } catch (error) {
-        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'load', name: 'cloud', error: error.data.message } });
+        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档加载失败', icon: 'mdi-cloud-alert' } });
         return null;
     }
 };
 
-const loadSelectedFileData = async (selectedSavefile) => {
+const loadCloud = async (selectedSavefile) => {
     try {
-        let userId = store.state.system.settings.general.items.clouduser.value;
-        let tokenId = store.state.system.settings.general.items.cloudpwd.value;
+        let userId = store.state.system.cloudSave.user;
+        let tokenId = store.state.system.cloudSave.pwd;
 
         if (!userId || !tokenId) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'load', name: 'cloud', error: 'clouduser or cloudpwd error' } });
+            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码未填写完整', icon: 'mdi-cloud-alert' } });
             return;
         }
 
         const saveData = await loadSaveFile(selectedSavefile.id, userId, tokenId);
         if (saveData) {
+            store.commit('system/addNotification', { color: 'success', timeout: 3000, message: { type: 'common', message: '云存档加载成功', icon: 'mdi-cloud-arrow-up' } });
             cleanStore();
             loadGame(saveData);
-            store.commit('system/addNotification', { color: 'success', timeout: 2000, message: { type: 'load', name: 'cloud' } });
         } else {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'load', name: 'cloud', error: 'Failed to load cloud save' } });
+            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档加载失败', icon: 'mdi-cloud-alert' } });
         }
     } catch (error) {
-        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'load', name: 'cloud', error: error.data?.message || 'Failed to load cloud save' } });
+        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档加载失败', icon: 'mdi-cloud-alert' } });
     }
 };
 
@@ -307,7 +279,7 @@ function loadFile(file) {
         return;
     }
 
-    ['timestamp', 'currentDay', 'lastPlayedDays', 'theme', 'backupTimer', 'playerId', 'noteHint', 'cheaterSelfMark', 'cheatDetected', 'extraVersion', 'listSort', 'forceXlLayout', 'endmin'].forEach(elem => {
+    ['timestamp', 'currentDay', 'lastPlayedDays', 'theme', 'backupTimer', 'playerId', 'noteHint', 'cheaterSelfMark', 'cheatDetected', 'extraVersion', 'listSort', 'forceXlLayout', 'endmin', 'cloudSave'].forEach(elem => {
         if (save[elem]) {
             store.commit('system/updateKey', {key: elem, value: save[elem]});
         }
@@ -576,6 +548,7 @@ function getSavefile() {
         listSort: store.state.system.listSort,
         forceXlLayout: store.state.system.forceXlLayout,
         endmin: store.state.system.endmin,
+        cloudSave: store.state.system.cloudSave,
 
         // Generic systems
         subfeature: {},

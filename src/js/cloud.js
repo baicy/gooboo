@@ -61,34 +61,6 @@ export function loadSaveFile(saveId, userId, tokenId) {
     });
 }
 
-
-export async function getLatestData(userId, tokenId) {
-    const gameId = window.location.hostname;
-
-    const data = {
-        userId: userId,
-        tokenId: tokenId,
-        gameId: gameId
-    };
-
-    try {
-        const response = await instance({
-            url: '/latest',
-            method: 'post',
-            data: data,
-        });
-
-        if (response.success && response.save && response.save.save_data) {
-            return response.save;
-        } else {
-            return null;
-        }
-    } catch (error) {
-        console.error("获取最新的存档失败:", error);
-        throw error;
-    }
-}
-
 export async function getLatestDataList(userId, tokenId) {
     const gameId = window.location.hostname;
 

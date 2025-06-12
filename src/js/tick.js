@@ -9,7 +9,7 @@ import school from "./modules/school";
 import cryolab from "./modules/cryolab";
 import achievement from "./modules/achievement";
 import store from "../store";
-import { saveLocal, saveFileData } from "./savefile";
+import { saveLocal, saveCloud } from "./savefile";
 import general from "./modules/general";
 import event from "./modules/event";
 import { getDay } from "./utils/date";
@@ -66,21 +66,22 @@ function advance() {
                     }
                 }
             }
+            // 云存档
             if (
-                store.state.system.settings.general.items.clouduser.value !== null &&
-                store.state.system.settings.general.items.cloudpwd.value !== null &&
-                store.state.system.settings.general.items.cloudautosaveTimer.value !== null &&
-                store.state.system.cloudautosaveTimer !== null &&
+                store.state.system.cloudSave.user &&
+                store.state.system.cloudSave.pwd &&
+                store.state.system.cloudSave.autoTime &&
+                store.state.system.cloudAutosaveTimer !== null &&
                 !['offlineSummary', 'tab-duplicate'].includes(store.state.system.screen)
             ) {
-                let newTimer = store.state.system.cloudautosaveTimer - timeDiff;
+                let newTimer = store.state.system.cloudAutosaveTimer - timeDiff;
                 if (newTimer > 0) {
-                    store.commit('system/updateKey', {key: 'cloudautosaveTimer', value: newTimer});
+                    store.commit('system/updateKey', {key: 'cloudAutosaveTimer', value: newTimer});
                 } else {
                     store.commit('system/resetCloudAutosaveTimer');
                     let saveError = null;
                     try {
-                        saveFileData();
+                        saveCloud();
                     } catch (error) {
                         saveError = error;
                     }

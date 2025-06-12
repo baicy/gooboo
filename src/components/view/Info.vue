@@ -53,7 +53,7 @@
         <v-btn class="ma-1" color="primary" target="_blank" href="https://tendsty.itch.io/gooboo"><v-icon class="mr-2">mdi-open-in-new</v-icon>原版</v-btn>
       </v-card-actions>
     </v-card>
-    <change-content />
+    <cheat-notice />
     <v-card class="ma-2">
       <v-card-title class="justify-center">{{ $vuetify.lang.t('$vuetify.info.socials.title') }}</v-card-title>
       <v-card-text>{{ $vuetify.lang.t('$vuetify.info.socials.text') }}</v-card-text>
@@ -164,10 +164,10 @@ import { mapState } from 'vuex';
 import { APP_ENV, APP_TESTING } from '../../js/constants';
 import { numFormatters, numNegativeFormatters } from '../../js/utils/format';
 import AlertText from '../partial/render/AlertText.vue';
-import ChangeContent from '../partial/info/ChangeContent.vue';
+import CheatNotice from '../partial/info/CheatNotice.vue';
 
 export default {
-  components: { AlertText, ChangeContent },
+  components: { AlertText, CheatNotice },
   data: () => ({
     timeUnits: ['s', 'm', 'h', 'd'],
     tech: {
