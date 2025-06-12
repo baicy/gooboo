@@ -611,6 +611,7 @@ export default {
             commit('updateKey', {key: 'enhancementIngredient', value: null});
             commit('system/updateSubfeature', {key: 'mining', value: subfeature}, {root: true});
             commit('updateKey', {key: 'durability', value: getters.currentDurability});
+            commit('updateKey', {key: 'autoBreak', value: {active: false}});
             dispatch('upgrade/reset', {feature: 'mining', subfeature, type: 'regular'}, {root: true});
             dispatch('currency/reset', {feature: 'mining', type: 'regular'}, {root: true});
             dispatch('stat/reset', {feature: 'mining', type: 'regular'}, {root: true});

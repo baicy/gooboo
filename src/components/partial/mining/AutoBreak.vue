@@ -53,7 +53,7 @@
       class="mt-3"
       type="number"
       suffix="m"
-      :label="`完成后前往深度(1~${maxDepth})`"
+      :label="`完成/停止后前往深度(1~${maxDepth})`"
       dense
       outlined
       hide-details
@@ -63,7 +63,7 @@
       <v-btn
         :color="autoBreak.active? 'error': 'primary'"
         @click="toggleAutoBreak"
-        :disabled="!start || !end ||start < 0 || start > maxDepth - 1 || end < 0 || end > maxDepth - 1 || start > end"
+        :disabled="disabled"
       >
         {{ autoBreak.active ? '停止' : '开始' }}
       </v-btn>
@@ -100,11 +100,14 @@ export default {
     maxDepth() {
       return this.$store.state.stat[`mining_maxDepth${this.subfeature}`].value;
     },
+    disabled() {
+      return !this.autoBreak.active && (!this.start || !this.end || this.start < 0 || this.start > this.maxDepth - 1 || this.end < 0 || this.end > this.maxDepth - 1 || this.start > this.end || this.final > this.maxDepth);
+    }
   },
   mounted() {
     this.getMaxFlashDepth();
     this.start = this.autoBreak.startDepth || Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth-1));
-    this.end = this.autoBreak.finalDepth || this.maxFlashDepth + 1;
+    this.end = this.autoBreak.endDepth || this.maxFlashDepth + 1;
     this.breaks = this.autoBreak.targetBreaks || 1000;
     this.final = this.autoBreak.finalDepth || this.maxDepth;
     this.getNiter();
