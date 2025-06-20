@@ -40,7 +40,9 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="ma-1" min-width="36" :color="showSummary ? 'primary' : 'secondary'" @click="showSummary = !showSummary" v-bind="attrs" v-on="on"><v-icon>mdi-chart-box-outline</v-icon></v-btn>
         </template>
-        <div class="mt-0">收获统计预测，仅供参考，概率在收获时判断</div>
+        <div class="mt-0">收获统计预测，仅供参考</div>
+        <div class="mt-0">未成熟作物按100%统计</div>
+        <div class="mt-0">若掉落上限内的花瓣和蜜蜂，对应产量差距巨大请勿参考</div>
         <alert-text v-if="selectedColor" :type="selectedColor" icon-name="info">仅统计该颜色的地块</alert-text>
       </gb-tooltip>
     </div>

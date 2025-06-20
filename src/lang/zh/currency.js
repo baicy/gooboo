@@ -1,8 +1,8 @@
 export default {
-  overcapGain: '由于达到上限，收益减少至 {0}%',
-  overcapNoGain: '由于超过上限无法获得',
+  overcapGain: '已达到容量上限，收益减少至 {0}%',
+  overcapNoGain: '已超过容量上限，不再获得收益',
   benefitLoss: '购买这个会导致利益损失',
-  gainTimerNeeded: '距离买得起还有 {0}',
+  gainTimerNeeded: '距离足够购买还有 {0}',
   capTimerNeeded: '距离达到容量上限还有 {0}',
   overcapTimerNeeded: '距离达到下一个容量等级还有 {0}',
 

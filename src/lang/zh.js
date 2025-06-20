@@ -2272,7 +2272,7 @@ export default {
     unlockSeed: '解锁种子',
     experience: '经验值',
     expToLevelUp: '你还需要 {0} 次收获以达到下一等级',
-    yield: '生产',
+    yield: '产量',
     rareDrops: '稀有掉落',
     huntedRareDrops: 'Hunted稀有掉落',
     addRareDrop: '增加稀有掉落 ({0})',
