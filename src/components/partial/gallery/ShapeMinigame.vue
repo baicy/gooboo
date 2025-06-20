@@ -361,6 +361,9 @@ export default {
       }
       this.$store.dispatch('currency/gain', {feature: 'gallery', name: stat.shape, gainMult: true, amount: Math.pow(stat.amount, 2)});
       this.$store.dispatch('currency/spend', {feature: 'gallery', name: 'motivation', amount: 5 * stat.amount});
+      if (this.$store.getters['gallery/shapeHasHourglass']) {
+        this.$store.commit('gallery/updateKey', {key: 'hourglassCombo', value: this.$store.state.gallery.hourglassCombo + stat.amount});
+      }
       this.$store.dispatch('gallery/rerollShapes', changedGrid);
     }
   }
