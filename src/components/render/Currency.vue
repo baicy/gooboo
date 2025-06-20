@@ -161,6 +161,11 @@ export default {
       required: false,
       default: null
     },
+    customTimer: {
+      type: Number,
+      required: false,
+      default: null
+    },
     gainBase: {
       type: Number,
       required: false,
@@ -219,7 +224,8 @@ export default {
     },
     showTimer() {
       return (this.currency.showGainTimer && this.gainAmount !== null && this.gainAmount > 0) ||
-        (this.timerFunction !== null && this.timerFunction > 0);
+        (this.timerFunction !== null && this.timerFunction > 0) ||
+        (this.customTimer !== null && this.customTimer > 0);
     },
     gainName() {
       return this.currency.showGainMult ? this.$store.getters['currency/gainMultName'](...this.name.split('_')) : null;
@@ -272,6 +278,9 @@ export default {
       return this.currency.overcapMult * Math.pow(this.currency.overcapScaling, this.overcapStage - 1);
     },
     capTimerNeeded() {
+      if (this.customTimer !== null) {
+        return this.customTimer;
+      }
       if (this.currency.cap === null || this.overcapMult <= 0) {
         return null;
       }
