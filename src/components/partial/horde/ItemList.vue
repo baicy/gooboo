@@ -107,7 +107,7 @@ export default {
         arr = arr.filter(item => item.equipped);
       }
       if (this.canUpgrade) {
-        arr = arr.filter(item => item.cap < item.level && item.price(item.level) <= this.$store.getters['currency/value']('horde_monsterPart'));
+        arr = arr.filter(item => item.cap !== item.level && item.known && item.price(item.level) <= this.$store.getters['currency/value']('horde_monsterPart'));
       }
       return arr;
     },
