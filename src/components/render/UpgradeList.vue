@@ -19,7 +19,7 @@
 <template>
   <div>
     <div class="upgrade-pagination" :class="{'upgrade-pagination-mobile': $vuetify.breakpoint.smAndDown && !noTabs, 'upgrade-pagination-mobile-notabs': $vuetify.breakpoint.smAndDown && noTabs}">
-      <div class="d-flex mx-2 py-1 bg-tile-default align-center justify-center">
+      <div v-if="$store.getters['system/checkExtraCheated']('extraToolbar')" class="d-flex mx-2 py-1 bg-tile-default align-center justify-center">
         <gb-tooltip :min-width="0">
           <template v-slot:activator="{ on, attrs }">
             <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" :color="filter ? currency[filter].color : ''" @click="viewFilter = !viewFilter;">
@@ -189,7 +189,7 @@ export default {
       list.forEach(elem => {
         this.$store.dispatch('upgrade/updateProgress', elem);
       });
-      if (this.listSort) {
+      if (this.$store.getters['system/checkExtraCheated']('extraToolbar') && this.listSort) {
         return list.sort((a, b) => this.$store.state.upgrade.item[b].buyProgress - this.$store.state.upgrade.item[a].buyProgress);
       }
       return list;

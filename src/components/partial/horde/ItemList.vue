@@ -57,7 +57,7 @@
     <div class="horde-item-pagination text-center bg-tile-default rounded-b elevation-2 mx-2" :class="{'horde-item-pagination-mobile': $vuetify.breakpoint.xsOnly}" v-if="pages > 1">
       <v-pagination v-model="page" :length="pages"></v-pagination>
     </div>
-    <div class="px-2 d-flex justify-center">
+    <div v-if="$store.getters['system/checkExtraCheated']('extraToolbar')" class="px-2 d-flex justify-center">
       <v-checkbox label="已装备" v-model="equipped" dense hide-details></v-checkbox>
       <v-checkbox label="可升级" v-model="canUpgrade" class="ml-2" dense hide-details></v-checkbox>
     </div>

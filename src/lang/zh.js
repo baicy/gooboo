@@ -1222,19 +1222,7 @@ export default {
       useLegacyFarmSelect: {
         name: '旧版农场显示',
         description: '使用旧版菜单选择农场的作物和建筑'
-      },
-      clouduser: {
-        name: '云端用户名',
-        description: '此处设置已废弃，请使用云存档加载处的设置，账号不变'
-      },
-      cloudpwd: {
-        name: '云端密码',
-        description: '此处设置已废弃，请使用云存档加载处的设置，账号不变'
-      },
-      cloudautosaveTimer: {
-        name: '云端自动保存',
-        description: '此处设置已废弃，请使用云存档加载处的设置'
-      },
+      }
     },
     automation: {
       name: '自动化',
@@ -1389,6 +1377,10 @@ export default {
       cloudSave: {
         name: '云存档',
         description: '热心玩家提供的专门服务器，账号密码独立'
+      },
+      extraToolbar: {
+        name: '列表工具栏',
+        description: '用作筛选的工具栏'
       },
     }
   },

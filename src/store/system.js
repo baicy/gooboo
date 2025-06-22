@@ -159,32 +159,6 @@ export default {
                         defaultValue: 30,
                         clearable: true
                     },
-                    clouduser: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'text',
-                        value: '',
-                        defaultValue: '',
-                    },
-                    cloudpwd: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'text', 
-                        value: '', 
-                        defaultValue: ''
-                    },
-                    cloudautosaveTimer: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'number',
-                        min: 30,
-                        max: 604800,
-                        step: 50,
-                        suffix: 's',
-                        value: null,
-                        defaultValue: null,
-                        clearable: true
-                    },
                     lang: {
                         unlock: null,
                         hasDescription: false,
@@ -419,6 +393,13 @@ export default {
                         type: 'switch',
                         value: true,
                         defaultValue: true,
+                    },
+                    extraToolbar: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
                     },
                     cheatSchoolExam: {
                         unlock: null,

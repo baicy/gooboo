@@ -1167,18 +1167,6 @@ export default {
       useLegacyFarmSelect: {
         name: 'Alte Bauernhofauswahl',
         description: 'Nutzt das alte Menü um Pflanzen und Gebäude im Bauernhof auszuwählen'
-      },
-      clouduser: {
-        name: 'Cloud Username',
-        description: 'Please remember, recovery is not provided.'
-      },
-      cloudpwd: {
-        name: 'Cloud Password',
-        description: 'Please remember, recovery is not provided.'
-      },
-      cloudautosaveTimer: {
-        name: 'Cloud-Autospeicherung',
-        description: 'Abandom'
       }
     },
     automation: {
@@ -1332,6 +1320,10 @@ export default {
       cloudSave: {
         name: 'Cloud save',
         description: 'Save across devices'
+      },
+      extraToolbar: {
+        name: 'Extra toolbar',
+        description: 'Use to filter list'
       },
     }
   },
