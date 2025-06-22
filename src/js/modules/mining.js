@@ -14,6 +14,7 @@ import upgrade2 from "./mining/upgrade2";
 import upgradePremium from "./mining/upgradePremium";
 import upgradePrestige from "./mining/upgradePrestige";
 import bookMining from "./school/bookMining";
+import { SECONDS_PER_DAY } from "../constants";
 
 const notes = {
     1: 'mining_0',
@@ -447,7 +448,9 @@ export default {
             miningSmelterySpeed: {type: 'mult', value: val => val * 0.02 + 1}
         }},
         resin: {type: 'prestige', color: 'orange', icon: 'mdi-water', gainMult: {baseValue: 0.0001, display: 'perSecond'}, showGainMult: true, showGainTimer: true, capMult: {baseValue: 5}},
-        crystalGreen: {type: 'prestige', alwaysVisible: true, color: 'light-green', icon: 'mdi-star-three-points', gainMult: {}},
+        crystalGreen: {type: 'prestige', alwaysVisible: true, color: 'light-green', icon: 'mdi-star-three-points', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('mining').mining_crystalGreen / SECONDS_PER_DAY;
+        }, timerIsEstimate: true},
         helium: {type: 'prestige', color: 'pale-blue', icon: 'mdi-gas-cylinder', gainMult: {display: 'percent', baseValue: 0.01}, currencyMult: {
             currencyMiningScrapCap: {type: 'mult', value: val => val * 0.01 + 1}
         }},
@@ -460,7 +463,9 @@ export default {
         krypton: {type: 'prestige', color: 'light-blue', icon: 'mdi-gas-cylinder', gainMult: {display: 'percent', baseValue: 0.01}},
         xenon: {type: 'prestige', color: 'blue', icon: 'mdi-gas-cylinder', gainMult: {display: 'percent', baseValue: 0.01}},
         radon: {type: 'prestige', color: 'light-green', icon: 'mdi-gas-cylinder', gainMult: {display: 'percent', baseValue: 0.01}},
-        crystalYellow: {type: 'prestige', alwaysVisible: true, color: 'yellow', icon: 'mdi-star-four-points', gainMult: {}}
+        crystalYellow: {type: 'prestige', alwaysVisible: true, color: 'yellow', icon: 'mdi-star-four-points', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('mining').mining_crystalYellow / SECONDS_PER_DAY;
+        }, timerIsEstimate: true}
     },
     upgrade: {
         ...upgrade,

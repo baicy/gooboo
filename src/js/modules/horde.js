@@ -997,8 +997,12 @@ export default {
         soulCorrupted: {color: 'purple', icon: 'mdi-ghost', overcapMult: 0.75, overcapScaling: 0.85, gainMult: {}, capMult: {min: 200}, gainTimerFunction() {
             return store.getters['mult/get']('currencyHordeSoulCorruptedGain') / store.getters['mult/get']('hordeMinibossTime');
         }, timerIsEstimate: true},
-        soulEmpowered: {type: 'prestige', alwaysVisible: true, color: 'pink', icon: 'mdi-ghost'},
-        courage: {type: 'prestige', alwaysVisible: true, color: 'orange', icon: 'mdi-ghost', gainMult: {}},
+        soulEmpowered: {type: 'prestige', alwaysVisible: true, color: 'pink', icon: 'mdi-ghost', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('horde').horde_soulEmpowered / SECONDS_PER_DAY;
+        }, timerIsEstimate: true},
+        courage: {type: 'prestige', alwaysVisible: true, color: 'orange', icon: 'mdi-ghost', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('horde').horde_courage / SECONDS_PER_DAY;
+        }, timerIsEstimate: true},
         crown: {type: 'prestige', color: 'amber', icon: 'mdi-crown-circle-outline'},
         towerKey: {type: 'prestige', color: 'light-grey', icon: 'mdi-key-variant'},
         blood: {color: 'red', icon: 'mdi-iv-bag', gainMult: {}, capMult: {baseValue: 7500}},

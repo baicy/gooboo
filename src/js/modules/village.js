@@ -344,8 +344,12 @@ export default {
         gears: {subtype: 'specialIngredient', color: 'blue-grey', icon: 'mdi-cogs'},
 
         // Prestige currency
-        blessing: {type: 'prestige', alwaysVisible: true, color: 'yellow', icon: 'mdi-flare'},
-        shares: {type: 'prestige', alwaysVisible: true, color: 'beige', icon: 'mdi-certificate', gainMult: {}},
+        blessing: {type: 'prestige', alwaysVisible: true, color: 'yellow', icon: 'mdi-flare', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('village').village_blessing / SECONDS_PER_DAY;
+        }, timerIsEstimate: true},
+        shares: {type: 'prestige', alwaysVisible: true, color: 'beige', icon: 'mdi-certificate', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('village').village_shares / SECONDS_PER_DAY;
+        }, timerIsEstimate: true},
         offering: {type: 'prestige', color: 'orange-red', icon: 'mdi-candle', gainMult: {display: 'perHour'}, showGainMult: true, gainTimerFunction() {
             return store.getters['village/offeringPerSecond'] * SECONDS_PER_HOUR;
         }}

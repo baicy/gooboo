@@ -12,6 +12,7 @@ import upgradeShapeModify from "./gallery/upgradeShapeModify";
 import upgradePremium from "./gallery/upgradePremium";
 import upgradePrestige from "./gallery/upgradePrestige";
 import bookGallery from "./school/bookGallery";
+import { SECONDS_PER_DAY } from "../constants";
 
 export default {
     name: 'gallery',
@@ -114,7 +115,9 @@ export default {
         package: {multUnlock: 'galleryDrums', color: 'beige', icon: 'mdi-package-variant', overcapMult: 0.8, overcapScaling: 0.8, gainMult: {baseValue: 0.0125, display: 'perSecond'}, showGainMult: true, showGainTimer: true, capMult: {baseValue: 10}},
         motivation: {multUnlock: 'galleryShape', type: 'shape', color: 'pink-purple', icon: 'mdi-emoticon-excited', overcapMult: 0.5, gainMult: {baseValue: 0.2, display: 'perSecond'}, showGainMult: true, showGainTimer: true, capMult: {baseValue: 100}},
         mysteryShape: {multUnlock: 'galleryShape', type: 'shape', color: 'pale-purple', icon: 'mdi-octahedron', overcapMult: 0, gainMult: {baseValue: 1}, capMult: {baseValue: 1337}},
-        cash: {multUnlock: 'galleryAuction', type: 'prestige', alwaysVisible: true, color: 'green', icon: 'mdi-cash', gainMult: {}}
+        cash: {multUnlock: 'galleryAuction', type: 'prestige', alwaysVisible: true, color: 'green', icon: 'mdi-cash', gainMult: {display: 'perSecond'}, showGainMult: true, gainTimerFunction() {
+            return store.getters['cryolab/prestigeGain']('gallery').gallery_cash / SECONDS_PER_DAY;
+        }, timerIsEstimate: true}
     },
     note: buildArray(10).map(() => 'g'),
     upgrade: {
