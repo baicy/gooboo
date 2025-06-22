@@ -19,9 +19,9 @@
         <stat-breakdown name="galleryInspirationIncrement"></stat-breakdown>
       </currency>
     </div>
-    <div v-for="(content, tier) in ideas" :key="tier" class="d-flex flex-wrap justify-center align-center bg-tile-default rounded ma-2 pa-1 elevation-2">
+    <div v-for="(content, tier) in ideas" :key="tier" class="d-flex flex-wrap justify-center align-center bg-tile-default rounded ma-2 pa-1 elevation-2" style="position: relative;">
       <idea-item v-for="(item, key) in content" :key="tier + '-' + key" class="ma-1" :name="item" :disabled="isFrozen"></idea-item>
-      <v-chip label color="primary">{{ countOfTier[tier] }}</v-chip>
+      <v-chip v-if="tier" label :color="needPrevious(tier) ? 'error' : 'success'" style="position: absolute; right: 0; bottom: 0;">{{ needPrevious(tier) }}</v-chip>
     </div>
     <div v-if="canvasSpace.length > 0" class="d-flex flex-wrap grey mx-auto my-2 pa-2 rounded" :style="`width: ${ Math.ceil(Math.sqrt(canvasSpace.length)) * 48 + 16 }px;`">
       <div
@@ -71,6 +71,11 @@ export default {
     },
     nextInspirationTime() {
       return this.$store.getters['gallery/inspirationTimeNeeded'](this.$store.state.gallery.inspirationAmount) - this.$store.state.gallery.inspirationTime;
+    }
+  },
+  methods: {
+    needPrevious(tier) {
+      return (this.countOfTier[tier] + 1) * 2 - this.countOfTier[tier - 1];
     }
   }
 }

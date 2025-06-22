@@ -96,9 +96,7 @@
       </gb-tooltip>
       <v-icon v-if="showTransferArrow" class="color-generate-arrow">mdi-transfer-up</v-icon>
     </template>
-    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus">
-      <alert-text type="info">下阶段 ~{{ $formatTime(converterNeededTime) }}</alert-text>
-    </currency>
+    <currency v-else name="gallery_converter" class="ma-1" :bonus-array="converterBonus" :customTimer="converterNeededTime"></currency>
   </div>
 </template>
 
