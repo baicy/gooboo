@@ -429,20 +429,6 @@ export default {
                         value: false,
                         defaultValue: false
                     },
-                    oldGalleryUpgrade: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    galleryAccelerator: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
                     horde1AutoUtility: {
                         unlock: null,
                         hasDescription: true,
@@ -453,6 +439,27 @@ export default {
                     horde2SkillReset: {
                         unlock: null,
                         hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    oldGalleryUpgrade: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    inspirationReset: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    galleryAccelerator: {
+                        unlock: null,
+                        hasDescription: true,
                         type: 'switch',
                         value: false,
                         defaultValue: false

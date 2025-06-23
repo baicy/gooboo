@@ -1382,6 +1382,10 @@ export default {
         name: '列表工具栏',
         description: '用作筛选的工具栏'
       },
+      inspirationReset: {
+        name: '灵感重置',
+        description: '不便宜，但还是很厉害'
+      },
     }
   },
   statBreakdown: {

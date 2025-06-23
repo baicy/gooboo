@@ -1,7 +1,7 @@
 <template>
   <gb-tooltip :title-text="$vuetify.lang.t(`$vuetify.gallery.idea.${name}`)">
     <template v-slot:activator="{ on, attrs }">
-      <div :class="$vnode.data.staticClass" v-bind="attrs" v-on="on">
+      <div :class="$vnode.data.staticClass" v-bind="attrs" v-on="on" style="z-index: 1;">
         <v-btn width="56" height="56" min-width="56" :disabled="!canUpgrade || disabled" :color="idea.color" @click="buy">
           <v-badge overlap bottom left offset-x="45" color="grey" :disabled="!canUpgrade" :content="$formatNum(idea.level)">
             <v-icon large>{{ idea.icon }}</v-icon>

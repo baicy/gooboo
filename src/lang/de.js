@@ -1325,6 +1325,10 @@ export default {
         name: 'Extra toolbar',
         description: 'Use to filter list'
       },
+      inspirationReset: {
+        name: 'Inspiration reset',
+        description: 'Not cheap but still IMBA'
+      },
     }
   },
   statBreakdown: {
