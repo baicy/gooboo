@@ -27,7 +27,7 @@
       </currency>
       <div v-if="$store.getters['system/checkExtraCheated']('inspirationReset')" class="d-flex align-center ml-2">
         <price-tag class="ml-1" currency="gem_sapphire" :amount="resetPrice"></price-tag>
-        <v-btn color="error" class="ml-1" :disabled="isFrozen" @click="reset">重置</v-btn>
+        <v-btn color="error" class="ml-1" :disabled="isFrozen" @click="reset">重置(暂时无效)</v-btn>
       </div>
     </div>
     <div v-for="(content, tier) in ideas" :key="tier" class="d-flex flex-wrap justify-center align-center bg-tile-default rounded ma-2 pa-1 elevation-2" style="position: relative;">
@@ -93,19 +93,21 @@ export default {
       return (this.countOfTier[tier] + 1) * 2 - this.countOfTier[tier - 1];
     },
     reset() {
-      if (!this.$store.getters['system/checkExtraCheated']('inspirationReset')) return;
-      let total = 0;
-      for (const [key, elem] of Object.entries(this.$store.state.gallery.idea)) {
-        if (elem.level > 0) {
-          total += elem.level;
-          this.$store.commit('gallery/updateIdeaKey', {name: key, key: 'level', value: 0});
-          this.$store.dispatch('gallery/applyIdeaReset', key);
-        }
-      }
-      this.$store.state.currency.gallery_inspiration.value += total;
-      if (!this.$store.state.system.endmin) {
-        this.$store.dispatch('currency/spend', { feature: 'gem', name: 'sapphire', amount: this.resetPrice });
-      }
+      // if (!this.$store.getters['system/checkExtraCheated']('inspirationReset')) return;
+      // // let total = 0;
+      // for (const [key, elem] of Object.entries(this.$store.state.gallery.idea)) {
+      //   if (elem.level > 0) {
+      //     // total += elem.level;
+      //     this.$store.commit('gallery/updateIdeaKey', {name: key, key: 'level', value: 0});
+      //     this.$store.dispatch('gallery/applyIdeaReset', key);
+      //   }
+      // }
+      // commit('updateKey', {key: 'inspirationTime', value: 0});
+      // commit('updateKey', {key: 'inspirationAmount', value: 0});
+      // // this.$store.state.currency.gallery_inspiration.value += total;
+      // if (!this.$store.state.system.endmin) {
+      //   this.$store.dispatch('currency/spend', { feature: 'gem', name: 'sapphire', amount: this.resetPrice });
+      // }
     }
   }
 }
