@@ -1384,7 +1384,7 @@ export default {
       },
       inspirationReset: {
         name: '灵感重置',
-        description: '不便宜，但还是很厉害'
+        description: '非常厉害，因为太厉害了所以需要用黄玉'
       },
     }
   },
