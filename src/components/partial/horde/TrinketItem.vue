@@ -28,8 +28,25 @@
     </v-card-text>
     <v-card-actions v-if="gain === null">
       <v-icon v-if="trinket.isActive">mdi-check</v-icon>
+       <gb-tooltip v-if="!trinket.isTimeless" :min-width="350" :title-text="$vuetify.lang.t('$vuetify.upgrade.nextLevels')">
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon class="mx-1" v-bind="attrs" v-on="on">mdi-crystal-ball</v-icon>
+          </template>
+          <div v-for="(predict, key) in prediction" :key="`predict-${ key }`" class="d-flex align-center">
+            <div class="d-flex mr-2">
+              <span :class="predict.level >= 1 ? `${ ['grey', null, 'green', 'blue', 'purple', 'orange', 'red', 'yellow', 'cyan', 'pink', 'lime'][predict.level] }--text` : null">{{ $vuetify.lang.t(`$vuetify.horde.trinket.rarity.${ predict.level }`) }}</span>
+              <span class="ml-1">{{ predict.till }}</span>
+            </div>
+            <div class="bg-tile-background flex-grow-1 rounded pa-1">
+              <display-row v-for="(item, subkey) in predict.display" class="mx-1" :key="`predict-display-${key}-${item.name}-${item.type}-${subkey}`" :name="item.name" :type="item.type" :after="item.value"></display-row>
+              <template v-if="trinket.activeType !== null">
+                <active-tooltip v-for="(elem, key) in predict.active" :key="`active-effect-${ key }`" class="mt-0" :effect="elem"></active-tooltip>
+              </template>
+            </div>
+          </div>
+        </gb-tooltip>
       <v-spacer></v-spacer>
-      <v-btn small :color="trinket.equipped ? 'error' : 'primary'" @click="toggleEquipped" :disabled="isFrozen || !trinket.equipped && !canEquip">{{ $vuetify.lang.t(`$vuetify.gooboo.${ trinket.equipped ? 'deselect' : 'select' }`) }}</v-btn>
+      <v-btn v-if="trinket.level >= 1" small :color="trinket.equipped ? 'error' : 'primary'" @click="toggleEquipped" :disabled="isFrozen || !trinket.equipped && !canEquip">{{ $vuetify.lang.t(`$vuetify.gooboo.${ trinket.equipped ? 'deselect' : 'select' }`) }}</v-btn>
     </v-card-actions>
     <v-card-actions v-else>
       <div v-if="!trinket.isTimeless">+{{ $formatNum(gain) }}</div>
@@ -102,6 +119,20 @@ export default {
     },
     nextFighterStats() {
       return this.$store.state.horde.fighterClass[this.$store.state.horde.nextClass].baseStats;
+    },
+    prediction() {
+      let arr = [];
+      for (let i = this.trinket.level + 1; i < this.$store.state.horde.trinketAmountNeeded.length; i++) {
+        arr.push({
+          level: i,
+          till: this.$store.state.horde.trinketAmountNeeded[i - 1],
+          active: this.trinket.active(i),
+          display: this.trinket.effect.map(elem => {
+            return {...elem, value: elem.value(i)};
+          })
+        });
+      }
+      return arr;
     }
   },
   methods: {

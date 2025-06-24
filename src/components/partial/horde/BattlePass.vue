@@ -117,7 +117,8 @@ export default {
       return this.$store.getters['horde/battlePassCurrentLevel'];
     },
     maxPage() {
-      return Math.ceil(this.currentLevel / 5);
+      // return Math.ceil(this.currentLevel / 5);
+      return 80 / 5 - 1;
     },
     quests() {
       let obj = {};

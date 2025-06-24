@@ -29,10 +29,10 @@ export default {
     }),
     list() {
       let arr = [];
-      for (const [key, elem] of Object.entries(this.$store.state.horde.trinket)) {
-        if (elem.level >= 1) {
-          arr.push(key);
-        }
+      for (const [key] of Object.entries(this.$store.state.horde.trinket)) {
+        // if (elem.level >= 1) {
+        arr.push(key);
+        // }
       }
       return arr;
     },
