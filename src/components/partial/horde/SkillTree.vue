@@ -213,7 +213,7 @@ export default {
           const row = elem.items.findIndex(i => this.skillLevel[i[0]] > 0);
           return {...this.skills[e], name: e, canUse: (row === ind) || (row === -1 && k === 0)};
         }) : {...this.skills[el], name: el}}), canUse};
-      }).filter((elem, index, arr) => elem.canUse || (index > 0 && arr[index - 1].canUse));
+      });
     },
     currentLevel() {
       return Math.floor(this.expLevel);

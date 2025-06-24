@@ -2185,7 +2185,7 @@ export default {
       ohilio_guard2: '守卫 B',
       ohilio: '奥西利欧',
       chriz1: '克里兹',
-      chriz2: '克里兹',
+      chriz2: '克里兹+',
       mina: '米娜',
     },
     area: {

@@ -54,6 +54,11 @@
       class="horde-area-line"
       :class="{'horde-area-line-dark': $vuetify.theme.dark}"
     ></div>
+    <div class="horde-area-zone" style="left: 4px;top: 4px;">
+      <div>通过最大难度：{{ clearMaxDifficulty }}</div>
+      <div v-if="trinkets.length">击败boss掉落饰品：</div>
+      <div v-for="item in trinkets" :key="item.name">{{ $vuetify.lang.t(`$vuetify.horde.trinket.${ item.name }`) }} +{{ item.amount }}</div>
+    </div>
     <gb-tooltip v-for="(item, key) in zones" :key="`horde-zone-${ key }`" :min-width="0" :max-width="300">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -90,6 +95,7 @@
 <script>
 import { mapState } from 'vuex';
 import AlertText from '../render/AlertText.vue';
+import { randomInt, weightSelect } from "../../../js/utils/random";
 
 export default {
   components: { AlertText },
@@ -164,6 +170,41 @@ export default {
         }
       }
       return obj;
+    },
+    trinkets() {
+      let drops = [];
+      const bossZone = this.area.zones.boss_1;
+      const bossName = bossZone.boss[bossZone.boss.length - 1];
+      let hasTrinket = false;
+      const classObj = this.$store.state.horde.fighterClass[this.$store.state.horde.selectedClass];
+      const questObj = classObj.questsCompleted.boss < classObj.quests.boss.length ? classObj.quests.boss[classObj.questsCompleted.boss] : null;
+      if (questObj !== null && questObj.boss === bossName && questObj.difficulty === this.bossBonusDifficulty) {
+        hasTrinket = true;
+      } else if (this.$store.state.horde.selectedClass === 'pirate') {
+        hasTrinket = true;
+      }
+      if (bossZone.unlocked && hasTrinket) {
+        const difficulty = bossZone.difficulty + this.bossBonusDifficulty;
+        let eligible = [];
+        for (const [key, elem] of Object.entries(this.$store.state.horde.trinket)) {
+          const diff = this.$store.getters['mult/get']('hordeTrinketQuality', difficulty) - elem.rarity;
+          if (diff >= 0 && (elem.uniqueToBoss === null || elem.uniqueToBoss === bossName) && (!elem.isTimeless || elem.level <= 0)) {
+            eligible.push({name: key, weight: (diff * 0.1 + 1) * (elem.isTimeless ? 0.05 : 1), maxAmount: elem.isTimeless ? 1 : Math.floor(this.$store.getters['mult/get']('hordeTrinketGain', Math.pow(diff, 1.5) * 0.01) + 1)});
+          }
+        }
+        let rngGen = this.$store.getters['system/getRng']('horde_trinket');
+        for (let i = 0; i < 3; i++) {
+          if (eligible.length > 0) {
+            const chosenId = weightSelect(eligible.map(el => el.weight), rngGen());
+            if (chosenId !== -1) {
+              const chosenObj = eligible[chosenId];
+              drops.push({name: chosenObj.name, amount: randomInt(1, chosenObj.maxAmount, rngGen())});
+              eligible.splice(chosenId, 1);
+            }
+          }
+        }
+      }
+      return drops;
     }
   },
   methods: {
