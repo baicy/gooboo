@@ -401,6 +401,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    autoUpgrade: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     cheatSchoolExam: {
                         unlock: null,
                         hasDescription: true,

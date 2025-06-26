@@ -1329,6 +1329,10 @@ export default {
         name: 'Inspiration reset',
         description: 'Not cheap but still IMBA'
       },
+      autoUpgrade: {
+        name: 'Auto upgrade',
+        description: 'Automatically upgrade when resources are sufficient, checks every 5 seconds'
+      },
     }
   },
   statBreakdown: {

@@ -23,15 +23,25 @@
   <v-card class="d-flex align-center pa-1" v-if="upgrade.collapse">
     <v-icon v-if="upgrade.icon" class="ma-1">{{ upgrade.icon }}</v-icon>
     <div v-else class="ma-1">{{ $vuetify.lang.t(`$vuetify.upgrade.${name}`) }}</div>
-    <gb-tooltip key="upgrade-bought-collapse" v-if="upgrade.bought || (upgrade.cap !== null && !upgrade.hideCap)" :min-width="0">
+    <gb-tooltip key="upgrade-bought-collapse" v-if="!upgrade.hideCap" :min-width="0">
       <template v-slot:activator="{ on, attrs }">
-        <v-chip label small class="ma-1 px-2" v-bind="attrs" v-on="on">
+        <v-chip
+          label
+          small
+          class="ma-1 px-2"
+          v-bind="attrs"
+          v-on="on"
+          :color="auto ? 'success' : ''"
+          :style="{'cursor': autoEnable ? 'pointer' : ''}"
+          @click="autoEnable ? toggleAuto() : null"
+        >
           <v-icon class="mr-1">mdi-chevron-double-up</v-icon>
           <span>{{ upgrade.level }}{{ upgrade.level !== upgrade.bought ? (' (+' + Math.round(upgrade.bought - upgrade.level) + ')') : '' }}</span>
           <span v-if="upgrade.cap !== null && !upgrade.hideCap">&nbsp;/ {{ upgrade.cap }}</span>
         </v-chip>
       </template>
       <div>{{ $vuetify.lang.t(`$vuetify.upgrade.keyset.${ translationSet }.bought`) }}</div>
+      <div v-if="autoEnable">{{ auto ? '取消' : '加入' }}自动升级</div>
     </gb-tooltip>
     <v-chip key="upgrade-time-collapse" label small class="ma-1 px-2" v-if="isTimed && isUpgrading">
       <v-icon class="mr-1">mdi-timer</v-icon>
@@ -108,7 +118,7 @@
         </gb-tooltip>
       </div>
       <div>
-        <gb-tooltip key="upgrade-bought" v-if="upgrade.bought || (upgrade.cap !== null && !upgrade.hideCap)" :min-width="0">
+        <gb-tooltip key="upgrade-bought" v-if="!upgrade.hideCap" :min-width="0">
           <template v-slot:activator="{ on, attrs }">
             <v-chip
               :small="$vuetify.breakpoint.xsOnly"
@@ -117,6 +127,9 @@
               :class="{'px-2': $vuetify.breakpoint.xsOnly, 'reduced-height': $vuetify.breakpoint.smAndUp}"
               v-bind="attrs"
               v-on="on"
+              :color="auto ? 'success' : ''"
+              :style="{'cursor': autoEnable ? 'pointer' : ''}"
+              @click="autoEnable ? toggleAuto() : null"
             >
               <v-icon class="mr-1">mdi-chevron-double-up</v-icon>
               <span>{{ upgrade.level }}{{ upgrade.level !== upgrade.bought ? (' (+' + Math.round(upgrade.bought - upgrade.level) + ')') : '' }}</span>
@@ -124,6 +137,7 @@
             </v-chip>
           </template>
           <div class="mt-0">{{ $vuetify.lang.t(`$vuetify.upgrade.keyset.${ translationSet }.bought`) }}</div>
+          <div v-if="autoEnable">{{ auto ? '取消' : '加入' }}自动升级</div>
         </gb-tooltip>
       </div>
       <v-chip
@@ -208,6 +222,7 @@ export default {
   computed: {
     ...mapState({
       currency: state => state.currency,
+      autoEnable: state => state.system.settings.cheat.items.autoUpgrade.value,
     }),
     upgrade() {
       return this.$store.state.upgrade.item[this.name];
@@ -339,6 +354,11 @@ export default {
         });
       }
       return arr;
+    },
+    auto() {
+      if (!this.autoEnable) return false;
+      const queue = this.$store.state.upgrade.autoQueue[`${this.upgrade.feature}_${this.upgrade.type}`];
+      return queue && queue.includes(this.name);
     }
   },
   methods: {
@@ -374,6 +394,9 @@ export default {
     },
     toggleCollapse() {
       this.$store.commit('upgrade/updateKey', {name: this.name, key: 'collapse', value: !this.upgrade.collapse});
+    },
+    toggleAuto() {
+      this.$store.dispatch('upgrade/toggleAutoQueue', {name: this.name});
     }
   }
 }

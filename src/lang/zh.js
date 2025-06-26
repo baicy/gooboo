@@ -1386,6 +1386,10 @@ export default {
         name: '灵感重置',
         description: '非常厉害，因为太厉害了所以需要用黄玉'
       },
+      autoUpgrade: {
+        name: '自动升级',
+        description: '资源满足即自动升级，每隔5秒检测一次'
+      },
     }
   },
   statBreakdown: {

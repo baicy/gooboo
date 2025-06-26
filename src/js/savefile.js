@@ -401,6 +401,11 @@ function loadFile(file) {
             }
         }
     }
+    if (save.autoQueue) {
+        for (const [key, elem] of Object.entries(save.autoQueue)) {
+            Vue.set(store.state.upgrade.autoQueue, key, [...elem]);
+        }
+    }
     if (save.relic) {
         save.relic.forEach(elem => {
             if (store.state.relic.item[elem]) {
@@ -558,6 +563,7 @@ function getSavefile() {
         stat: {},
         upgrade: {},
         upgradeQueue: {},
+        autoQueue: {},
         relic: [],
         globalLevel: {},
         settings: {},
@@ -620,6 +626,11 @@ function getSavefile() {
     for (const [key, elem] of Object.entries(store.state.upgrade.queue)) {
         if (elem.length > 0) {
             save.upgradeQueue[key] = [...elem];
+        }
+    }
+    for (const [key, elem] of Object.entries(store.state.upgrade.autoQueue)) {
+        if (elem.length > 0) {
+            save.autoQueue[key] = [...elem];
         }
     }
     for (const [key, elem] of Object.entries(store.state.relic.item)) {

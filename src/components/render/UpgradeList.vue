@@ -97,6 +97,7 @@
       </div>
       <div v-if="filterItems.length === 0" class="text-center">{{ $vuetify.lang.t(`$vuetify.upgrade.keyset.${ translationSet }.notFound`) }}</div>
     </div>
+    <auto-queue :feature="feature" :type="type"></auto-queue>
     <v-row v-if="filterItems.length > 0"  class="pa-1" no-gutters>
       <v-col class="pa-1" v-for="(item, key) in finalItems" :key="`${feature}-${type}-${key}`" :cols="cols">
         <upgrade :name="item" :disabled="isFrozen" :upgrade-translation="upgradeTranslation" :translation-set="translationSet">
@@ -115,9 +116,10 @@ import AlertText from '../partial/render/AlertText.vue';
 import StatBreakdown from './StatBreakdown.vue';
 import Upgrade from './Upgrade.vue';
 import UnlockUpgrade from './UnlockUpgrade.vue';
+import AutoQueue from './AutoQueue.vue';
 
 export default {
-  components: { Upgrade, StatBreakdown, AlertText, UnlockUpgrade },
+  components: { Upgrade, StatBreakdown, AlertText, UnlockUpgrade, AutoQueue },
   props: {
     feature: {
       type: String,

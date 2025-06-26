@@ -10,7 +10,8 @@ export default {
         subtypeIcon: {
             village_housing: 'mdi-home-circle',
             village_workstation: 'mdi-briefcase'
-        }
+        },
+        autoQueue: {}
     },
     getters: {
         capMultName: () => (feature, name) => {
@@ -180,6 +181,21 @@ export default {
                     state.cache[cacheKey].splice(cacheIndex, 1);
                 }
             }
+        },
+        initAutoQueue(state, listName) {
+            if (state.autoQueue[listName] === undefined) {
+                Vue.set(state.autoQueue, listName, []);
+            }
+        },
+        addToAutoQueue(state, o) {
+            state.autoQueue[o.list].push(o.item);
+        },
+        removeFromAutoQueue(state, o) {
+            const index = state.autoQueue[o.list].indexOf(o.item);
+            state.autoQueue[o.list].splice(index, 1);
+        },
+        updateAutoQueue(state, o) {
+            Vue.set(state.autoQueue, o.list, o.queue);
         },
     },
     actions: {
@@ -477,6 +493,32 @@ export default {
                     }
                 }
             }
+        },
+        toggleAutoQueue({ state, commit }, o) {
+            const name = o.name;
+            const upgrade = state.item[name];
+            const listName = `${upgrade.feature}_${upgrade.type}`;
+            if (state.autoQueue[listName] === undefined) {
+                commit('initAutoQueue', listName);
+            }
+            const inQueue = state.autoQueue[listName].includes(name);
+            if (inQueue) {
+                commit('removeFromAutoQueue', { list: listName, item: name });
+            } else {
+                commit('addToAutoQueue', { list: listName, item: name });
+            }
+        },
+        applyAutoQueue({ state, getters, dispatch }, list) {
+            const queue = state.autoQueue[list];
+            if (queue === undefined || queue.length === 0) {
+                return;
+            }
+            queue.forEach(key => {
+                const [feature, name] = key.split('_');
+                if (getters.canAfford(feature, name)) {
+                    dispatch('buyMax', { feature, name });
+                }
+            });
         }
     }
 }
