@@ -32,7 +32,6 @@
           v-bind="attrs"
           v-on="on"
           :color="auto ? 'success' : ''"
-          :style="{'cursor': autoEnable ? 'pointer' : ''}"
           @click="autoEnable ? toggleAuto() : null"
         >
           <v-icon class="mr-1">mdi-chevron-double-up</v-icon>
@@ -128,7 +127,6 @@
               v-bind="attrs"
               v-on="on"
               :color="auto ? 'success' : ''"
-              :style="{'cursor': autoEnable ? 'pointer' : ''}"
               @click="autoEnable ? toggleAuto() : null"
             >
               <v-icon class="mr-1">mdi-chevron-double-up</v-icon>

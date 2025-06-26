@@ -16,6 +16,11 @@
   <div v-if="canSee">
     <div class="d-flex justify-center ma-2">
       <currency name="gallery_inspiration" :customPercent="inspirationPercent" :customTimer="nextInspirationTime">
+        <div>
+          <span>已获取 </span>
+          <currency-icon name="gallery_inspiration"></currency-icon>
+          <span> {{ inspirationAmount }}</span>
+        </div>
         <span>{{ $vuetify.lang.t(`$vuetify.gallery.nextInspiration.0`) }}</span>
         <currency-icon name="gallery_inspiration"></currency-icon>
         <span>{{ $vuetify.lang.t(`$vuetify.gallery.nextInspiration.1`) }}</span>
@@ -24,17 +29,18 @@
         <stat-breakdown name="galleryInspirationBase"></stat-breakdown>
         <h3 class="text-center">{{ $vuetify.lang.t('$vuetify.mult.galleryInspirationIncrement') }}</h3>
         <stat-breakdown name="galleryInspirationIncrement"></stat-breakdown>
+        <h3 class="text-center">{{ $vuetify.lang.t('$vuetify.mult.galleryInspirationStart') }}</h3>
+        <stat-breakdown name="galleryInspirationStart"></stat-breakdown>
       </currency>
       <div v-if="$store.getters['system/checkExtraCheated']('inspirationReset')" class="d-flex align-center ml-2">
         <gb-tooltip>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on" :color="topazAmount < resetPrice ? 'error' : 'primary'" class="ml-1" :disabled="isFrozen" @click="reset">重置</v-btn>
+            <v-btn v-bind="attrs" v-on="on" :color="sapphireAmount < resetPrice ? 'error' : 'primary'" class="ml-1" :disabled="isFrozen" @click="reset">重置</v-btn>
           </template>
           <div>初始化创意等级和灵感点数</div>
-          <div>不返还使用卡片的灵感点数</div>
           <div>
             <span class="mr-1">每次重置需要花费</span>
-            <price-tag class="ml-1" currency="gem_topaz" :amount="resetPrice"></price-tag>
+            <price-tag class="ml-1" currency="gem_sapphire" :amount="resetPrice"></price-tag>
           </div>
         </gb-tooltip>
       </div>
@@ -65,13 +71,14 @@ import PriceTag from '../../render/PriceTag.vue';
 export default {
   components: { Currency, IdeaItem, CurrencyIcon, StatBreakdown, PriceTag },
   data: ()=>({
-    resetPrice: 100
+    resetPrice: 1000
   }),
   computed: {
     ...mapState({
       isFrozen: state => state.cryolab.gallery.active,
       canvasSpace: state => state.gallery.canvasSpace,
-      topazAmount: state => state.currency.gem_topaz.value
+      inspirationAmount: state => state.gallery.inspirationAmount,
+      sapphireAmount: state => state.currency.gem_sapphire.value
     }),
     inspirationPercent() {
       return 100 * this.$store.state.gallery.inspirationTime / this.$store.getters['gallery/inspirationTimeNeededCurrent'];
@@ -95,7 +102,12 @@ export default {
       return this.$store.state.unlock.galleryInspiration.see;
     },
     nextInspirationTime() {
-      return this.$store.getters['gallery/inspirationTimeNeeded'](this.$store.state.gallery.inspirationAmount) - this.$store.state.gallery.inspirationTime;
+      return this.$store.getters['gallery/inspirationTimeNeeded'](this.inspirationAmount) - this.$store.state.gallery.inspirationTime;
+    },
+    startAmount() {
+      const amountStart = this.$store.getters['mult/get']('galleryInspirationStart');
+      const amountFromIdea = this.$store.state.gallery.idea.thinkHarder.level * 2;
+      return amountStart - amountFromIdea;
     }
   },
   methods: {
@@ -104,21 +116,19 @@ export default {
     },
     reset() {
       if (!this.$store.getters['system/checkExtraCheated']('inspirationReset')) return;
-      if (this.topazAmount < this.resetPrice) return;
-      let total = 0;
+      if (this.sapphireAmount < this.resetPrice) return;
       for (const [key, elem] of Object.entries(this.$store.state.gallery.idea)) {
         if (elem.level > 0) {
-          total += elem.level;
           this.$store.commit('gallery/updateIdeaKey', {name: key, key: 'level', value: 0});
           this.$store.dispatch('gallery/applyIdeaReset', key);
         }
       }
       if (this.$store.state.system.endmin) {
-        this.$store.state.currency.gallery_inspiration.value += total;
-        this.$store.dispatch('currency/spend', { feature: 'gem', name: 'topaz', amount: this.resetPrice });
+        this.$store.state.currency.gallery_inspiration.value = this.inspirationAmount + this.startAmount;
+        this.$store.dispatch('currency/spend', { feature: 'gem', name: 'sapphire', amount: this.resetPrice });
       } else {
         this.$store.commit('gallery/updateKey', {key: 'inspirationTime', value: 0});
-        this.$store.commit('gallery/updateKey', {key: 'inspirationAmount', value: 0});
+        this.$store.commit('gallery/updateKey', {key: 'inspirationAmount', value: this.startAmount});
       }
     }
   }

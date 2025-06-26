@@ -134,7 +134,7 @@ export default {
   farmHuntChance: '狩猎几率',
   galleryInspirationBase: '灵感时间基数',
   galleryInspirationIncrement: '灵感时间增量',
-  galleryInspirationStart: '灵感的开始',
+  galleryInspirationStart: '起始灵感',
   galleryColorGain: '所有颜色增益',
   galleryColorDrumChance: '所有鼓几率',
   galleryColorDrumCap: '所有鼓上限',
