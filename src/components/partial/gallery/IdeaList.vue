@@ -127,8 +127,9 @@ export default {
         this.$store.state.currency.gallery_inspiration.value = this.inspirationAmount + this.startAmount;
         this.$store.dispatch('currency/spend', { feature: 'gem', name: 'sapphire', amount: this.resetPrice });
       } else {
+        this.$store.state.currency.gallery_inspiration.value = this.startAmount;
         this.$store.commit('gallery/updateKey', {key: 'inspirationTime', value: 0});
-        this.$store.commit('gallery/updateKey', {key: 'inspirationAmount', value: this.startAmount});
+        this.$store.commit('gallery/updateKey', {key: 'inspirationAmount', value: 0});
       }
     }
   }
