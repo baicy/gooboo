@@ -1390,6 +1390,10 @@ export default {
         name: '自动升级',
         description: '资源满足即自动升级，每隔5秒检测一次'
       },
+      categoryCrop: {
+        name: '作物分类显示',
+        description: '根据作物类型进行分类显示，仅在旧版农场显示生效'
+      },
     }
   },
   statBreakdown: {

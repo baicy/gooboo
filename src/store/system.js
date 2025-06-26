@@ -457,6 +457,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    categoryCrop: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     inspirationReset: {
                         unlock: null,
                         hasDescription: true,

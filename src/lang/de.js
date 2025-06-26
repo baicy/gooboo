@@ -1333,6 +1333,10 @@ export default {
         name: 'Auto upgrade',
         description: 'Automatisch upgraden, wenn die Ressourcen ausreichen, alle 5 Sekunden überprüft'
       },
+      categoryCrop: {
+        name: 'Pflanzenkategorie',
+        description: 'Pflanzen nach Kategorie anzeigen, nur in der alten Farmauswahl wirksam'
+      },
     }
   },
   statBreakdown: {

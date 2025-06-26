@@ -1,22 +1,41 @@
+<style>
+.crop-progress {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  width: calc(100% - 8px);
+}
+</style>
+
 <template>
   <div>
     <div class="d-flex flex-wrap justify-center ma-1">
-      <currency v-for="(item, key) in currencies" class="ma-1" :key="'currency-' + key" :name="'farm_' + item">
-        <div v-if="rareDropSource[`farm_${item}`]">
-          <div class="d-flex">
-            <div style="min-width: 70px">掉落作物：</div>
-            <div class="d-flex flex-wrap">
-              <v-chip v-for="crop in rareDropSource[`farm_${item}`]" :key="crop" class="ma-1 balloon-text-dynamic" :color="crops[crop].color" small label>
-                <v-icon class="mr-1">{{ crops[crop].icon }}</v-icon>
-                {{ $vuetify.lang.t(`$vuetify.farm.crop.${ crop }`) }}
-              </v-chip>
-            </div>
-          </div>
-        </div>
-      </currency>
+      <currency v-for="(item, key) in currencies" class="ma-1" :key="'currency-' + key" :name="'farm_' + item"></currency>
     </div>
     <template v-if="useLegacySelect">
-      <div class="d-flex flex-wrap justify-center ma-1">
+      <div v-if="$store.getters['system/checkExtraCheated']('categoryCrop')">
+        <v-tabs v-model="category" grow show-arrows>
+          <v-tab v-for="category in categories" :key="category" :href="`#${category}`">
+            <tab-icon-text :icon="currency[`farm_${category}`].icon"></tab-icon-text>
+          </v-tab>
+        </v-tabs>
+        <div class="d-flex flex-wrap justify-center ma-1">
+          <div v-for="item in categoryCrops[category]" :key="`farm-crop-${ item.name }`" style="position: relative;">
+            <v-btn
+              class="ma-1 px-2 balloon-text-dynamic"
+              :class="{'selected-primary': selectedCropName === item.name}"
+              min-width="0"
+              :color="item.color"
+              @click="selectCrop(item.name)"
+            >
+              <v-icon>{{ item.icon }}</v-icon>
+              <span class="ml-1" :class="{'light-blue--text': item.level >= item.levelMax}">{{ item.level || 0 }}</span>
+            </v-btn>
+            <v-progress-linear class="rounded crop-progress" :color="item.level >= item.levelMax ? 'light-blue' : 'white'" height="4" :value="item.exp / expNeededs[item.name] * 100"></v-progress-linear>
+          </div>
+        </div>
+      </div>
+      <div v-else class="d-flex flex-wrap justify-center ma-1">
         <template v-for="(item, key) in crops">
           <v-btn :data-cy="`farm-crop-${ key }`" v-if="item.found" class="ma-1 px-2" :class="{'selected-primary': selectedCropName === key}" min-width="0" :key="'crop-' + key" :color="item.color" @click="selectCrop(key)">
             <v-icon>{{ item.icon }}</v-icon>
@@ -56,12 +75,15 @@ import BuildingCard from './BuildingCard.vue';
 import CropCard from './CropCard.vue';
 import FertilizerCard from './FertilizerCard.vue';
 import PlaceableSelectDisplay from './PlaceableSelectDisplay.vue';
+import TabIconText from '../render/TabIconText.vue';
 
 export default {
-  components: { Currency, CropCard, FertilizerCard, Consumable, BuildingCard, PlaceableSelectDisplay },
+  components: { Currency, CropCard, FertilizerCard, Consumable, BuildingCard, PlaceableSelectDisplay, TabIconText },
   data: () => ({
     currencies: ['vegetable', 'berry', 'grain', 'flower', 'gold', 'seedHull', 'grass', 'petal', 'bug', 'butterfly', 'ladybug', 'spider', 'bee', 'mysteryStone', 'goldenPetal', 'smallSeed'],
-    selectedPlaceable: null
+    selectedPlaceable: null,
+    categories: ['vegetable', 'berry', 'grain', 'flower'],
+    category: 'vegetable'
   }),
   computed: {
     ...mapState({
@@ -71,7 +93,8 @@ export default {
       selectedBuildingName: state => state.farm.selectedBuildingName,
       selectedFertilizerName: state => state.farm.selectedFertilizerName,
       unlock: state => state.unlock,
-      consumable: state => state.consumable
+      consumable: state => state.consumable,
+      currency: state => state.currency
     }),
     fertilizers() {
       let obj = {};
@@ -103,22 +126,32 @@ export default {
     useLegacySelect() {
       return this.$store.state.system.settings.general.items.useLegacyFarmSelect.value;
     },
-    rareDropSource() {
-      const drops = {};
-      for(const crop in this.crops) {
-        this.crops[crop].rareDrop.forEach((drop) => {
-          if (drops[drop.name] === undefined) {
-            drops[drop.name] = [];
+    categoryCrops() {
+      const crops = {};
+      for (const type of this.categories) {
+        crops[type] = [];
+        for (const [key, elem] of Object.entries(this.crops)) {
+          if (elem.type === type && elem.found) {
+            crops[type].push({name: key, ...elem});
           }
-          drops[drop.name].push(crop);
-        });
+        }
       }
-      return drops;
-    }
+      return crops;
+    },
+    expNeededs() {
+      const neededs = {};
+      for (const [key, elem] of Object.entries(this.crops)) {
+        if (elem.found) {
+          neededs[key] = this.$store.getters['farm/expNeeded'](key);
+        }
+      }
+      return neededs;
+    },
   },
   mounted() {
     if (this.selectedCropName !== null) {
       this.selectedPlaceable = `crop_${ this.selectedCropName }`;
+      this.category = this.crops[this.selectedCropName].type;
     } else if (this.selectedBuildingName !== null) {
       this.selectedPlaceable = `building_${ this.selectedBuildingName }`;
     }

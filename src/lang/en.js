@@ -1333,6 +1333,10 @@ export default {
         name: 'Auto upgrade',
         description: 'Automatically upgrade when resources are sufficient, checks every 5 seconds'
       },
+      categoryCrop: {
+        name: 'Crop category',
+        description: 'Display crops by category, only effective in the old farm selection'
+      },
     }
   },
   statBreakdown: {

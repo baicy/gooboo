@@ -1,6 +1,15 @@
 <template>
   <div class="tooltip-text-container">
     <div v-if="!hideDetails">{{ $vuetify.lang.t(`$vuetify.currency.${name}.description`) }}</div>
+    <div v-if="dropSource.length" class="d-flex">
+      <div class="my-1" style="min-width: 70px">掉落作物：</div>
+      <div class="d-flex flex-wrap">
+        <v-chip v-for="crop in dropSource" :key="crop.name" class="ma-1 balloon-text-dynamic" :color="crop.color" small label>
+          <v-icon v-if="crop.icon" class="mr-1">{{ crop.icon }}</v-icon>
+          {{ crop.title }}
+        </v-chip>
+      </div>
+    </div>
     <slot></slot>
     <alert-text v-if="!hideDetails && isOvercap" type="error">{{
       currency.overcapMult > 0 ? ($vuetify.lang.t('$vuetify.currency.overcapGain', $formatNum(overcapMult * 100, true)) + (overcapStage > 1 ? ` (x${ overcapStage })` : '')) : $vuetify.lang.t('$vuetify.currency.overcapNoGain')
@@ -184,6 +193,23 @@ export default {
       }
       const gainAmount = this.currency.showGainTimer ? this.gainAmount : this.timerFunction;
       return Math.ceil((this.currency.cap * (this.overcapStage + 1) - this.currency.value) * this.gainTimeMult / (gainAmount * this.overcapMult));
+    },
+    dropSource() {
+      const sources = [];
+      if (this.name.split('_')[0] === 'farm') {
+        const crops = this.$store.state.farm.crop;
+        for (const [key, elem] of Object.entries(crops)) {
+          if (elem.rareDrop && elem.rareDrop.find(drop => drop.name === this.name)) {
+            sources.push({
+              name: key,
+              title: elem.found ? this.$vuetify.lang.t('$vuetify.farm.crop.' + key) : '?',
+              icon: elem.found ? elem.icon : '',
+              color: elem.color,
+            });
+          }
+        }
+      }
+      return sources;
     }
   }
 }
