@@ -58,11 +58,82 @@
         </v-card>
       </v-col>
     </v-row>
+    <div v-if="$store.getters['system/checkExtraCheated']('extraToolbar')" class="d-flex mx-2 align-center justify-center" style="gap: 4px;">
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn :color="crafting ? 'primary' : ''" v-bind="attrs" v-on="on" @click="toggleFilterCrafting" width="36" min-width="36" elevation="5">
+          <v-icon>mdi-hammer</v-icon>
+        </v-btn>
+        </template>
+        <div>筛选制作中的工艺品</div>
+      </gb-tooltip>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn :color="selling ? 'primary' : ''" v-bind="attrs" v-on="on" @click="toggleFilterSelling" width="36" min-width="36" elevation="5">
+          <v-icon>mdi-currency-usd</v-icon>
+        </v-btn>
+        </template>
+        <div>筛选出售中的工艺品</div>
+      </gb-tooltip>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn :color="enable ? 'primary' : ''" v-bind="attrs" v-on="on" @click="enable = !enable" width="36" min-width="36" elevation="5" :disabled="crafting || selling">
+          <v-icon>mdi-check</v-icon>
+        </v-btn>
+        </template>
+        <div>筛选可以制作的工艺品</div>
+      </gb-tooltip>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn :color="finalFilter ? craftMaterials[finalFilter].color : ''" v-bind="attrs" v-on="on" @click="showMaterials = !showMaterials" width="36" min-width="36" elevation="5" :disabled="crafting || selling">
+          <v-icon>{{ finalFilter ? craftMaterials[finalFilter].icon : 'mdi-filter' }}</v-icon>
+        </v-btn>
+        </template>
+        <div>根据原材料筛选工艺品</div>
+      </gb-tooltip>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn :color="showLocked ? 'primary' : ''" v-bind="attrs" v-on="on" @click="showLocked = !showLocked" width="36" min-width="36" elevation="5" :disabled="crafting || selling">
+          <v-icon>mdi-lock</v-icon>
+        </v-btn>
+        </template>
+        <div>查看未解锁工艺品</div>
+      </gb-tooltip>
+    </div>
+    <div v-if="showMaterials" class="d-flex flex-wrap bg-tile-background px-2 justify-center my-1" style="gap: 8px">
+      <gb-tooltip
+        v-for="mat in craftMaterials"
+        :key="mat.name"
+        :min-width="0"
+        :title-text="mat.title"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <div v-bind="attrs" v-on="on" class="rounded" :class="{'selected-primary': finalFilter === mat.name}">
+            <v-btn
+              :color="mat.color"
+              class="balloon-text-dynamic opacity-40"
+              :class="[$vuetify.theme.dark ? 'theme--dark darken-3' : 'theme--light lighten-3']"
+              min-width="30" width="30" height="30"
+              elevation="3"
+              @click="() => filter = filter === mat.name ? '' : mat.name"
+            >
+              <v-icon size="16">{{ mat.icon }}</v-icon>
+            </v-btn>
+          </div>
+        </template>
+      </gb-tooltip>
+    </div>
     <div class="d-flex flex-wrap ma-1">
-      <crafting-item class="ma-1" v-for="craft in craftingItems" :key="craft" :name="craft" @click="selectCraft(craft)"></crafting-item>
+      <crafting-item class="ma-1" v-for="craft in finalCraftingItems" :key="craft" :name="craft" @click="selectCraft(craft)"></crafting-item>
     </div>
     <v-card v-if="selectedCraft" class="ma-2">
-      <v-card-title class="pa-2 justify-center">{{ $vuetify.lang.t(`$vuetify.village.crafting.${ selectedCraft }`) }}</v-card-title>
+      <v-card-title class="pa-2 justify-center">
+        {{ $vuetify.lang.t(`$vuetify.village.crafting.${ selectedCraft }`) }}
+        <v-chip label small v-if="completedMilestones !== null" class="ml-2">
+          <v-icon class="mr-1">mdi-trophy</v-icon>
+          <span>{{ completedMilestones }}</span>
+        </v-chip>
+      </v-card-title>
       <v-card-subtitle class="pa-1 text-center">{{ $vuetify.lang.t('$vuetify.village.crafting.owned', $formatNum(craftObj.owned)) }}</v-card-subtitle>
       <v-card-text>
         <div class="d-flex flex-wrap mx-n1 my-1">
@@ -87,33 +158,34 @@
             </gb-tooltip>
             <price-tag v-else class="ma-1" :key="currency + '-' + index" :currency="currency" :amount="craftObj.isSpecial ? amount(craftObj.owned) : amount"></price-tag>
           </template>
-          <v-chip small label class="ma-1 px-2" color="error" v-if="!craftObj.isSpecial">
+          <v-chip small label class="ma-1 px-2 balloon-text-dynamic" color="orange" v-if="!craftObj.isSpecial">
             <v-icon>mdi-circle-multiple</v-icon>
-            <span>/s</span>
-            <span class="ml-2">{{ parseFloat(sellPrice *craftObj.cacheSellChance).toFixed(4) }}</span>
+            <span class="ml-2">{{ parseFloat(sellPrice *craftObj.cacheSellChance).toFixed(4) }}/s</span>
           </v-chip>
         </div>
         <div class="d-flex align-center my-1">
           <v-btn
+            v-if="craftObj.unlocked"
             class="mr-2"
             :color="craftObj.isCrafting ? 'success': 'error'"
             @click="toggleCrafting"
             :disabled="isFrozen || !craftObj.isCrafting && currentArtisan >= maxArtisan"
           ><v-icon>{{ craftObj.isCrafting ? 'mdi-check' : 'mdi-cancel' }}</v-icon></v-btn>
-          <v-progress-linear class="rounded" height="16" :value="craftObj.progress * 100">{{ $formatTime(craftObj.timeNeeded) }}</v-progress-linear>
+          <v-progress-linear class="rounded" height="16" :value="craftObj.progress * 100">{{ $formatTime(craftObj.timeNeeded * (1 - craftObj.progress)) }} / {{ $formatTime(craftObj.timeNeeded) }}</v-progress-linear>
         </div>
         <div v-if="!craftObj.isSpecial" class="d-flex align-center my-1 mt-3">
           <v-btn
+            v-if="craftObj.unlocked"
             class="mr-2"
             :color="craftObj.isSelling ? 'success': 'error'"
             @click="toggleSelling"
             :disabled="isFrozen || !craftObj.isSelling && currentCounter >= maxCounter"
           ><v-icon>{{ craftObj.isSelling ? 'mdi-currency-usd' : 'mdi-currency-usd-off' }}</v-icon></v-btn>
           <v-text-field type="number" :label="$vuetify.lang.t('$vuetify.village.crafting.sellPrice', $formatNum(craftObj.value))" min="1" outlined hide-details v-model="sellPrice"></v-text-field>
-          <div class="text-center" style="min-width: 175px;">
+          <div class="text-center">
             {{ $vuetify.lang.t('$vuetify.village.crafting.sellEvery', $formatTime(Math.round(1 / Math.min(craftObj.cacheSellChance, 1)))) }}
             <br/>
-            需要~{{ $formatTime(Math.round(1 / Math.min(craftObj.cacheSellChance, 1))*craftObj.owned) }}
+            售完 ~{{ $formatTime(Math.round(1 / Math.min(craftObj.cacheSellChance, 1))*craftObj.owned) }}
           </div>
         </div>
         <v-progress-linear v-if="currentMilestone !== null" class="rounded mt-2" color="blue" height="24" :value="milestonePercent">
@@ -150,12 +222,19 @@ export default {
   components: { CraftingItem, PriceTag, StatBreakdown, DisplayRow },
   data: () => ({
     selectedCraft: null,
-    sellPrice: null
+    sellPrice: null,
+    showLocked: false,
+    showMaterials: false,
+    filter: '',
+    enable: false,
+    crafting: false,
+    selling: false
   }),
   computed: {
     ...mapState({
       craftingList: state => state.village.crafting,
       isFrozen: state => state.cryolab.village.active,
+      currency: state => state.currency
     }),
     ...mapGetters({
       currentArtisan: 'village/artisansActive',
@@ -164,11 +243,79 @@ export default {
     craftingItems() {
       let arr = [];
       for (const [key, elem] of Object.entries(this.craftingList)) {
-        if (elem.unlocked) {
+        if (elem.unlocked || this.showLocked) {
           arr.push(key);
         }
       }
       return arr;
+    },
+    finalFilter() {
+      if (!this.filter || !this.craftMaterials[this.filter]) {
+        return '';
+      }
+      return this.filter;
+    },
+    finalCraftingItems() {
+      let items = this.craftingItems;
+      if (this.crafting) {
+        items = items.filter(item => {
+          const craftObj = this.craftingList[item];
+          return craftObj.isCrafting;
+        });
+      } else if (this.selling) {
+        items = items.filter(item => {
+          const craftObj = this.craftingList[item];
+          return craftObj.isSelling;
+        });
+      } else {
+        if (this.finalFilter) {
+          items = items.filter(item => {
+            const craftObj = this.craftingList[item];
+            return Object.keys(craftObj.price).includes(this.finalFilter);
+          });
+        }
+        if (this.enable) {
+          items = items.filter(item => {
+            const craftObj = this.craftingList[item];
+            for (const [material, amount] of Object.entries(craftObj.price)) {
+              const [type, craftName] = material.split('_');
+              if (type === 'craft' && !this.craftingList[craftName].unlocked) {
+                return false;
+              }
+              if (type !== 'craft') {
+                if (typeof amount === 'function') {
+                  if (this.$store.getters['currency/value'](material) < amount(craftObj.owned)) {
+                    return false;
+                  }
+                } else {
+                  if (this.$store.getters['currency/value'](material) < amount) {
+                    return false;
+                  }
+                }
+              }
+            }
+            return true;
+          });
+        }
+      }
+      return items;
+    },
+    craftMaterials() {
+      const materials = {};
+      this.craftingItems.forEach(craft => {
+        const craftObj = this.craftingList[craft];
+        for (const material of Object.keys(craftObj.price)) {
+          if (materials[material]) continue;
+          const [type, craftName] = material.split('_');
+          materials[material] = {
+            name: material,
+            title: type === 'craft' ? this.$vuetify.lang.t(`$vuetify.village.crafting.${ craftName }`): this.$vuetify.lang.t(`$vuetify.currency.${material}.name`),
+            color: type === 'craft' ? this.craftingList[craftName].color : this.currency[material].color,
+            icon: type === 'craft' ? this.craftingList[craftName].icon : this.currency[material].icon,
+          };
+        }
+      });
+      return materials;
     },
     craftObj() {
       return this.selectedCraft === null ? null : this.craftingList[this.selectedCraft];
@@ -194,6 +341,18 @@ export default {
         amount = parseInt(key);
       }
       return 0;
+    },
+    completedMilestones() {
+      if (this.selectedCraft === null || this.craftObj.isSpecial) {
+        return null;
+      }
+      let completes = 0;
+      for (const key of Object.keys(this.craftObj.milestone)) {
+        if (parseInt(key) <= this.craftObj.crafted) {
+          completes++;
+        }
+      }
+      return completes;
     },
     currentMilestone() {
       if (this.selectedCraft === null || this.craftObj.isSpecial) {
@@ -235,6 +394,22 @@ export default {
     toggleSelling() {
       if (this.selectedCraft !== null) {
         this.$store.commit('village/updateSubkey', {key: 'crafting', name: this.selectedCraft, subkey: 'isSelling', value: !this.craftObj.isSelling});
+      }
+    },
+    toggleFilterCrafting() {
+      this.crafting = !this.crafting;
+      if (this.crafting) {
+        this.filter = '';
+        this.showMaterials = false;
+        this.selling = false;
+      }
+    },
+    toggleFilterSelling() {
+      this.selling = !this.selling;
+      if (this.selling) {
+        this.filter = '';
+        this.showMaterials = false;
+        this.crafting = false;
       }
     }
   },

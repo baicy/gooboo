@@ -1596,8 +1596,8 @@ export default {
         description: '特殊制品能够给制作过程提供永久加成，进度不随声望重置。每制作一次，消耗提升。特殊制品没有里程碑'
       },
       crafts: '制作 {0} / {1}',
-      sellEvery: '每 ~{0} 卖出 1',
-      sellPrice: '售卖价格 (原价：{0})',
+      sellEvery: '单售 ~{0}',
+      sellPrice: '出售价格 (原价：{0})',
       rope: '绳子',
       woodenPlanks: '木板',
       brick: '砖块',

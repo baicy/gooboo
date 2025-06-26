@@ -15,7 +15,7 @@
       currency.overcapMult > 0 ? ($vuetify.lang.t('$vuetify.currency.overcapGain', $formatNum(overcapMult * 100, true)) + (overcapStage > 1 ? ` (x${ overcapStage })` : '')) : $vuetify.lang.t('$vuetify.currency.overcapNoGain')
     }}</alert-text>
     <alert-text v-if="!hideDetails && currency.cap && currency.overcapMult > 0" type="info">
-      当前阶段上限 {{ $formatNum((currency.value-currency.cap * overcapStage) / currency.cap * 100, true) }}%
+      当前阶段 {{ $formatNum((currency.value-currency.cap * overcapStage) / currency.cap * 100, true) }}%
     </alert-text>
     <div class="text-center mt-2">
       <span :class="afford ? '' : `red--text ${ $vuetify.theme.dark ? 'text--lighten-3' : 'text--darken-2'}`">

@@ -8,7 +8,7 @@
   <v-badge class="crafting-badge-item" overlap bordered offset-x="16" offset-y="16" bottom :value="crafting.isSelling" :color="crafting.color">
     <v-badge overlap bordered offset-x="16" offset-y="16" :value="crafting.isCrafting" :color="crafting.color">
       <v-badge overlap bordered offset-x="16" offset-y="16" bottom left :value="crafting.isSpecial" :color="crafting.color">
-        <v-btn width="108" class="justify-start balloon-text-dynamic px-2" :color="crafting.color" v-on="$listeners">
+        <v-btn width="108" class="justify-start balloon-text-dynamic px-2" :color="crafting.color" v-on="$listeners" :style="{opacity: crafting.unlocked ? 1 : 0.5}">
           <v-icon class="mr-1">{{ crafting.icon }}</v-icon>
           {{ $formatNum(crafting.owned) }}
         </v-btn>
