@@ -7,6 +7,7 @@
         </template>
         <stat-breakdown name="hordeMaxTrinkets"></stat-breakdown>
       </gb-tooltip>
+      <v-checkbox v-if="$store.getters['system/checkExtraCheated']('extraToolbar')" label="未解锁" v-model="showUnlock" class="ml-1"></v-checkbox>
     </div>
     <v-row class="ma-1" no-gutters>
       <v-col v-for="trinket in list" :key="`trinket-${ trinket }`" cols="12" sm="6" md="12" lg="6" xl="4">
@@ -23,16 +24,19 @@ import TrinketItem from './TrinketItem.vue';
 
 export default {
   components: { TrinketItem, StatBreakdown },
+  data: () => ({
+    showUnlock: false
+  }),
   computed: {
     ...mapGetters({
       trinketsEquipped: 'horde/trinketsEquipped'
     }),
     list() {
       let arr = [];
-      for (const [key] of Object.entries(this.$store.state.horde.trinket)) {
-        // if (elem.level >= 1) {
-        arr.push(key);
-        // }
+      for (const [key, elem] of Object.entries(this.$store.state.horde.trinket)) {
+        if (this.showUnlock || elem.level >= 1) {
+          arr.push(key);
+        }
       }
       return arr;
     },

@@ -3,6 +3,13 @@
     <v-card-title class="pa-2 pt-0 justify-center">
       <v-icon class="mr-1" :color="trinket.color">{{ trinket.icon }}</v-icon>
       <span :class="`${ trinket.color }--text`">{{ $vuetify.lang.t(`$vuetify.horde.trinket.${ name }`) }}</span>
+      <gb-tooltip :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon class="mx-1" small v-bind="attrs" v-on="on">mdi-information</v-icon>
+        </template>
+        <div>品质 {{ trinket.rarity }}</div>
+        <div v-if="trinket.uniqueToBoss">专属BOSS {{ $vuetify.lang.t(`$vuetify.horde.bossName.${ trinket.uniqueToBoss }`) }}</div>
+      </gb-tooltip>
     </v-card-title>
     <v-card-subtitle class="pa-1 d-flex justify-center align-center">
       <span v-if="trinket.isTimeless">{{ $vuetify.lang.t(`$vuetify.horde.trinket.rarity.timeless`) }}</span>

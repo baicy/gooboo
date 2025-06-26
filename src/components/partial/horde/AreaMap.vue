@@ -55,9 +55,13 @@
       :class="{'horde-area-line-dark': $vuetify.theme.dark}"
     ></div>
     <div class="horde-area-zone" style="left: 4px;top: 4px;">
-      <div>通过最大难度：{{ clearMaxDifficulty }}</div>
-      <div v-if="trinkets.length">击败boss掉落饰品：</div>
-      <div v-for="item in trinkets" :key="item.name">{{ $vuetify.lang.t(`$vuetify.horde.trinket.${ item.name }`) }} +{{ item.amount }}</div>
+      <v-btn class="mx-1" icon small @click="showInfo = !showInfo"><v-icon>mdi-information</v-icon></v-btn>
+      <div v-if="showInfo">
+        <div>通过最高难度：{{ clearMaxDifficulty }}</div>
+        <div>饰品最高品质：{{ maxRarity }}</div>
+        <div v-if="trinkets.length">击败boss掉落饰品：</div>
+        <div v-for="item in trinkets" :key="item.name">{{ $vuetify.lang.t(`$vuetify.horde.trinket.${ item.name }`) }} +{{ item.amount }}</div>
+      </div>
     </div>
     <gb-tooltip v-for="(item, key) in zones" :key="`horde-zone-${ key }`" :min-width="0" :max-width="300">
       <template v-slot:activator="{ on, attrs }">
@@ -113,7 +117,8 @@ export default {
       bossDefeated: 'mdi-flag-variant',
       endless: 'mdi-infinity',
       sign: 'mdi-sign-text'
-    }
+    },
+    showInfo: false
   }),
   computed: {
     ...mapState({
@@ -171,10 +176,15 @@ export default {
       }
       return obj;
     },
+    bossZone() {
+      return this.area.zones.boss_1;
+    },
+    maxRarity() {
+      return this.$store.getters['mult/get']('hordeTrinketQuality', this.bossZone.difficulty + this.bossBonusDifficulty);
+    },
     trinkets() {
       let drops = [];
-      const bossZone = this.area.zones.boss_1;
-      const bossName = bossZone.boss[bossZone.boss.length - 1];
+      const bossName = this.bossZone.boss[this.bossZone.boss.length - 1];
       let hasTrinket = false;
       const classObj = this.$store.state.horde.fighterClass[this.$store.state.horde.selectedClass];
       const questObj = classObj.questsCompleted.boss < classObj.quests.boss.length ? classObj.quests.boss[classObj.questsCompleted.boss] : null;
@@ -183,11 +193,10 @@ export default {
       } else if (this.$store.state.horde.selectedClass === 'pirate') {
         hasTrinket = true;
       }
-      if (bossZone.unlocked && hasTrinket) {
-        const difficulty = bossZone.difficulty + this.bossBonusDifficulty;
+      if (this.bossZone.unlocked && hasTrinket) {
         let eligible = [];
         for (const [key, elem] of Object.entries(this.$store.state.horde.trinket)) {
-          const diff = this.$store.getters['mult/get']('hordeTrinketQuality', difficulty) - elem.rarity;
+          const diff = this.maxRarity - elem.rarity;
           if (diff >= 0 && (elem.uniqueToBoss === null || elem.uniqueToBoss === bossName) && (!elem.isTimeless || elem.level <= 0)) {
             eligible.push({name: key, weight: (diff * 0.1 + 1) * (elem.isTimeless ? 0.05 : 1), maxAmount: elem.isTimeless ? 1 : Math.floor(this.$store.getters['mult/get']('hordeTrinketGain', Math.pow(diff, 1.5) * 0.01) + 1)});
           }
