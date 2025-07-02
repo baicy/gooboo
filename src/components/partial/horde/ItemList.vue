@@ -60,6 +60,7 @@
     <div v-if="$store.getters['system/checkExtraCheated']('extraToolbar')" class="px-2 d-flex justify-center">
       <v-checkbox label="已装备" v-model="equipped" dense hide-details></v-checkbox>
       <v-checkbox label="可升级" v-model="canUpgrade" class="ml-2" dense hide-details></v-checkbox>
+      <v-checkbox label="未解锁" v-model="seeLocked" class="ml-2" dense hide-details></v-checkbox>
     </div>
     <item v-for="item in finalItems" :key="'item-' + item.name" :name="item.name" :disabled="itemsBlocked" :active-disabled="isFrozen" class="ma-2"></item>
   </div>
@@ -77,6 +78,7 @@ export default {
     page: 1,
     cacheKey: 'horde_0_equipment',
     showLoadouts: false,
+    seeLocked: false,
     equipped: false,
     canUpgrade: false
   }),
@@ -102,6 +104,9 @@ export default {
       let arr = [];
       for (const [key, elem] of Object.entries(this.itemsList)) {
         arr.push({...elem, name: key});
+      }
+      if (!this.seeLocked) {
+        arr = arr.filter(item => item.known);
       }
       if (this.equipped) {
         arr = arr.filter(item => item.equipped);
