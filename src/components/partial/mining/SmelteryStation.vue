@@ -45,23 +45,39 @@
           ></v-text-field>
           <div class="d-flex flex-wrap align-center mt-2">
             <span>消耗：</span>
-            <price-tag v-for="(amount, currency) in customPrice" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
-          </div>
-          <div class="d-flex flex-wrap align-center mt-2">
-            <span>算预定消耗：</span>
             <price-tag v-for="(amount, currency) in customPriceBooked" :key="`price-${ currency }`" class="ma-1" :currency="currency" :amount="amount"></price-tag>
+          </div>
+          <div class="d-flex flex-wrap mt-2">
+            <span>用时：</span>
+            <span>{{ $formatTime(smeltAmount * timeNeeded) }}</span>
           </div>
           <div class="d-flex flex-wrap mt-2">
             <span>已制作：{{ smeltery.total }}</span>
             <v-spacer></v-spacer>
-            <span>制作中：{{ smeltery.stored }}</span>
+            <span>制作中：{{ smeltery.stored }} ({{ $formatTime(smeltery.stored * timeNeeded) }})</span>
+          </div>
+           <div class="d-flex flex-wrap align-center mt-2" style="gap: 4px">
+            <span class="mr-3">预定中: {{ smeltery.book }}</span>
+            <v-btn small :color="smeltery.booking ? 'success' : 'error'" @click="bookPause">{{ smeltery.booking ? '运行' : '暂停' }}中</v-btn>
             <v-spacer></v-spacer>
-            <span>预定中: {{ smeltery.book }}</span>
+            <div v-if="smeltery.book > 0" class="d-flex align-center">
+              <v-text-field
+                v-model.number="cancelBookAmount"
+                label="取消预定数量"
+                type="number"
+                :min="0"
+                outlined
+                hide-details
+                dense
+                style="width: 100px;"
+              ></v-text-field>
+              <v-btn small color="error" class="ml-1" @click="bookCancel">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+            </div>
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="warning" @click="bookCustom" :disabled="smeltAmount <= 0">预定</v-btn>
-          <v-btn color="primary" @click="buyCustom" :disabled="smeltAmount <= 0 || smeltAmount > affordAmount">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
+          <v-btn color="primary" @click="buyMax" :disabled="isFrozen || !canAfford">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
+          <v-btn color="primary" @click="bookCustom" :disabled="smeltAmount <= 0">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" @click="showSmeltCustom = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
         </v-card-actions>
@@ -87,7 +103,8 @@ export default {
   },
   data: () => ({
     showSmeltCustom: false,
-    smeltAmount: 0
+    smeltAmount: 0,
+    cancelBookAmount: 0
   }),
   computed: {
     ...mapState({
@@ -120,11 +137,8 @@ export default {
     displayName() {
       return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`);
     },
-    customPrice() {
-      return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount);
-    },
     customPriceBooked() {
-      return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount + (this.smeltAmount > 0 ? this.smeltery.book : 0));
+      return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount + this.smeltery.book);
     },
     bookAmount() {
       return this.$store.getters['mining/smelteryBookAmount'](this.name);
@@ -134,15 +148,28 @@ export default {
     buy() {
       this.$store.dispatch('mining/addToSmeltery', {name: this.name, max: false});
     },
+    buyMax() {
+      this.$store.dispatch('mining/addToSmeltery', {name: this.name, max: true});
+    },
     showCustom() {
       this.smeltAmount = this.affordAmount;
       this.showSmeltCustom = true;
     },
-    buyCustom() {
-      this.$store.dispatch('mining/addToSmelteryCustom', {name: this.name, amount: this.smeltAmount});
-    },
     bookCustom() {
-      this.$store.commit('mining/updateSmelteryKey', {name: this.name, key: 'book', value: this.smeltery.book + this.smeltAmount});
+      const amount = Math.min(this.smeltAmount, this.affordAmount);
+      this.$store.dispatch('mining/addToSmelteryCustom', {name: this.name, amount});
+      const remain = this.smeltAmount - amount;
+      if (remain > 0) {
+        this.$store.commit('mining/updateSmelteryKey', {name: this.name, key: 'book', value: this.smeltery.book + remain});
+      }
+    },
+    bookPause() {
+      const booking = this.smeltery.booking;
+      this.$store.commit('mining/updateSmelteryKey', {name: this.name, key: 'booking', value: !booking});
+    },
+    bookCancel() {
+      const bookAmount = this.smeltery.book;
+      this.$store.commit('mining/updateSmelteryKey', {name: this.name, key: 'book', value: Math.max(0, bookAmount - this.cancelBookAmount)});
     }
   }
 }
