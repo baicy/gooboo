@@ -170,7 +170,6 @@
         <h3 class="text-center">{{ $vuetify.lang.t('$vuetify.mult.hordeShardChance') }}</h3>
         <stat-breakdown name="hordeShardChance"></stat-breakdown>
       </currency>
-      <v-btn v-if="$store.state.system.endmin && $store.state.currency.horde_mysticalShard.cap" @click="cheatShards(200)" color="teal" class="mx-1 my-2 balloon-text-dynamic"><v-icon>mdi-billiards-rack</v-icon>+200</v-btn>
       <currency class="ma-1" name="horde_soulCorrupted"></currency>
     </div>
     <div v-else-if="subfeature === 1" class="d-flex flex-wrap justify-center">
@@ -412,9 +411,6 @@ export default {
     },
     changeArea(name) {
       this.selectedArea = name;
-    },
-    cheatShards(amount) {
-      this.$store.commit('currency/add', {feature: 'horde', name: 'mysticalShard', amount}, {root: true});
     }
   },
   watch: {
