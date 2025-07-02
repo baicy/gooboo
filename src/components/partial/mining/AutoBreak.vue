@@ -92,6 +92,8 @@ export default {
       subfeature: state => state.system.features.mining.currentSubfeature,
       depth: state => state.mining.depth,
       autoBreak: state => state.mining.autoBreak,
+      beacon: state => state.mining.beacon,
+      beaconPlaced: state => state.mining.beaconPlaced,
     }),
     ...mapGetters({
       hitsNeeded: 'mining/depthHitsNeeded',
@@ -127,7 +129,23 @@ export default {
     getNiter() {
       let neededTime = 0;
       let niter = 0;
+      // 重置信标效果
+      let effects = [];
+      for (const [key, elem] of Object.entries(this.beacon)) {
+        effects.push(...elem.effect.map(el => {
+          return {...el, key};
+        }));
+      }
+      effects.forEach(effect => {
+        this.$store.dispatch('system/resetEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ effect.key }`});
+      });
       for (let i = 0; i < this.maxDepth - 1; i++) {
+        const beacon = this.beaconPlaced[i+1];
+        if (beacon) {
+          this.beacon[beacon].effect.forEach(effect => {
+            this.$store.dispatch('system/applyEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ beacon }`, value: effect.value(this.beacon[beacon].level), trigger: false});
+          });
+        }
         const breaks = this.$store.state.mining.breaks[i];
         const time = this.hitsNeeded(i+1);
         if (i >= this.start - 1 && i < this.end) {
@@ -140,6 +158,8 @@ export default {
       }
       this.totalTime = neededTime;
       this.totalNiter = niter;
+      // 恢复信标效果
+      this.$store.dispatch('mining/applyBeaconEffects');
     },
     toggleAutoBreak() {
       if (this.autoBreak.active) {

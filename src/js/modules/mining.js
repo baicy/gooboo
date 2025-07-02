@@ -227,6 +227,7 @@ export default {
                                     awardLoot(breaks, loots, preHits);
                                     store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
                                     store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
+                                    store.dispatch('mining/applyBeaconEffects');
                                     continue;
                                 } else {
                                     const hitsPerBreak = store.getters['mining/hitsNeeded'];
@@ -239,6 +240,7 @@ export default {
                                         awardLoot(breaks, loots, loots);
                                         store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
                                         store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
+                                        store.dispatch('mining/applyBeaconEffects');
                                         continue;
                                     }
                                 }
@@ -258,6 +260,7 @@ export default {
                 }
 
                 store.commit('mining/updateKey', {key: 'durability', value: newDurability});
+                store.dispatch('mining/applyBeaconEffects');
             }
         } else {
             // Sulfur gain

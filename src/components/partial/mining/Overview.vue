@@ -80,7 +80,7 @@ export default {
       effects.forEach(effect => {
         this.$store.dispatch('system/resetEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ effect.key }`});
       });
-      for (let i = 0; i < this.maxDepth + 1; i++) {
+      for (let i = 0; i < this.maxDepth; i++) {
         const depth = i + 1;
         const beacon = this.beaconPlaced[depth];
         if (beacon) {
