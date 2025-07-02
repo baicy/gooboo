@@ -517,6 +517,7 @@ export default {
                 commit('updateSmelteryKey', {name: key, key: 'stored', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'total', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'book', value: 0});
+                commit('updateSmelteryKey', {name: key, key: 'booking', value: false});
             }
             for (const [key] of Object.entries(state.enhancement)) {
                 commit('updateEnhancementKey', {name: key, key: 'level', value: 0});
@@ -595,6 +596,7 @@ export default {
                 commit('updateSmelteryKey', {name: key, key: 'stored', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'total', value: 0});
                 commit('updateSmelteryKey', {name: key, key: 'book', value: 0});
+                commit('updateSmelteryKey', {name: key, key: 'booking', value: false});
             }
             for (const [key, elem] of Object.entries(state.enhancement)) {
                 if (elem.level > 0) {
