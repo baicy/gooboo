@@ -171,7 +171,7 @@
             @click="toggleCrafting"
             :disabled="isFrozen || !craftObj.isCrafting && currentArtisan >= maxArtisan"
           ><v-icon>{{ craftObj.isCrafting ? 'mdi-check' : 'mdi-cancel' }}</v-icon></v-btn>
-          <v-progress-linear class="rounded" height="16" :value="craftObj.progress * 100">{{ $formatTime(craftObj.timeNeeded * (1 - craftObj.progress)) }} / {{ $formatTime(craftObj.timeNeeded) }}</v-progress-linear>
+          <v-progress-linear class="rounded balloon-text-dynamic" height="16" :value="craftObj.progress * 100">{{ $formatTime(craftObj.timeNeeded * (1 - craftObj.progress)) }} / {{ $formatTime(craftObj.timeNeeded) }}</v-progress-linear>
         </div>
         <div v-if="!craftObj.isSpecial" class="d-flex align-center my-1 mt-3">
           <v-btn
@@ -188,7 +188,7 @@
             售完 ~{{ $formatTime(Math.round(1 / Math.min(craftObj.cacheSellChance, 1))*craftObj.owned) }}
           </div>
         </div>
-        <v-progress-linear v-if="currentMilestone !== null" class="rounded mt-2" color="blue" height="24" :value="milestonePercent">
+        <v-progress-linear v-if="currentMilestone !== null" class="rounded mt-2 balloon-text-dynamic" color="blue" height="24" :value="milestonePercent">
           <div class="d-flex w-100 justify-space-between align-center ma-1">
             <span>{{ $vuetify.lang.t('$vuetify.village.crafting.crafts', $formatNum(craftObj.crafted), $formatNum(currentMilestone.needed)) }}:</span>
             <span>{{ $formatTime(craftObj.timeNeeded * (currentMilestone.needed - craftObj.crafted)) }}</span>
