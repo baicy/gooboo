@@ -1396,7 +1396,7 @@ export default {
       },
       hordeShardNoReduce: {
         name: '神秘碎片几率提高',
-        description: '去除神秘碎片随着持有变多而概率变低的机制'
+        description: '去除神秘碎片随着持有变多而概率变低的机制，需要存档后重启游戏生效'
       },
     }
   },

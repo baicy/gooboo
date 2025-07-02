@@ -166,7 +166,10 @@
       <currency large class="ma-1" name="horde_bone"></currency>
       <currency class="ma-1" name="horde_monsterPart"></currency>
       <currency class="ma-1" name="horde_corruptedFlesh"></currency>
-      <currency class="ma-1" name="horde_mysticalShard"></currency>
+      <currency class="ma-1" name="horde_mysticalShard">
+        <h3 class="text-center">{{ $vuetify.lang.t('$vuetify.mult.hordeShardChance') }}</h3>
+        <stat-breakdown name="hordeShardChance"></stat-breakdown>
+      </currency>
       <v-btn v-if="$store.state.system.endmin && $store.state.currency.horde_mysticalShard.cap" @click="cheatShards(200)" color="teal" class="mx-1 my-2 balloon-text-dynamic"><v-icon>mdi-billiards-rack</v-icon>+200</v-btn>
       <currency class="ma-1" name="horde_soulCorrupted"></currency>
     </div>
