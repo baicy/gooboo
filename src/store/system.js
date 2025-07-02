@@ -436,6 +436,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    hordeShardNoReduce: {
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     horde1AutoUtility: {
                         unlock: null,
                         hasDescription: true,

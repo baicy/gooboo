@@ -992,7 +992,7 @@ export default {
             hordeAttack: {type: 'mult', value: val => Math.pow(1.02, val)},
             hordeHealth: {type: 'mult', value: val => Math.pow(1.02, val)},
             currencyHordeBoneGain: {type: 'mult', value: val => Math.pow(1.02, val)},
-            hordeShardChance: {type: 'mult', value: val => Math.pow(1 / HORDE_SHARD_CHANCE_REDUCTION, val)}
+            hordeShardChance: {type: 'mult', value: val => store.getters['system/checkExtraCheated']('hordeShardNoReduce') ? 1 : Math.pow(1 / HORDE_SHARD_CHANCE_REDUCTION, val)}
         }},
         soulCorrupted: {color: 'purple', icon: 'mdi-ghost', overcapMult: 0.75, overcapScaling: 0.85, gainMult: {}, capMult: {min: 200}, gainTimerFunction() {
             return store.getters['mult/get']('currencyHordeSoulCorruptedGain') / store.getters['mult/get']('hordeMinibossTime');

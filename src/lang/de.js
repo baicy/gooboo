@@ -1337,6 +1337,10 @@ export default {
         name: 'Pflanzenkategorie',
         description: 'Pflanzen nach Kategorie anzeigen, nur in der alten Farmauswahl wirksam'
       },
+      hordeShardNoReduce: {
+        name: 'Horde shard drop chance increase',
+        description: 'Remove the mechanism that reduces the drop chance of horde shards as you hold more of them'
+      },
     }
   },
   statBreakdown: {

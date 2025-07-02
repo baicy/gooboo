@@ -1394,6 +1394,10 @@ export default {
         name: '作物分类显示',
         description: '根据作物类型进行分类显示，仅在旧版农场显示生效'
       },
+      hordeShardNoReduce: {
+        name: '神秘碎片几率提高',
+        description: '去除神秘碎片随着持有变多而概率变低的机制'
+      },
     }
   },
   statBreakdown: {

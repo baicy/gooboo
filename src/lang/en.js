@@ -1337,6 +1337,10 @@ export default {
         name: 'Crop category',
         description: 'Display crops by category, only effective in the old farm selection'
       },
+      hordeShardNoReduce: {
+        name: 'Horde shard drop chance increase',
+        description: 'Remove the mechanism that reduces the drop chance of horde shards as you hold more of them'
+      },
     }
   },
   statBreakdown: {
