@@ -163,13 +163,19 @@
           </template>
           <div class="mt-0">{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaDescription`, $formatNum(dnaNext)) }}</div>
           <div>{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaDuplicate`) }}</div>
-          <div v-if="crop.genesBlocked.length > 0">
+          <div v-if="crop.genesBlocked.length > 0 && !$store.getters['system/checkExtraCheated']('dnaUnblock')">
             <span>{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaBlocked`) }}:&nbsp;</span>
             <span v-for="(blocked, index) in crop.genesBlocked" :key="`gene-blocked-${ blocked }`">
               <span v-if="index > 0">,&nbsp;</span>
               <span>{{ $vuetify.lang.t(`$vuetify.farm.gene.${ blocked }`) }}</span>
             </span>
           </div>
+        </gb-tooltip>
+         <gb-tooltip :min-width="0" v-if="$store.getters['system/checkExtraCheated']('dnaUpgradeReset')">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" color="primary" small class="ml-2" @click="resetDna">重置</v-btn>
+          </template>
+          <div class="mt-0">只重置已选基因等级，不能重置基因选择</div>
         </gb-tooltip>
       </div>
       <gene-upgrade v-if="unlock.farmCropExp.use" class="ma-1 flex-grow-1" style="margin-left: 60px !important;" :crop="name" name="basics"></gene-upgrade>
@@ -304,7 +310,10 @@ export default {
       let index = 0;
       for (const [key, value] of Object.entries(this.$store.state.farm.geneLevels)) {
         if (this.crop.level >= parseInt(key) && this.crop.genes.length <= index) {
-          picker = [...value].filter(elem => !this.crop.genesBlocked.includes(elem));
+          if (this.$store.getters['system/checkExtraCheated']('dnaUnblock'))
+            picker = [...value];
+          else
+            picker = value.filter(elem => !this.crop.genesBlocked.includes(elem));
           break;
         }
         index++;
@@ -343,6 +352,17 @@ export default {
       if (!this.gene[name].lockOnField || this.cropCount <= 0) {
         this.$store.dispatch('farm/pickGene', {crop: this.name, gene: name});
       }
+    },
+    resetDna() {
+      let amount = 0;
+      const upgrades = this.crop.upgrades;
+      for (const upgrade in upgrades) {
+        for (let i = 0; i < upgrades[upgrade]; i++) {
+          amount += this.$store.getters['farm/upgradeDnaCost'](i);
+        }
+        upgrades[upgrade] = 0;
+      }
+      this.$store.state.farm.crop[this.name].dna += amount;
     }
   }
 }

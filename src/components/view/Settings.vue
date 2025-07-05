@@ -26,6 +26,19 @@
     <div v-else-if="tab === 'themes'" class="d-flex justify-center flex-wrap pa-1" :class="$vuetify.breakpoint.mdAndUp ? 'scroll-container-tab' : ''">
       <theme-item class="ma-1" v-for="(theme, name) in themes" :key="'theme-' + name" :name="name"></theme-item>
     </div>
+    <div v-else-if="tab === 'cheat'" :class="$vuetify.breakpoint.mdAndUp ? 'scroll-container-tab' : ''">
+      <div class="d-flex justify-center ma-2">
+        <alert-text type="error" style="max-width: 600px;">{{ $vuetify.lang.t(`$vuetify.settings.cheat.error`) }}</alert-text>
+      </div>
+      <div v-for="(label, category) in cheatCategories" :key="'cheat-category-' + category" class="ma-2">
+        <h3 class="ma-2">{{ label }}</h3>
+        <v-row no-gutters>
+          <v-col v-for="(item, key) in cheats[category]" class="d-flex align-center" :key="'cheat-' + key" cols="12" sm="6" md="4" lg="3" xl="2">
+            <setting-item class="ma-2" category="cheat" :name="key"></setting-item>
+          </v-col>
+        </v-row>
+      </div>
+    </div>
     <div v-else :class="$vuetify.breakpoint.mdAndUp ? 'scroll-container-tab' : ''">
       <v-row no-gutters>
         <v-col v-for="(item, key) in settings[tab].items" class="d-flex align-center" :key="'setting-' + key" cols="12" sm="6" md="4" lg="3" xl="2">
@@ -34,9 +47,6 @@
       </v-row>
       <div v-if="tab === 'experiment'" class="d-flex justify-center ma-2">
         <alert-text type="warning" style="max-width: 600px;">{{ $vuetify.lang.t(`$vuetify.settings.experiment.warning`) }}</alert-text>
-      </div>
-      <div v-if="tab === 'cheat'" class="d-flex justify-center ma-2">
-        <alert-text type="error" style="max-width: 600px;">{{ $vuetify.lang.t(`$vuetify.settings.cheat.error`) }}</alert-text>
       </div>
     </div>
   </div>
@@ -53,7 +63,16 @@ import ThemeItem from '../partial/settings/ThemeItem.vue';
 export default {
   components: { SettingItem, Keybind, ThemeItem, AlertText },
   data: () => ({
-    tab: 'general'
+    tab: 'general',
+    cheatCategories: {
+      utility: '通用',
+      mining: '采矿',
+      village: '村庄',
+      horde: '部落',
+      farm: '农场',
+      gallery: '画廊',
+      event: '事件',
+    }
   }),
   computed: {
     ...mapState({
@@ -93,6 +112,14 @@ export default {
         if (elem.owned || elem.price !== null) {
           obj[key] = elem;
         }
+      }
+      return obj;
+    },
+    cheats() {
+      let obj = {};
+      for (const [key, elem] of Object.entries(this.$store.state.system.settings.cheat.items)) {
+        if (!obj[elem.feature]) obj[elem.feature] = {};
+        obj[elem.feature][key] = elem;
       }
       return obj;
     }

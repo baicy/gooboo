@@ -388,13 +388,15 @@ export default {
                 unlock: null,
                 items: {
                     cloudSave: {
+                        feature: 'utility',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
                         value: true,
-                        defaultValue: true,
+                        defaultValue: true
                     },
                     extraToolbar: {
+                        feature: 'utility',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -402,6 +404,7 @@ export default {
                         defaultValue: false
                     },
                     autoUpgrade: {
+                        feature: 'utility',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -409,76 +412,7 @@ export default {
                         defaultValue: false
                     },
                     cheatSchoolExam: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    autoBreak: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    oldVillageCryolab: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    lootExchange: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    hordeShardNoReduce: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    horde1AutoUtility: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    horde2SkillReset: {
-                        unlock: null,
-                        hasDescription: false,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    oldGalleryUpgrade: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    categoryCrop: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    inspirationReset: {
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
-                    galleryAccelerator: {
+                        feature: 'utility',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -486,6 +420,7 @@ export default {
                         defaultValue: false
                     },
                     allSubfeatureCryolab: {
+                        feature: 'utility',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -493,6 +428,103 @@ export default {
                         defaultValue: false
                     },
                     scientificNotation: {
+                        feature: 'utility',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    autoBreak: {
+                        feature: 'mining',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    oldVillageCryolab: {
+                        feature: 'village',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    lootExchange: {
+                        feature: 'village',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    hordeShardNoReduce: {
+                        feature: 'horde',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    horde1AutoUtility: {
+                        feature: 'horde',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    horde2SkillReset: {
+                        feature: 'horde',
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    categoryCrop: {
+                        feature: 'farm',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    dnaUpgradeReset:{
+                        feature: 'farm',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    dnaUnblock:{
+                        feature: 'farm',
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    oldGalleryUpgrade: {
+                        feature: 'gallery',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    inspirationReset: {
+                        feature: 'gallery',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    galleryAccelerator: {
+                        feature: 'gallery',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -500,6 +532,7 @@ export default {
                         defaultValue: false
                     },
                     eventExtraShop: {
+                        feature: 'event',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
@@ -507,6 +540,7 @@ export default {
                         defaultValue: false
                     },
                     topazReturn: {
+                        feature: 'event',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',

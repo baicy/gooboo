@@ -1384,7 +1384,7 @@ export default {
       },
       inspirationReset: {
         name: '灵感重置',
-        description: '非常厉害，因为太厉害了所以需要用黄玉'
+        description: '有点贵，但特别强'
       },
       autoUpgrade: {
         name: '自动升级',
@@ -1397,6 +1397,13 @@ export default {
       hordeShardNoReduce: {
         name: '神秘碎片几率提高',
         description: '去除神秘碎片随着持有变多而概率变低的机制，需要存档后重启游戏生效'
+      },
+      dnaUpgradeReset: {
+        name: '农场DNA重置等级',
+        description: '只能重置已选基因等级，并不能重置基因选择'
+      },
+      dnaUnblock: {
+        name: '农场阻断基因失效'
       },
     }
   },
