@@ -2549,7 +2549,7 @@ export default {
   treasure: {
     effectSummary: '效果总结',
     tier: '层',
-    tierItem: '{0}层宝藏',
+    tierItem: '层{0}宝藏',
     tierEffect: {
       globalLevel: '你的全局等级增加了宝藏层级和获得更高层级宝藏的机会。',
       upgrade: '升级成本',

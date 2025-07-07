@@ -23,6 +23,8 @@
             <price-tag v-if="nextTime.gain !== null" class="mr-1" add :currency="`mining_crystal${ crystalColor }`" :amount="nextTime.gain"></price-tag>
             <span>{{ $vuetify.lang.t('$vuetify.mining.dweller.nextTime', Math.round(nextTime.depth * 100) / 100, $formatTime(nextTime.time)) }}</span>
           </div>
+          <h3 class="text-center">{{ $vuetify.lang.t('$vuetify.mult.miningDepthDwellerSpeed') }}</h3>
+          <stat-breakdown name="miningDepthDwellerSpeed"></stat-breakdown>
         </gb-tooltip>
         <gb-tooltip v-if="maxDweller0 > 0" :min-width="0">
           <template v-slot:activator="{ on, attrs }">
@@ -53,9 +55,10 @@ import { MINING_DWELLER_OVERCAP_MULT, MINING_DWELLER_OVERFLOW } from '../../../j
 import PriceTag from '../../render/PriceTag.vue';
 import StatusTemplate from '../prestige/StatusTemplate.vue';
 import AlertText from '../render/AlertText.vue';
+import StatBreakdown from '../../render/StatBreakdown.vue';
 
 export default {
-  components: { StatusTemplate, PriceTag, AlertText },
+  components: { StatusTemplate, PriceTag, AlertText, StatBreakdown },
   computed: {
     ...mapState({
       maxDweller0: state => state.stat.mining_depthDwellerCap0.total,

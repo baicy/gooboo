@@ -162,7 +162,7 @@
             </v-chip>
           </template>
           <div class="mt-0">{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaDescription`, $formatNum(dnaNext)) }}</div>
-          <div>{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaDuplicate`) }}</div>
+          <div v-if="!$store.getters['system/checkExtraCheated']('dnaUnblock')">{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaDuplicate`) }}</div>
           <div v-if="crop.genesBlocked.length > 0 && !$store.getters['system/checkExtraCheated']('dnaUnblock')">
             <span>{{ $vuetify.lang.t(`$vuetify.farm.gene.dnaBlocked`) }}:&nbsp;</span>
             <span v-for="(blocked, index) in crop.genesBlocked" :key="`gene-blocked-${ blocked }`">
