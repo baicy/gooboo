@@ -55,6 +55,10 @@ export default {
       type: String,
       required: true
     },
+    subfeature: {
+      type: Number,
+      required: true
+    },
     type: {
       type: String,
       required: true
@@ -76,7 +80,7 @@ export default {
       return this.queue.length - 1;
     },
     list() {
-      return `${this.feature}_${this.type}`;
+      return `${this.feature}_${this.subfeature}_${this.type}`;
     },
     queueKeyName() {
       return `queue-${ this.feature }-${ this.type }`;

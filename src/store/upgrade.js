@@ -497,7 +497,7 @@ export default {
         toggleAutoQueue({ state, commit }, o) {
             const name = o.name;
             const upgrade = state.item[name];
-            const listName = `${upgrade.feature}_${upgrade.type}`;
+            const listName = `${upgrade.feature}_${upgrade.subfeature}_${upgrade.type}`;
             if (state.autoQueue[listName] === undefined) {
                 commit('initAutoQueue', listName);
             }
@@ -510,9 +510,6 @@ export default {
         },
         applyAutoQueue({ state, getters, dispatch }, list) {
             const queue = state.autoQueue[list];
-            if (queue === undefined || queue.length === 0) {
-                return;
-            }
             queue.forEach(key => {
                 const [feature, name] = key.split('_');
                 if (getters.canAfford(feature, name)) {

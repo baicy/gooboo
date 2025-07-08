@@ -97,7 +97,7 @@
       </div>
       <div v-if="filterItems.length === 0" class="text-center">{{ $vuetify.lang.t(`$vuetify.upgrade.keyset.${ translationSet }.notFound`) }}</div>
     </div>
-    <auto-queue :feature="feature" :type="type"></auto-queue>
+    <auto-queue :feature="feature" :subfeature="subfeature" :type="type"></auto-queue>
     <v-row v-if="filterItems.length > 0"  class="pa-1" no-gutters>
       <v-col class="pa-1" v-for="(item, key) in finalItems" :key="`${feature}-${type}-${key}`" :cols="cols">
         <upgrade :name="item" :disabled="isFrozen" :upgrade-translation="upgradeTranslation" :translation-set="translationSet">

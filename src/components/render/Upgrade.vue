@@ -355,7 +355,7 @@ export default {
     },
     auto() {
       if (!this.autoEnable) return false;
-      const queue = this.$store.state.upgrade.autoQueue[`${this.upgrade.feature}_${this.upgrade.type}`];
+      const queue = this.$store.state.upgrade.autoQueue[`${this.upgrade.feature}_${this.upgrade.subfeature}_${this.upgrade.type}`];
       return queue && queue.includes(this.name);
     }
   },
