@@ -435,15 +435,15 @@ export default {
                         value: false,
                         defaultValue: false
                     },
-                    featureExtraShop: {
-                        feature: 'utility',
+                    autoBreak: {
+                        feature: 'mining',
                         unlock: null,
                         hasDescription: true,
                         type: 'switch',
                         value: false,
                         defaultValue: false
                     },
-                    autoBreak: {
+                    miningExtraShop: {
                         feature: 'mining',
                         unlock: null,
                         hasDescription: true,

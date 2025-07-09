@@ -80,7 +80,7 @@ export default {
       effects.forEach(effect => {
         this.$store.dispatch('system/resetEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ effect.key }`});
       });
-      for (let i = 0; i < this.maxDepth; i++) {
+      for (let i = 0; i < Math.max(this.maxDepth, this.depth + 1); i++) {
         const depth = i + 1;
         const beacon = this.beaconPlaced[depth];
         if (beacon) {
@@ -114,9 +114,13 @@ export default {
       this.depths = depths;
     },
     getOres() {
-      this.ores =  ['scrap', ...Object.entries(this.ingredients)
-      .filter(([, elem]) => (elem.minDepth <= this.maxDepth + 1))
-      .map(([ore]) => ore), 'salt', 'deeprock'];
+      let ores = ['scrap'];
+      if (this.subfeature === 0) {
+        ores = [...ores, ...Object.entries(this.ingredients)
+        .filter(([, elem]) => (elem.minDepth <= this.maxDepth + 1))
+        .map(([ore]) => ore), 'salt', 'deeprock'];
+      }
+      this.ores = ores;
     },
     getHeaders() {
       let columns = [
@@ -139,18 +143,16 @@ export default {
           divider: true,
         },
       ];
-      if (this.subfeature === 0) {
-        this.ores.forEach(ore => {
-          if (!(ore==='salt' && this.maxDepth < MINING_SALT_DEPTH) && !(ore==='deeprock' && this.maxDepth < MINING_DEEPROCK_DEPTH)) {
-            columns.push({
-              text: this.$vuetify.lang.t(`$vuetify.currency.mining_${ore}.name`),
-              value: ore,
-              sortable: true,
-              divider: true,
-            })
-          }
-        });
-      }
+      this.ores.forEach(ore => {
+        if (!(ore==='salt' && this.maxDepth < MINING_SALT_DEPTH) && !(ore==='deeprock' && this.maxDepth < MINING_DEEPROCK_DEPTH)) {
+          columns.push({
+            text: this.$vuetify.lang.t(`$vuetify.currency.mining_${ore}.name`),
+            value: ore,
+            sortable: true,
+            divider: true,
+          })
+        }
+      });
       this.headers = columns;
     },
     depthTo(depth) {

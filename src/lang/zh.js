@@ -1405,9 +1405,9 @@ export default {
       dnaUnblock: {
         name: '农场阻断基因失效'
       },
-      featureExtraShop: {
-        name: '额外升级项',
-        description: '名字显示为红色。基本是其他子功能有的复制过来，原版完善之后会删除'
+      miningExtraShop: {
+        name: '矿2额外升级项',
+        description: '名字显示为红色。额外用废料升级深度居民速度，公式同矿1'
       },
     }
   },

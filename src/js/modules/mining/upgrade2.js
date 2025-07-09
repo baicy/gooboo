@@ -3,7 +3,7 @@ import { buildNum } from "../../utils/format";
 
 const requirementStat = 'mining_maxDepth1';
 const requirementBase = () => store.state.stat[requirementStat].total;
-const extra = () => store.state.system.settings.cheat.items.featureExtraShop.value;
+const extra = () => store.state.system.settings.cheat.items.miningExtraShop.value;
 
 export default {
     fumes: {subfeature: 1, price(lvl) {
