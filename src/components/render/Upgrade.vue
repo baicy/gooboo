@@ -22,7 +22,7 @@
 <template>
   <v-card class="d-flex align-center pa-1" v-if="upgrade.collapse">
     <v-icon v-if="upgrade.icon" class="ma-1">{{ upgrade.icon }}</v-icon>
-    <div v-else class="ma-1">{{ $vuetify.lang.t(`$vuetify.upgrade.${name}`) }}</div>
+    <div v-else class="ma-1" :class="{'error--text': upgrade.cheat}">{{ $vuetify.lang.t(`$vuetify.upgrade.${name}`) }}</div>
     <gb-tooltip key="upgrade-bought-collapse" v-if="!upgrade.hideCap" :min-width="0">
       <template v-slot:activator="{ on, attrs }">
         <v-chip
@@ -74,7 +74,7 @@
   <v-card v-else>
     <v-card-title class="pa-2 justify-center">
       <v-icon v-if="upgrade.icon" class="mr-2">{{ upgrade.icon }}</v-icon>
-      <div>{{ $vuetify.lang.t(`$vuetify.upgrade.${ name }`) }}</div>
+      <div :class="{'error--text': upgrade.cheat}">{{ $vuetify.lang.t(`$vuetify.upgrade.${ name }`) }}</div>
     </v-card-title>
     <v-card-text class="pb-0">
       <display-row v-for="(item, key) in display" :key="`${item.name}-${item.type}-${key}`" :name="item.name" :type="item.type" :before="item.before" :after="item.after"></display-row>

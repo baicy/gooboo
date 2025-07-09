@@ -3,6 +3,7 @@ import { buildNum } from "../../utils/format";
 
 const requirementStat = 'mining_maxDepth1';
 const requirementBase = () => store.state.stat[requirementStat].total;
+const extra = () => store.state.system.settings.cheat.items.featureExtraShop.value;
 
 export default {
     fumes: {subfeature: 1, price(lvl) {
@@ -55,6 +56,11 @@ export default {
     }, effect: [
         {name: 'miningDamage', type: 'mult', value: lvl => Math.pow(1.05, lvl)},
         {name: 'currencyMiningScrapGain', type: 'mult', value: lvl => Math.pow(1.3, lvl)}
+    ]},
+    drillFuel: {cheat: true, requirement: extra, subfeature: 1, requirementBase, requirementStat, requirementValue: 45, price(lvl) {
+        return {mining_scrap: Math.pow(lvl * 0.1 + 2.4, lvl) * buildNum(35, 'B')};
+    }, effect: [
+        {name: 'miningDepthDwellerSpeed', type: 'mult', value: lvl => Math.pow(1.02, lvl) * (lvl * 0.05 + 1)}
     ]},
     harvester: {subfeature: 1, requirementBase, requirementStat, requirementValue: 50, price(lvl) {
         return {mining_neon: Math.round(Math.pow(1.35, lvl) * 50)};

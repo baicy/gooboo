@@ -1360,7 +1360,7 @@ export default {
       },
       scientificNotation: {
         name: '使用科学计数法',
-        description: '效果不好，不建议使用',
+        description: '经常因为长度过长不太好看，用KMB是可以理解的',
       },
       lootExchange: {
         name: '村庄战利品置换',
@@ -1404,6 +1404,10 @@ export default {
       },
       dnaUnblock: {
         name: '农场阻断基因失效'
+      },
+      featureExtraShop: {
+        name: '额外升级项',
+        description: '名字显示为红色。基本是其他子功能有的复制过来，原版完善之后会删除'
       },
     }
   },
