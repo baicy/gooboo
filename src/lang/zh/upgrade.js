@@ -145,6 +145,7 @@ export default {
   mining_particleFilter: '颗粒过滤器',
   mining_hotAirBalloon: '热气球',
   mining_vent: '通风口',
+  mining_drillFuel2: '钻机燃料',
   mining_harvester: '收割机',
   mining_graphiteRod: '石墨棒',
   mining_enrichedCrystal: '浓缩水晶',
