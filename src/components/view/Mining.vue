@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$vuetify.breakpoint.xlOnly || $store.state.system.forceXlLayout">
+  <div v-if="$vuetify.breakpoint.xlOnly || ($vuetify.breakpoint.lgOnly && $store.state.system.forceXlLayout)">
     <v-tabs v-model="tab" grow show-arrows>
       <v-tab href="#mine"><tab-icon-text :text="$vuetify.lang.t('$vuetify.mining.mine')" icon="mdi-pickaxe"></tab-icon-text></v-tab>
       <v-tab href="#dweller" v-if="unlock.miningDepthDweller.see"><tab-icon-text :text="$vuetify.lang.t('$vuetify.mining.depthDweller')" icon="mdi-elevator-down"></tab-icon-text></v-tab>

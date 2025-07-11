@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$vuetify.breakpoint.xlOnly || $store.state.system.forceXlLayout">
+  <div v-if="$vuetify.breakpoint.xlOnly || ($vuetify.breakpoint.lgOnly && $store.state.system.forceXlLayout)">
     <v-tabs v-model="tab" grow show-arrows>
       <v-tab href="#gallery"><tab-icon-text :text="$vuetify.lang.t('$vuetify.gallery.gallery')" icon="mdi-image-frame"></tab-icon-text></v-tab>
       <v-tab href="#shapes" v-if="canSeeShapes"><tab-icon-text :text="$vuetify.lang.t('$vuetify.gallery.shapes.name')" icon="mdi-shape-plus"></tab-icon-text></v-tab>

@@ -401,16 +401,6 @@
         </template>
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.cryolab.frozenFeature.description') }}</div>
       </gb-tooltip>
-      <gb-tooltip 
-        v-if="(($vuetify.breakpoint.lgOnly || forceXlLayout) && ['mining', 'village', 'horde', 'farm', 'gallery', 'event'].includes(screen))"
-        key="xl-column-type"
-        title-text="使用超大屏幕分列"
-        :min-width="0"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon class="mx-2" :class="{'selected-primary': forceXlLayout}" v-bind="attrs" v-on="on" @click="changeLayout">mdi-view-column</v-icon>
-        </template>
-      </gb-tooltip>
       <gb-tooltip v-if="isEndOfFeature" key="end-of-content" :title-text="$vuetify.lang.t('$vuetify.endOfContent.name')">
         <template v-slot:activator="{ on, attrs }">
           <v-icon class="ml-2" v-bind="attrs" v-on="on">mdi-sign-caution</v-icon>
@@ -425,6 +415,36 @@
         </v-btn>
       </v-bottom-navigation>
       <v-spacer></v-spacer>
+      <gb-tooltip 
+        v-if="($vuetify.breakpoint.lgOnly && ['mining', 'village', 'horde', 'farm', 'gallery', 'event'].includes(screen))"
+        key="xl-column-type"
+        :title-text="`${forceXlLayout ? '不' : ''}使用超大屏幕分列`"
+        :min-width="0"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon class="ml-2" v-bind="attrs" v-on="on" @click="changeLayout">{{ forceXlLayout ? 'mdi-size-xl' : 'mdi-size-l' }}</v-icon>
+        </template>
+      </gb-tooltip>
+      <gb-tooltip 
+        v-if="$vuetify.breakpoint.lgAndUp"
+        key="pause-game"
+        :title-text="`${pause ? '继续' : '暂停'}游戏`"
+        :min-width="0"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon class="ml-2" v-bind="attrs" v-on="on" @click="pauseGame">{{ pause ? 'mdi-play' : 'mdi-pause' }}</v-icon>
+        </template>
+      </gb-tooltip>
+      <gb-tooltip 
+        v-if="$vuetify.breakpoint.lgAndUp"
+        key="dark-mode"
+        :title-text="`使用${dark ? '浅' : '深'}色模式`"
+        :min-width="0"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon class="ml-2" v-bind="attrs" v-on="on" @click="switchThemeMode">{{ dark ? 'mdi-weather-night' : 'mdi-weather-sunny' }}</v-icon>
+        </template>
+      </gb-tooltip>
       <v-btn icon @click="changeScreen('info')">
         <v-badge :value="importantNotice" color="red" overlap dot>
           <v-icon>mdi-information</v-icon>
@@ -463,15 +483,14 @@
             <v-list-item-title>{{ $vuetify.lang.t('$vuetify.gooboo.resetProgress') }}</v-list-item-title>
           </v-list-item>
           <template v-if="$store.getters['system/checkExtraCheated']('cloudSave')">
-            <v-subheader>云存档</v-subheader>
             <v-list-item @click="CloudSave" :disabled="isSaving">
               <v-list-item-title>
-                <span>{{ '上传' + (cloudAutosaveTimer !== null ? (' (' + $formatTime(cloudAutosaveTimer) + ')') : '') }}</span>
+                <span>{{ '上传云存档' + (cloudAutosaveTimer !== null ? (' (' + $formatTime(cloudAutosaveTimer) + ')') : '') }}</span>
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="showCloudList = true">
               <v-list-item-title>
-                <v-list-item-title>加载</v-list-item-title>
+                <v-list-item-title>加载云存档</v-list-item-title>
               </v-list-item-title>
             </v-list-item>
           </template>
@@ -652,6 +671,7 @@ export default {
       globalLevel: state => state.meta.globalLevel,
       screen: state => state.system.screen,
       dark: state => state.system.settings.general.items.dark.value,
+      pause: state => state.system.settings.general.items.pause.value,
       lang: state => state.system.settings.general.items.lang.value,
       cloudAutosaveTimer: state => state.system.cloudAutosaveTimer,
       autosaveTimer: state => state.system.autosaveTimer,
@@ -871,6 +891,12 @@ export default {
     },
     changeLayout() {
       this.$store.commit('system/updateKey', { key: 'forceXlLayout', value: !this.forceXlLayout })
+    },
+    switchThemeMode() {
+      this.$store.dispatch('system/updateSetting', {category: 'general', name: 'dark', value: !this.dark});
+    },
+    pauseGame() {
+      this.$store.dispatch('system/updateSetting', {category: 'general', name: 'pause', value: !this.pause});
     }
   },
   watch: {

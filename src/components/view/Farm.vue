@@ -1,5 +1,5 @@
 <template>
-  <v-row v-if="$vuetify.breakpoint.xlOnly || $store.state.system.forceXlLayout" no-gutters>
+  <v-row v-if="$vuetify.breakpoint.xlOnly || ($vuetify.breakpoint.lgOnly && $store.state.system.forceXlLayout)" no-gutters>
     <v-col class="scroll-container" cols="6">
       <field-bar></field-bar>
       <field class="mx-auto"></field>
