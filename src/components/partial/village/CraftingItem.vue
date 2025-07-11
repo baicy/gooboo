@@ -17,7 +17,7 @@
         </template>
       </v-badge>
       <template v-slot:badge>
-        <v-icon x-small>mdi-hammer</v-icon>
+        <v-icon x-small :color="enable ? '' : 'error'">mdi-hammer</v-icon>
       </template>
     </v-badge>
     <template v-slot:badge>
@@ -37,6 +37,21 @@ export default {
   computed: {
     crafting() {
       return this.$store.state.village.crafting[this.name];
+    },
+    enable() {
+      if (!this.crafting.isCrafting) return true;
+      for (const [material, amount] of Object.entries(this.crafting.price)) {
+        const [type, craftName] = material.split('_');
+        if (type === 'craft') {
+          if (!this.$store.state.village.crafting[craftName].unlocked) return false;
+          const needed = typeof amount === 'function' ? amount(this.crafting.owned) : amount;
+          if (this.$store.state.village.crafting[craftName].owned < needed) return false;
+        } else {
+          const needed = typeof amount === 'function' ? amount(this.crafting.owned) : amount;
+          if (this.$store.getters['currency/value'](material) < needed) return false;
+        }
+      }
+      return true;
     }
   }
 }

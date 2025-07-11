@@ -279,19 +279,13 @@ export default {
             const craftObj = this.craftingList[item];
             for (const [material, amount] of Object.entries(craftObj.price)) {
               const [type, craftName] = material.split('_');
-              if (type === 'craft' && !this.craftingList[craftName].unlocked) {
-                return false;
-              }
-              if (type !== 'craft') {
-                if (typeof amount === 'function') {
-                  if (this.$store.getters['currency/value'](material) < amount(craftObj.owned)) {
-                    return false;
-                  }
-                } else {
-                  if (this.$store.getters['currency/value'](material) < amount) {
-                    return false;
-                  }
-                }
+              if (type === 'craft') {
+                if (!this.craftingList[craftName].unlocked) return false;
+                const needed = typeof amount === 'function' ? amount(craftObj.owned) : amount;
+                if (this.craftingList[craftName].owned < needed) return false;
+              } else {
+                const needed = typeof amount === 'function' ? amount(craftObj.owned) : amount;
+                if (this.$store.getters['currency/value'](material) < needed) return false;
               }
             }
             return true;
