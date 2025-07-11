@@ -416,6 +416,16 @@
       </v-bottom-navigation>
       <v-spacer></v-spacer>
       <gb-tooltip 
+        v-if="$vuetify.breakpoint.lgAndUp"
+        key="relative-upgrade"
+        :title-text="`${relativeUpgrade ? '不' : ''}使用相对升级统计`"
+        :min-width="0"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon class="ml-2" v-bind="attrs" v-on="on" @click="switchRelativeUpgrade">{{ relativeUpgrade ? 'mdi-ray-start-arrow' : 'mdi-ray-vertex' }}</v-icon>
+        </template>
+      </gb-tooltip>
+      <gb-tooltip 
         v-if="($vuetify.breakpoint.lgOnly && ['mining', 'village', 'horde', 'farm', 'gallery', 'event'].includes(screen))"
         key="xl-column-type"
         :title-text="`${forceXlLayout ? '不' : ''}使用超大屏幕分列`"
@@ -672,6 +682,7 @@ export default {
       screen: state => state.system.screen,
       dark: state => state.system.settings.general.items.dark.value,
       pause: state => state.system.settings.general.items.pause.value,
+      relativeUpgrade: state => state.system.settings.general.items.relativeUpgradeStats.value,
       lang: state => state.system.settings.general.items.lang.value,
       cloudAutosaveTimer: state => state.system.cloudAutosaveTimer,
       autosaveTimer: state => state.system.autosaveTimer,
@@ -897,6 +908,9 @@ export default {
     },
     pauseGame() {
       this.$store.dispatch('system/updateSetting', {category: 'general', name: 'pause', value: !this.pause});
+    },
+    switchRelativeUpgrade() {
+      this.$store.dispatch('system/updateSetting', {category: 'general', name: 'relativeUpgradeStats', value: !this.relativeUpgrade});
     }
   },
   watch: {

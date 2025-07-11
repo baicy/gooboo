@@ -1,13 +1,17 @@
 <template>
   <div>
-    <div class="text-center mx-2">{{ $vuetify.lang.t(`$vuetify.event.bank.description`) }}</div>
+    <div class="text-center mx-2">{{ $vuetify.lang.t(`$vuetify.event.bank.description`) }}剩余行动： {{ hasAction ? 1 : 0 }}</div>
     <div class="d-flex justify-center ma-2">
       <currency name="gem_topaz" large></currency>
     </div>
     <v-row no-gutters>
       <v-col cols="12" md="4">
         <v-card class="ma-1" v-if="projectName !== null">
-          <v-card-title class="pa-2 justify-center">{{ $vuetify.lang.t(`$vuetify.event.bank.project.name`) }}<v-icon class="mx-2">mdi-circle-small</v-icon>{{ $vuetify.lang.t(`$vuetify.event.bank.project.${projectName}`) }}</v-card-title>
+          <v-card-title class="pa-2 justify-center">
+            {{ $vuetify.lang.t(`$vuetify.event.bank.project.name`) }}
+            <v-icon class="mx-2">mdi-circle-small</v-icon>{{ $vuetify.lang.t(`$vuetify.event.bank.project.${projectName}`) }}
+            <v-btn color="primary" small class="ml-2" @click="showProjects = true">更换</v-btn>
+          </v-card-title>
           <v-card-text>
             <display-row v-for="(item, key) in projectDisplay" :key="`${item.name}-${item.type}-${key}`" :name="item.name" :type="item.type" :before="item.before" :after="item.after"></display-row>
             <v-progress-linear class="rounded mt-2" height="20" color="amber" :value="projectPercent">{{ $formatNum(projectCurrent.spent) }} / {{ $formatNum(projectPrice) }}</v-progress-linear>
@@ -70,6 +74,17 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-dialog v-model="showProjects" width="400px">
+      <v-card class="default-card pa-2">
+        <v-card-actions>
+          <v-select :items="Object.keys(projects)" v-model="newProject">
+            <template #selection="{ item }">{{ $vuetify.lang.t(`$vuetify.event.bank.project.${item}`) }}</template>
+            <template #item="{ item }">{{ $vuetify.lang.t(`$vuetify.event.bank.project.${item}`) }}</template>
+          </v-select>
+          <v-btn color="primary" class="ml-2" @click="changeProject">更换</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -85,11 +100,14 @@ export default {
     fundAmount: 0,
     investAmount: 0,
     loanRepayAmount: 0,
-    loanBorrowAmount: 0
+    loanBorrowAmount: 0,
+    showProjects: false,
+    newProject: ''
   }),
   computed: {
     ...mapState({
       projectName: state => state.event.bank_project_current,
+      projects: state => state.event.bank_project,
       investment: state => state.event.bank_investment,
       loan: state => state.event.bank_loan,
       hasAction: state => state.event.bank_action
@@ -170,6 +188,9 @@ export default {
       return this.loan + Math.ceil(this.loanBorrowAmountFinal * (this.loanInterest + 1));
     }
   },
+  mounted() {
+    this.newProject = this.projectName;
+  },
   methods: {
     projectFundCommit() {
       this.$store.dispatch('event/bankProjectFund', isNaN(this.fundAmount) ? 0 : Math.min(this.maxProjectPrice, Math.max(0, this.fundAmount)));
@@ -182,6 +203,9 @@ export default {
     },
     loanBorrowCommit() {
       this.$store.dispatch('event/bankLoanBorrow', this.loanBorrowAmountFinal);
+    },
+    changeProject() {
+      this.$store.commit('event/updateKey', {key: 'bank_project_current', value: this.newProject});
     }
   }
 }

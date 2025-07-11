@@ -173,7 +173,7 @@ export default {
   galleryCardCap: '画廊卡片容量',
   treasureSlots: '宝藏插槽',
   cryolabMaxFeatures: '最大冻结的功能',
-  merchantOffers: '商户优惠',
+  merchantOffers: '商人供应',
   bankInvestmentSize: '投资规模',
   bankLoanSize: '贷款规模',
   bankCardPackChance: '银行卡包机会',
