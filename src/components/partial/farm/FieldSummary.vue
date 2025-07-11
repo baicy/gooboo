@@ -132,7 +132,7 @@ export default {
           if (exp + amount >= needed) {
             leveled = true;
             before = level;
-            after = Math.floor(logBase((exp + amount) / baseExp, 1.75));
+            after = Math.floor(logBase((exp + amount) / baseExp, 1.75)) + 1;
           } else {
             before = exp / needed;
             after = (exp + amount) / needed;

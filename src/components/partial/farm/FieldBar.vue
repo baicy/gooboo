@@ -38,7 +38,7 @@
       </gb-tooltip>
       <gb-tooltip :min-width="0">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn class="ma-1" min-width="36" :color="showSummary ? 'primary' : 'secondary'" @click="showSummary = !showSummary" v-bind="attrs" v-on="on"><v-icon>mdi-chart-box-outline</v-icon></v-btn>
+          <v-btn class="ma-1" min-width="36" :color="showSummary ? (selectedColor ? selectedColor : 'primary') : 'secondary'" @click="showSummary = !showSummary" v-bind="attrs" v-on="on"><v-icon>mdi-chart-box-outline</v-icon></v-btn>
         </template>
         <div class="mt-0">收获统计预测，仅供参考</div>
         <div class="mt-0">未成熟作物按100%统计</div>
