@@ -153,6 +153,10 @@ export default {
                             }
                             if (maxAfford < payments) {
                                 newProgress = maxAfford + Math.ceil(elem.progress);
+                                // 材料不足无法继续制作，查看是否有接替计划
+                                if (store.getters['system/checkExtraCheated']('extraToolbar')) {
+                                    store.dispatch('village/handoverCrafting', key);
+                                }
                             }
                         }
                         if (newProgress >= 1) {
@@ -441,6 +445,11 @@ export default {
         if (Object.keys(crafting).length > 0) {
             obj.crafting = crafting;
         }
+        // 制作接替队列
+        obj.craftingHandover = {
+            out: [...store.state.village.craftingHandover.out],
+            in: [...store.state.village.craftingHandover.in]
+        };
 
         return obj;
     },
@@ -486,6 +495,10 @@ export default {
                     }
                 }
             }
+        }
+        // 制作接替队列
+        if (data.craftingHandover !== undefined) {
+            store.commit('village/updateKey', {key: 'craftingHandover', value: data.craftingHandover});
         }
         if (data.explorerProgress !== undefined) {
             store.commit('village/updateKey', {key: 'explorerProgress', value: data.explorerProgress});

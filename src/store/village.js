@@ -11,6 +11,7 @@ export default {
         offering: {},
         policy: {},
         crafting: {},
+        craftingHandover: {out: [], in: []},
         explorerProgress: 0,
         offeringGen: 0,
         offeringBuyBatch: -1
@@ -41,6 +42,21 @@ export default {
             }
             return active;
         },
+        canCraft: (state, getters, rootState, rootGetters) => (name) => {
+            const item = state.crafting[name];
+            for (const [material, amount] of Object.entries(item.price)) {
+                const [type, craftName] = material.split('_');
+                if (type === 'craft') {
+                if (!state.crafting[craftName].unlocked) return false;
+                const needed = typeof amount === 'function' ? amount(item.owned) : amount;
+                if (state.crafting[craftName].owned < needed) return false;
+                } else {
+                const needed = typeof amount === 'function' ? amount(item.owned) : amount;
+                if (rootGetters['currency/value'](material) < needed) return false;
+                }
+            }
+            return true;
+        }, 
         unemployed: (state, getters, rootState, rootGetters) => {
             return rootGetters['mult/get']('villageWorker') - getters.employed;
         },
@@ -155,6 +171,19 @@ export default {
         },
         updatePolicyKey(state, o) {
             Vue.set(state.policy[o.name], o.key, o.value);
+        },
+        updateHandover(state, o) {
+            const index = state.craftingHandover[o.list].indexOf(o.key);
+            if (index === -1) {
+                state.craftingHandover[o.list].push(o.key);
+            } else {
+                state.craftingHandover[o.list].splice(index, 1);
+            }
+        },
+        applyHandover(state, o) {
+            const index = state.craftingHandover.out.indexOf(o.from);
+            state.craftingHandover.out.splice(index, 1);
+            state.craftingHandover.in.shift();
         }
     },
     actions: {
@@ -181,6 +210,7 @@ export default {
                 commit('updateSubkey', {key: 'crafting', name: key, subkey: 'owned', value: 0});
                 commit('updateSubkey', {key: 'crafting', name: key, subkey: 'crafted', value: 0});
             }
+            commit('updateKey', {key: 'craftingHandover', value: {out: [], in: []}});
             commit('updateKey', {key: 'explorerProgress', value: 0});
             commit('updateKey', {key: 'offeringGen', value: 0});
             commit('updateKey', {key: 'offeringfBuyBatch', value:-1});
@@ -252,6 +282,7 @@ export default {
             dispatch('upgrade/reset', {feature: 'village', subfeature, type: 'building'}, {root: true});
             dispatch('currency/reset', {feature: 'village', type: 'regular'}, {root: true});
             dispatch('stat/reset', {feature: 'village', type: 'regular'}, {root: true});
+            commit('updateKey', {key: 'craftingHandover', value: {out: [], in: []}});
             commit('updateKey', {key: 'explorerProgress', value: 0});
             dispatch('card/activateCards', 'village', {root: true});
 
@@ -407,6 +438,14 @@ export default {
                 }
                 commit('system/nextRng', {name: 'village_ingredientBox', amount: 1}, {root: true});
                 dispatch('consumable/use', 'village_ingredientBox', {root: true});
+            }
+        },
+        handoverCrafting({ state, commit }, oldItem) {
+            if (state.craftingHandover.out.includes(oldItem) && state.craftingHandover.in.length) {
+                commit('updateSubkey', {key: 'crafting', name: oldItem, subkey: 'isCrafting', value: false});
+                const newItem = state.craftingHandover.in[0];
+                commit('updateSubkey', {key: 'crafting', name: newItem, subkey: 'isCrafting', value: true});
+                commit('applyHandover', {key: oldItem });
             }
         }
     }
