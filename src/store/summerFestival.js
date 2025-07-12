@@ -465,6 +465,11 @@ export default {
                 }
             }
         },
+        sellIslandCell({ state, commit, dispatch }, o) {
+            commit('updateIslandKey', {x: o.x, y: o.y, key: 'unlocked', value: false});
+            dispatch('currency/gain', {feature: 'gem', name: 'topaz', amount: (state.topazExpansion - 1) * 10 + 100}, {root: true});
+            commit('updateKey', {key: 'topazExpansion', value: state.topazExpansion - 1});
+        },
         placeBuilding({ state, getters, rootGetters, commit, dispatch }) {
             if (getters.canPlaceBuilding && state.buildQueue.length < rootGetters['mult/get']('summerFestivalBuildQueueSlots')) {
                 const building = state.building[state.selectedBuilding];

@@ -24,16 +24,42 @@
         </ul>
       </v-card-text>
       <v-card-actions>
+        <v-btn class="ma-1" color="primary" @click="showQuests = true">任务列表</v-btn>
         <v-spacer></v-spacer>
         <price-tag class="ma-1" currency="event_summerFestivalToken" :amount="questTokenGain" add></price-tag>
         <v-btn class="ma-1" color="primary" :disabled="!questIsComplete" @click="completeQuest">{{ $vuetify.lang.t(`$vuetify.event.summerFestival.complete`) }}</v-btn>
       </v-card-actions>
     </v-card>
+    <v-dialog v-model="showQuests" :width="400">
+      <v-card class="pa-2 default-card">
+        <v-card-text>
+          <div v-for="(quest, no) in quests.slice(questsCompleted)" :key="no" class="my-2 d-flex bg-tile-default pa-2 rounded">
+            <div>#{{ questsCompleted + no + 1 }}</div>
+            <ul>
+              <li v-for="(item, key) in quest" :key="`task-${ key }`">
+                <template v-if="item.type === 'currency'">
+                  <span>{{ $vuetify.lang.t(`$vuetify.event.summerFestival.quest.currency`, $formatNum(item.amount)) }}</span>
+                  <currency-icon :name="item.name"></currency-icon>
+                </template>
+                <template v-else-if="item.type === 'building'">{{
+                  $vuetify.lang.t(
+                    `$vuetify.event.summerFestival.quest.building`,
+                    item.amount,
+                    item.level,
+                    $vuetify.lang.t(`$vuetify.event.summerFestival.building.${ item.name }.name`)
+                  )
+                }}</template>
+              </li>
+            </ul>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import Currency from '../../render/Currency.vue';
 import CurrencyIcon from '../../render/CurrencyIcon.vue';
 import PriceTag from '../../render/PriceTag.vue';
@@ -47,9 +73,14 @@ export default {
       'music', 'sand', 'freshWater', 'coal', 'metalPart', 'pearl', 'salt', 'pepper', 'honey', 'vegetable', 'citrusFruit', 'rawFish', 'cookedFish', 'rawMeat', 'cookedMeat',
       'solidPlate', 'sandstone', 'hardSteel', 'compositePlate',
       'coconutSalad', 'saltyShell', 'lemonCandy', 'steak', 'fishSticks'
-    ]
+    ],
+    showQuests: false
   }),
   computed: {
+    ...mapState({
+      quests: state => state.summerFestival.quest,
+      questsCompleted: state => state.summerFestival.questsCompleted
+    }),
     ...mapGetters({
       currentQuest: 'summerFestival/currentQuest',
       questTokenGain: 'summerFestival/questTokenGain',

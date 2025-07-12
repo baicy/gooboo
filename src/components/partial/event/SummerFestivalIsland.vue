@@ -236,6 +236,8 @@
       <summer-festival-building-card v-else-if="island[selectedCell.y][selectedCell.x].building" :id="island[selectedCell.y][selectedCell.x].building"></summer-festival-building-card>
       <template v-else>
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.event.summerFestival.empty') }}</div>
+        <v-btn class="ma-1" color="error" v-if="topazExpansion" @click="sellCell">退回</v-btn>
+        <price-tag class="ma-1" currency="gem_topaz" v-if="topazExpansion" :amount="(topazExpansion - 1) * 10 + 100" add></price-tag>
         <div v-if="canTerraform" class="d-flex flex-wrap">
           <gb-tooltip v-for="(item, key) in cellType[island[selectedCell.y][selectedCell.x].tile].terraform" :key="`terraform-${ key }`" :min-width="0">
             <template v-slot:activator="{ on, attrs }">
@@ -274,7 +276,8 @@ export default {
       placedBuilding: state => state.summerFestival.placedBuilding,
       buildingListBase: state => state.summerFestival.building,
       buildQueue: state => state.summerFestival.buildQueue,
-      maxStageStat: state => state.stat.event_summerFestivalMaxStage
+      maxStageStat: state => state.stat.event_summerFestivalMaxStage,
+      topazExpansion: state => state.summerFestival.topazExpansion
     }),
     ...mapGetters({
       topazExpansionCost: 'summerFestival/topazExpansionCost',
@@ -356,6 +359,9 @@ export default {
       } else {
         this.$store.dispatch('summerFestival/buyIslandCell', this.selectedCell);
       }
+    },
+    sellCell() {
+      this.$store.dispatch('summerFestival/sellIslandCell', this.selectedCell);
     },
     selectBuilding(name) {
       this.$store.commit('summerFestival/updateKey', {key: 'selectedBuilding', value: (
