@@ -40,7 +40,7 @@
       <gb-tooltip v-else>
         <template v-slot:activator="{ on, attrs }">
           <span v-bind="attrs" v-on="on">
-            <span>{{ $vuetify.lang.t('$vuetify.horde.enemy') + ' #' + (combo + 1) }}</span>
+            <span>{{ $vuetify.lang.t('$vuetify.horde.enemy') + ' #' + (combo + 1) }} ({{ $formatTime(fightTime) }})</span>
             <span v-if="enemyAmount !== null">&nbsp;/&nbsp;{{ enemyAmount }}</span>
           </span>
         </template>

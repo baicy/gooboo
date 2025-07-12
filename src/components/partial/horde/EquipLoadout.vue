@@ -51,10 +51,12 @@ export default {
     itemsList() {
       let arr = [];
       for (const [key, elem] of Object.entries(this.$store.getters['horde/itemsList'])) {
-        arr.push({
-          name: key,
-          color: elem.activeColor
-        });
+        if (elem.known) {
+          arr.push({
+            name: key,
+            color: elem.activeColor
+          });
+        }
       }
       return arr;
     }
