@@ -61,7 +61,7 @@
             <div v-bind="attrs" v-on="on" class="rounded" :class="{'selected-primary': filter === mat}">
               <v-btn
                 :color="currency[mat].color"
-                class="balloon-text-dynamic opacity-40"
+                class="balloon-text-dynamic"
                 :class="[$vuetify.theme.dark ? 'theme--dark darken-3' : 'theme--light lighten-3']"
                 :style="{ opacity: neededMaterials.has(mat) ? 1 : 0.5 }"
                 min-width="30" width="30" height="30"

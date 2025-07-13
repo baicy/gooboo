@@ -158,7 +158,7 @@
     <v-dialog v-if="showAutoBreak" v-model="showAutoBreak" max-width="400">
       <auto-break @close="showAutoBreak = false" />
     </v-dialog>
-    <v-dialog v-if="showOverview" v-model="showOverview">
+    <v-dialog v-if="showOverview" v-model="showOverview" max-width="800">
       <overview @close="showOverview = false" />
     </v-dialog>
     <div class="d-flex justify-space-around mt-8 mt-lg-12">
