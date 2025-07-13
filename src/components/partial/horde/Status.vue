@@ -23,9 +23,6 @@
       <v-btn icon :disabled="isMaxZone || isFrozen || currentTower !== null" @click="zoneNext"><v-icon>mdi-step-forward</v-icon></v-btn>
       <v-btn icon :disabled="isMaxZone || isFrozen || currentTower !== null" @click="zoneNext10"><v-icon>mdi-step-forward-2</v-icon></v-btn>
       <v-btn icon :disabled="isMaxZone || isFrozen || currentTower !== null" @click="zoneMax"><v-icon>mdi-skip-forward</v-icon></v-btn>
-      <v-btn text small @click="viewZoneList" v-if="subfeature === 0" :class="{'deep-purple--text': currentCorruption > 0}">
-        <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(currentCorruption * 100, true) }}%
-      </v-btn>
     </div>
     <div v-if="subfeature === 0" class="d-flex flex-wrap justify-center align-center">
       <gb-tooltip :min-width="0">
@@ -153,10 +150,14 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="6">
-        <v-card min-height="52" class="d-flex flex-wrap ma-1 mb-2 pa-1">
+        <v-card min-height="52" class="d-flex flex-wrap ma-1 mb-2 pa-1 align-center">
           <template v-if="enemy !== null">
             <enemy-active class="ma-1 mr-2" v-for="(item, key) in enemy.active" :key="'active-' + key" :name="key"></enemy-active>
           </template>
+          <v-spacer></v-spacer>
+          <v-btn text @click="viewZoneList" v-if="subfeature === 0" :class="{'deep-purple--text': currentCorruption > 0}">
+            <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(45.788, true) }}%
+          </v-btn>
         </v-card>
         <enemy-status class="ma-1"></enemy-status>
       </v-col>

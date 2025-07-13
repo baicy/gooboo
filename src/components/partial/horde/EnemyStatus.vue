@@ -96,7 +96,7 @@
       >
         <gb-tooltip v-if="currentCorruption > 0" :title-text="$vuetify.lang.t(`$vuetify.horde.corruption.name`)">
           <template v-slot:activator="{ on, attrs }">
-            <v-chip label small :color="`deep-purple ${ themeModifier }`" class="balloon-text-dynamic ma-1 px-2" v-bind="attrs" v-on="on"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(currentCorruption * 100) }}%</v-chip>
+            <v-chip label small :color="`deep-purple ${ themeModifier }`" class="balloon-text-dynamic ma-1 px-2" v-bind="attrs" v-on="on"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(currentCorruption, true) }}%</v-chip>
           </template>
           <stat-breakdown name="hordeCorruption" :base="corruptionBase"></stat-breakdown>
           <div class="text-center">{{ $vuetify.lang.t(`$vuetify.horde.corruption.effects`) }}</div>
@@ -111,7 +111,7 @@
           </template>
           <div>{{ $vuetify.lang.t('$vuetify.horde.rampage.description', $formatTime(fightTime), $formatTime(enemyRampageTime)) }}</div>
           <div>{{ $vuetify.lang.t('$vuetify.horde.rampage.effect', $formatNum(rampageStats.attack, true), $formatNum(rampageStats.critChance * 100, true), $formatNum(rampageStats.critDamage * 100, true), $formatNum(rampageStats.stunResist)) }}</div>
-          <div>{{ $vuetify.lang.t('$vuetify.horde.rampage.effectCurrent', $formatNum(fightRampage), $formatNum(rampageStats.attackNow, true), $formatNum(rampageStats.critChanceNow * 100, true), $formatNum(rampageStats.critDamageNow * 100, true), $formatNum(rampageStats.stunResistNow)) }}</div>
+          <div v-if="fightRampage > 0">{{ $vuetify.lang.t('$vuetify.horde.rampage.effectCurrent', $formatNum(fightRampage), $formatNum(rampageStats.attackNow, true), $formatNum(rampageStats.critChanceNow * 100, true), $formatNum(rampageStats.critDamageNow * 100, true), $formatNum(rampageStats.stunResistNow)) }}</div>
         </gb-tooltip>
       </entity-status>
       <div v-else-if="nextEnemyStats !== null" style="height: 60px;">
