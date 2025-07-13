@@ -116,7 +116,7 @@
       </entity-status>
       <div v-else-if="nextEnemyStats !== null" style="height: 60px;">
         <v-chip label small :color="`red ${ themeModifier }`" class="balloon-text-dynamic mt-8 px-2"><v-icon class="mr-2">mdi-sword-cross</v-icon>({{ $formatNum(nextEnemyStats.attack) }})</v-chip>
-        <v-chip v-if="currentCorruption > 0" label small :color="`deep-purple ${ themeModifier }`" class="balloon-text-dynamic mt-8 ml-2 px-2"><v-icon class="mr-2">mdi-skull</v-icon>({{ $formatNum(currentCorruption * 100) }}%)</v-chip>
+        <v-chip v-if="currentCorruption > 0" label small :color="`deep-purple ${ themeModifier }`" class="balloon-text-dynamic mt-8 ml-2 px-2"><v-icon class="mr-2">mdi-skull</v-icon>({{ $formatNum(currentCorruption * 100, true) }}%)</v-chip>
       </div>
       <div class="d-flex flex-wrap my-1 mx-n1" style="min-height: 32px;">
         <gb-tooltip key="reward-bone" v-if="subfeature === 0 && bossFight === 0 && currentTower === null" :title-text="$vuetify.lang.t(`$vuetify.gooboo.multGain`, $vuetify.lang.t('$vuetify.currency.horde_bone.name'))">

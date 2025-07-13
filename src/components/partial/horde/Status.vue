@@ -185,7 +185,7 @@
           <div class="d-flex">
             <v-text-field type="number"
               v-model.number="selectedZone"
-              :label="$vuetify.lang.t('$vuetify.horde.zone')"
+              :label="`${$vuetify.lang.t('$vuetify.horde.zone')} ${zone}/${maxZone}`"
               outlined
               hide-details
               dense
@@ -195,18 +195,24 @@
               label
               :color="`${selectedCorruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`"
               class="balloon-text-dynamic ma-1 px-2 text-center"
-              v-bind="attrs" v-on="on"
               style="width: 100px"
             >
               <v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(selectedCorruption * 100, true) }}%
             </v-chip>
+          </div>
+          <div v-if="this.selectedZone <= this.maxZone" class="mt-2 d-flex">
+            <div>
+              <sigil v-for="sigilName in sigils" :key="'sigil-' + sigilName" class="ma-1" :name="sigilName" :tier="1" small></sigil>
+            </div>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="$store.dispatch('horde/updateZone', selectedZone);" :disabled="selectedZone < 1">前往</v-btn>
           </div>
           <div class="d-flex mt-2">
             <div>
               <h3>前10层</h3>
               <div v-for="item in corruptionListPrev" :key="item.zone">
                 {{ item.zone }}
-                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2" v-bind="attrs" v-on="on"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
+                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
               </div>
             </div>
             <v-spacer></v-spacer>
@@ -214,7 +220,7 @@
               <h3>后10层</h3>
               <div v-for="item in corruptionListNext" :key="item.zone">
                 {{ item.zone }}
-                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2" v-bind="attrs" v-on="on"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
+                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
               </div>
             </div>
           </div>
@@ -238,9 +244,10 @@ import EnemyStatus from './EnemyStatus.vue';
 import PlayerStatus from './PlayerStatus.vue';
 import TowerTile from './TowerTile.vue';
 import TrinketItem from './TrinketItem.vue';
+import Sigil from './Sigil.vue';
 
 export default {
-  components: { Active, PlayerStatus, EnemyStatus, Currency, StatBreakdown, AlertText, EnemyActive, TowerTile, AreaMap, DisplayRow, TrinketItem },
+  components: { Active, PlayerStatus, EnemyStatus, Currency, StatBreakdown, AlertText, EnemyActive, TowerTile, AreaMap, DisplayRow, TrinketItem, Sigil },
   data: () => ({
     showTowers: false,
     showMap: false,
@@ -409,6 +416,12 @@ export default {
     },
     selectedCorruption() {
       return this.$store.getters['horde/enemyCorruption'](this.selectedZone);
+    },
+    sigils() {
+      if (this.subfeature === 1) {
+        return [];
+      }
+      return this.$store.state.horde.sigilZones.length < this.selectedZone ? [] : this.$store.state.horde.sigilZones[this.selectedZone - 1];
     },
     corruptionListPrev() {
       const list = [];
