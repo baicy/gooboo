@@ -23,6 +23,9 @@
       <v-btn icon :disabled="isMaxZone || isFrozen || currentTower !== null" @click="zoneNext"><v-icon>mdi-step-forward</v-icon></v-btn>
       <v-btn icon :disabled="isMaxZone || isFrozen || currentTower !== null" @click="zoneNext10"><v-icon>mdi-step-forward-2</v-icon></v-btn>
       <v-btn icon :disabled="isMaxZone || isFrozen || currentTower !== null" @click="zoneMax"><v-icon>mdi-skip-forward</v-icon></v-btn>
+      <v-btn text small @click="viewZoneList" v-if="subfeature === 0" :class="{'deep-purple--text': currentCorruption > 0}">
+        <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(currentCorruption * 100, true) }}%
+      </v-btn>
     </div>
     <div v-if="subfeature === 0" class="d-flex flex-wrap justify-center align-center">
       <gb-tooltip :min-width="0">
@@ -176,6 +179,48 @@
       <currency large class="ma-1" name="horde_blood"></currency>
       <currency v-if="selectedClass === 'pirate'" class="ma-1" name="horde_lockpick"></currency>
     </div>
+    <v-dialog v-model="showCorruptionList" :width="400">
+      <v-card class="default-card pa-2">
+        <v-card-text class="pt-2">
+          <div class="d-flex">
+            <v-text-field type="number"
+              v-model.number="selectedZone"
+              :label="$vuetify.lang.t('$vuetify.horde.zone')"
+              outlined
+              hide-details
+              dense
+            >
+            </v-text-field>
+            <v-chip
+              label
+              :color="`${selectedCorruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`"
+              class="balloon-text-dynamic ma-1 px-2 text-center"
+              v-bind="attrs" v-on="on"
+              style="width: 100px"
+            >
+              <v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(selectedCorruption * 100, true) }}%
+            </v-chip>
+          </div>
+          <div class="d-flex mt-2">
+            <div>
+              <h3>前10层</h3>
+              <div v-for="item in corruptionListPrev" :key="item.zone">
+                {{ item.zone }}
+                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2" v-bind="attrs" v-on="on"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
+              </div>
+            </div>
+            <v-spacer></v-spacer>
+            <div>
+              <h3>后10层</h3>
+              <div v-for="item in corruptionListNext" :key="item.zone">
+                {{ item.zone }}
+                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2" v-bind="attrs" v-on="on"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -201,6 +246,8 @@ export default {
     showMap: false,
     selectedArea: 'warzone',
     bossBonusDifficulty: 0,
+    showCorruptionList: false,
+    selectedZone: 0
   }),
   mounted() {
     this.selectedArea = this.$store.state.horde.selectedArea;
@@ -236,7 +283,8 @@ export default {
       comboRequired: 'horde/comboRequired',
       comboRequiredBase: 'horde/comboRequiredBase',
       itemsActiveList: 'horde/itemsActiveList',
-      canSpawnMiniboss: 'horde/canSpawnMiniboss'
+      canSpawnMiniboss: 'horde/canSpawnMiniboss',
+      currentCorruption: 'horde/currentCorruption'
     }),
     isMaxZone() {
       return this.zone >= this.maxZone;
@@ -358,6 +406,29 @@ export default {
     },
     isBossZone() {
       return this.subfeature === 1 && this.areaList[this.currentArea].zones[this.zone].type === 'boss';
+    },
+    selectedCorruption() {
+      return this.$store.getters['horde/enemyCorruption'](this.selectedZone);
+    },
+    corruptionListPrev() {
+      const list = [];
+      for (let i = Math.max(this.selectedZone - 10, 0);i < this.selectedZone; i++) {
+        list.push({
+          zone: i,
+          corruption: this.$store.getters['horde/enemyCorruption'](i)
+        })
+      }
+      return list;
+    },
+    corruptionListNext() {
+      const list = [];
+      for (let i = this.selectedZone + 1;i <= this.selectedZone + 10; i++) {
+        list.push({
+          zone: i,
+          corruption: this.$store.getters['horde/enemyCorruption'](i)
+        })
+      }
+      return list;
     }
   },
   methods: {
@@ -411,6 +482,10 @@ export default {
     },
     changeArea(name) {
       this.selectedArea = name;
+    },
+    viewZoneList() {
+      this.selectedZone = this.zone;
+      this.showCorruptionList = true;
     }
   },
   watch: {

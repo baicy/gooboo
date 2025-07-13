@@ -40,7 +40,7 @@
       <gb-tooltip v-else>
         <template v-slot:activator="{ on, attrs }">
           <span v-bind="attrs" v-on="on">
-            <span>{{ $vuetify.lang.t('$vuetify.horde.enemy') + ' #' + (combo + 1) }} ({{ $formatTime(fightTime) }})</span>
+            <span>{{ $vuetify.lang.t('$vuetify.horde.enemy') + ' #' + (combo + 1) }}</span>
             <span v-if="enemyAmount !== null">&nbsp;/&nbsp;{{ enemyAmount }}</span>
           </span>
         </template>
@@ -102,10 +102,10 @@
           <div class="text-center">{{ $vuetify.lang.t(`$vuetify.horde.corruption.effects`) }}</div>
           <div class="mt-0" v-for="(stat, name) in corruptionStats" :key="name">{{ $vuetify.lang.t(`$vuetify.horde.corruption.${ name }`, name === 'execute' ? $formatNum(stat * 100, true) : $formatNum(stat, true)) }}</div>
         </gb-tooltip>
-        <gb-tooltip v-if="fightRampage > 0" :title-text="$vuetify.lang.t('$vuetify.horde.rampage.name')">
+        <gb-tooltip :title-text="$vuetify.lang.t('$vuetify.horde.rampage.name')">
           <template v-slot:activator="{ on, attrs }">
-            <v-chip label small class="balloon-text-dynamic ma-1 px-2" :color="`deep-orange ${ themeModifier }`" v-bind="attrs" v-on="on">
-              <v-icon class="mr-2">mdi-emoticon-angry</v-icon>
+            <v-chip label small class="balloon-text-dynamic ma-1 px-2" :color="`${fightRampage > 0 ? 'deep-orange' : 'green'} ${ themeModifier }`" v-bind="attrs" v-on="on">
+              <v-icon class="mr-2">mdi-emoticon-{{fightRampage > 0 ? 'angry' : 'happy'}}</v-icon>
               {{ $formatNum(fightRampage) }}
             </v-chip>
           </template>

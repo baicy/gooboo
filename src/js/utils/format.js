@@ -50,10 +50,10 @@ function formatNum(amount, showDecimals = false) {
         }
         if (Math.abs(numBase) > 4) {
             return negativePrefix + (amount / Math.pow(10, numBase)).toFixed(2) + 'e' + numBase;
+        } else if (showDecimals && Math.abs(numBase) < 3) {
+            return negativePrefix + roundNear(amount).toString().slice(0, 5);
         } else if (numBase < 0) {
             return negativePrefix + amount.toFixed(4);
-        } else if (showDecimals && numBase < 3) {
-            return negativePrefix + roundNear(amount).toString().slice(0, 5);
         } else {
             return negativePrefix + Math.floor(amount);
         }
