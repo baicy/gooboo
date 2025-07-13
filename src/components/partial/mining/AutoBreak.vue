@@ -118,18 +118,7 @@ export default {
     ...mapActions({
       toggle: 'mining/toggleAutoBreak'
     }),
-    getMaxFlashDepth() {
-      let flash = 0;
-      for (let i = 0; i < this.maxDepth - 1; i++) {
-        if (this.hitsNeeded(i+1) > 1) break;
-        flash = i;
-      }
-      this.maxFlashDepth = flash;
-    },
-    getNiter() {
-      let neededTime = 0;
-      let niter = 0;
-      // 重置信标效果
+    resetBeaconEffects() {
       let effects = [];
       for (const [key, elem] of Object.entries(this.beacon)) {
         effects.push(...elem.effect.map(el => {
@@ -139,6 +128,27 @@ export default {
       effects.forEach(effect => {
         this.$store.dispatch('system/resetEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ effect.key }`});
       });
+    },
+    getMaxFlashDepth() {
+      let flash = 0;
+      this.resetBeaconEffects();
+      for (let i = 0; i < this.maxDepth - 1; i++) {
+        const beacon = this.beaconPlaced[i+1];
+        if (beacon) {
+          this.beacon[beacon].effect.forEach(effect => {
+            this.$store.dispatch('system/applyEffect', {type: effect.type, name: effect.name, multKey: `miningBeacon_${ beacon }`, value: effect.value(this.beacon[beacon].level), trigger: false});
+          });
+        }
+        if (this.hitsNeeded(i+1) > 1) break;
+        flash = i;
+      }
+      this.$store.dispatch('mining/applyBeaconEffects');
+      this.maxFlashDepth = flash;
+    },
+    getNiter() {
+      let neededTime = 0;
+      let niter = 0;
+      this.resetBeaconEffects();
       for (let i = 0; i < this.maxDepth - 1; i++) {
         const beacon = this.beaconPlaced[i+1];
         if (beacon) {
@@ -158,7 +168,6 @@ export default {
       }
       this.totalTime = neededTime;
       this.totalNiter = niter;
-      // 恢复信标效果
       this.$store.dispatch('mining/applyBeaconEffects');
     },
     toggleAutoBreak() {

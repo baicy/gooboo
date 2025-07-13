@@ -156,7 +156,7 @@
           </template>
           <v-spacer></v-spacer>
           <v-btn text @click="viewZoneList" v-if="subfeature === 0" :class="{'deep-purple--text': currentCorruption > 0}">
-            <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(45.788, true) }}%
+            <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(currentCorruption * 100, true) }}%
           </v-btn>
         </v-card>
         <enemy-status class="ma-1"></enemy-status>
