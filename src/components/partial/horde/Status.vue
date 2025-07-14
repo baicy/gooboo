@@ -155,7 +155,7 @@
             <enemy-active class="ma-1 mr-2" v-for="(item, key) in enemy.active" :key="'active-' + key" :name="key"></enemy-active>
           </template>
           <v-spacer></v-spacer>
-          <v-btn text @click="viewZoneList" v-if="subfeature === 0" :class="{'deep-purple--text': currentCorruption > 0}">
+          <v-btn text @click="viewZoneList" v-if="subfeature === 0 && !currentTower" :class="{'deep-purple--text': currentCorruption > 0}">
             <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(currentCorruption * 100, true) }}%
           </v-btn>
         </v-card>
@@ -180,50 +180,32 @@
       <currency large class="ma-1" name="horde_blood"></currency>
       <currency v-if="selectedClass === 'pirate'" class="ma-1" name="horde_lockpick"></currency>
     </div>
-    <v-dialog v-model="showCorruptionList" :width="400">
+    <v-dialog v-model="showZoneList" :max-width="800">
       <v-card class="default-card pa-2">
         <v-card-text class="pt-2">
-          <div class="d-flex">
+          <div class="d-flex align-center mb-2">
             <v-text-field type="number"
               v-model.number="selectedZone"
-              :label="`${$vuetify.lang.t('$vuetify.horde.zone')} ${zone}/${maxZone}`"
+              :label="$vuetify.lang.t('$vuetify.horde.zone')"
               outlined
               hide-details
               dense
             >
             </v-text-field>
-            <v-chip
-              label
-              :color="`${selectedCorruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`"
-              class="balloon-text-dynamic ma-1 px-2 text-center"
-              style="width: 100px"
-            >
-              <v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(selectedCorruption * 100, true) }}%
-            </v-chip>
+            <span class="ml-4">{{ zone }} / {{ maxZone }}</span>
           </div>
-          <div v-if="this.selectedZone <= this.maxZone" class="mt-2 d-flex">
-            <div>
-              <sigil v-for="sigilName in sigils" :key="'sigil-' + sigilName" class="ma-1" :name="sigilName" :tier="1" small></sigil>
-            </div>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="$store.dispatch('horde/updateZone', selectedZone);" :disabled="selectedZone < 1">前往</v-btn>
-          </div>
-          <div class="d-flex mt-2">
-            <div>
-              <h3>前10层</h3>
-              <div v-for="item in corruptionListPrev" :key="item.zone">
-                {{ item.zone }}
+          <div v-for="item in zoneList" :key="item.zone" :class="{'selected-primary': item.zone === zone}">
+            <v-card>
+              <v-card-actions>
+                <span>{{ item.zone }}</span>
+                <div v-if="subfeature === 0 && item.zone <= maxZone" class="ml-2">
+                  <sigil v-for="sigilName in sigils[item.zone - 1]" :key="'sigil-' + item.zone + sigilName" class="ma-1" :name="sigilName" :tier="1" small></sigil>
+                </div>
+                <v-spacer></v-spacer>
                 <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
-              </div>
-            </div>
-            <v-spacer></v-spacer>
-            <div>
-              <h3>后10层</h3>
-              <div v-for="item in corruptionListNext" :key="item.zone">
-                {{ item.zone }}
-                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
-              </div>
-            </div>
+                <v-btn small color="primary" @click="$store.dispatch('horde/updateZone', item.zone);" v-if="!isFrozen && item.zone <= maxZone && item.zone !== zone">前往</v-btn>
+              </v-card-actions>
+            </v-card>
           </div>
         </v-card-text>
       </v-card>
@@ -254,7 +236,7 @@ export default {
     showMap: false,
     selectedArea: 'warzone',
     bossBonusDifficulty: 0,
-    showCorruptionList: false,
+    showZoneList: false,
     selectedZone: 0
   }),
   mounted() {
@@ -286,6 +268,7 @@ export default {
       trinketDrop: state => state.horde.trinketDrop,
       bossStage: state => state.horde.bossStage,
       selectedClass: state => state.horde.selectedClass,
+      sigils: state => state.horde.sigilZones
     }),
     ...mapGetters({
       comboRequired: 'horde/comboRequired',
@@ -418,26 +401,10 @@ export default {
     selectedCorruption() {
       return this.$store.getters['horde/enemyCorruption'](this.selectedZone);
     },
-    sigils() {
-      if (this.subfeature === 1) {
-        return [];
-      }
-      return this.$store.state.horde.sigilZones.length < this.selectedZone ? [] : this.$store.state.horde.sigilZones[this.selectedZone - 1];
-    },
-    corruptionListPrev() {
+    zoneList() {
       const list = [];
-      for (let i = Math.max(this.selectedZone - 10, 0);i < this.selectedZone; i++) {
-        list.push({
-          zone: i,
-          corruption: this.$store.getters['horde/enemyCorruption'](i)
-        })
-      }
-      return list;
-    },
-    corruptionListNext() {
-      const list = [];
-      for (let i = this.selectedZone + 1;i <= this.selectedZone + 10; i++) {
-        list.push({
+      for (let i = Math.max(this.selectedZone - 2, 0);i <= this.selectedZone + 2; i++) {
+        list.unshift({
           zone: i,
           corruption: this.$store.getters['horde/enemyCorruption'](i)
         })
@@ -499,7 +466,7 @@ export default {
     },
     viewZoneList() {
       this.selectedZone = this.zone;
-      this.showCorruptionList = true;
+      this.showZoneList = true;
     }
   },
   watch: {
