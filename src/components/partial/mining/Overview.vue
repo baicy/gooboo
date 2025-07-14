@@ -12,7 +12,7 @@
           @input="getDepths"
         >
         </v-text-field>
-        <span class="ml-4">{{ depth }} / {{ maxDepth }}</span>
+        <span class="ml-2 text-right" style="min-width: 70px">{{ depth }} / {{ maxDepth }}</span>
       </div>
       <v-row no-gutters class="mt-2">
         <v-col cols="12" :md="filters.length ? 4 : 12">

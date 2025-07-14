@@ -155,7 +155,7 @@
             <enemy-active class="ma-1 mr-2" v-for="(item, key) in enemy.active" :key="'active-' + key" :name="key"></enemy-active>
           </template>
           <v-spacer></v-spacer>
-          <v-btn text @click="viewZoneList" v-if="subfeature === 0 && !currentTower" :class="{'deep-purple--text': currentCorruption > 0}">
+          <v-btn text @click="viewZoneList" v-if="!currentTower" :class="{'deep-purple--text': currentCorruption > 0}">
             <v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(currentCorruption * 100, true) }}%
           </v-btn>
         </v-card>
@@ -181,33 +181,54 @@
       <currency v-if="selectedClass === 'pirate'" class="ma-1" name="horde_lockpick"></currency>
     </div>
     <v-dialog v-model="showZoneList" :max-width="800">
-      <v-card class="default-card pa-2">
-        <v-card-text class="pt-2">
-          <div class="d-flex align-center mb-2">
-            <v-text-field type="number"
-              v-model.number="selectedZone"
-              :label="$vuetify.lang.t('$vuetify.horde.zone')"
-              outlined
-              hide-details
-              dense
-            >
-            </v-text-field>
-            <span class="ml-4">{{ zone }} / {{ maxZone }}</span>
-          </div>
-          <div v-for="item in zoneList" :key="item.zone" :class="{'selected-primary': item.zone === zone}">
-            <v-card>
-              <v-card-actions>
-                <span>{{ item.zone }}</span>
-                <div v-if="subfeature === 0 && item.zone <= maxZone" class="ml-2">
-                  <sigil v-for="sigilName in sigils[item.zone - 1]" :key="'sigil-' + item.zone + sigilName" class="ma-1" :name="sigilName" :tier="1" small></sigil>
-                </div>
-                <v-spacer></v-spacer>
-                <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic ma-1 px-2"><v-icon class="mr-2">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
-                <v-btn small color="primary" @click="$store.dispatch('horde/updateZone', item.zone);" v-if="!isFrozen && item.zone <= maxZone && item.zone !== zone">前往</v-btn>
-              </v-card-actions>
-            </v-card>
-          </div>
-        </v-card-text>
+      <v-card class="default-card pt-4 pb-2 px-2">
+        <div class="d-flex align-center mb-2" v-if="subfeature === 0">
+          <v-text-field type="number"
+            v-model.number="selectedZone"
+            :label="$vuetify.lang.t('$vuetify.horde.zone')"
+            outlined
+            hide-details
+            dense
+          >
+          </v-text-field>
+          <span class="ml-2" style="min-width: 70px">{{ zone }} / {{ maxZone }}</span>
+        </div>
+        <v-sheet class="d-flex align-center mb-2" v-if="subfeature === 1" style="position: sticky; top: 16px; z-index: 3;">
+          <v-select hide-details outlined dense :items="Object.keys(areaList)" v-model="selectedZoneArea" v-if="subfeature === 1">
+            <template #item="{ item }">
+              <v-icon class="mr-1" :color="areaList[item].color">{{ areaList[item].icon }}</v-icon>
+              {{ $vuetify.lang.t(`$vuetify.horde.area.${ item }`) }}
+            </template>
+            <template #selection="{ item }">
+              <v-icon class="mr-1" :color="areaList[item].color">{{ areaList[item].icon }}</v-icon>
+              {{ $vuetify.lang.t(`$vuetify.horde.area.${ item }`) }}
+            </template>
+          </v-select>
+          <span class="ml-2" style="min-width: 100px">
+            <v-icon class="mr-1" :color="areaList[currentArea].color">{{ areaList[currentArea].icon }}</v-icon>
+            {{ $vuetify.lang.t(`$vuetify.horde.area.${ currentArea }`) }}
+          </span>
+        </v-sheet>
+        <div v-for="item in zoneList" :key="item.zone" class="ma-1" :class="{'selected-primary': currentArea === selectedZoneArea && item.zone === zone}">
+          <v-card>
+            <v-card-actions>
+              <span v-if="item.zone === 'endless'">{{ $vuetify.lang.t('$vuetify.horde.area.zoneEndless') }}</span>
+              <span v-else-if="typeof item.zone ==='string' && item.zone.slice(0, 4) === 'boss'">Boss</span>
+              <span v-else>{{ $vuetify.lang.t('$vuetify.horde.zone') }} {{ item.zone }}</span>
+              <div v-if="subfeature === 0 && item.zone <= maxZone" class="ml-1 d-flex flex-wrap">
+                <sigil v-for="sigilName in sigils[item.zone - 1]" :key="'sigil-' + item.zone + sigilName" class="mx-1 my-1" :name="sigilName" :tier="1" small></sigil>
+              </div>
+              <div v-if="subfeature === 1" class="ml-2">
+                {{ $vuetify.lang.t(`$vuetify.horde.area.difficulty`, $formatNum(item.difficulty)) }}
+                <v-icon v-if="item.difficulty <= clearMaxDifficulty" color="success">mdi-check</v-icon>
+              </div>
+              <v-spacer></v-spacer>
+              <v-chip label small :color="`${item.corruption > 0 ? 'deep-purple' : ''} ${ $vuetify.theme.dark ? 'darken-2' : 'lighten-2' }`" class="balloon-text-dynamic"><v-icon class="mr-1">mdi-skull</v-icon>{{ $formatNum(item.corruption * 100, true) }}%</v-chip>
+              <v-btn small color="primary" @click="$store.dispatch('horde/updateZone', item.zone);" v-if="!isFrozen && subfeature === 0 && item.zone <= maxZone && item.zone !== zone" class="ml-1">前往</v-btn>
+              <v-btn small color="primary" @click="$store.dispatch('horde/updateAreaZone', {area: selectedZoneArea, zone: item.zone});" v-if="!isFrozen && subfeature === 1 && Object.keys(areaVisible).includes(selectedZoneArea) && item.unlocked && (currentArea !== selectedZoneArea || item.zone !== zone)" class="ml-1">前往</v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
       </v-card>
     </v-dialog>
   </div>
@@ -237,7 +258,8 @@ export default {
     selectedArea: 'warzone',
     bossBonusDifficulty: 0,
     showZoneList: false,
-    selectedZone: 0
+    selectedZone: 0,
+    selectedZoneArea: 'warzone'
   }),
   mounted() {
     this.selectedArea = this.$store.state.horde.selectedArea;
@@ -268,7 +290,8 @@ export default {
       trinketDrop: state => state.horde.trinketDrop,
       bossStage: state => state.horde.bossStage,
       selectedClass: state => state.horde.selectedClass,
-      sigils: state => state.horde.sigilZones
+      sigils: state => state.horde.sigilZones,
+      clearMaxDifficulty: state => state.stat.horde_maxDifficulty.value
     }),
     ...mapGetters({
       comboRequired: 'horde/comboRequired',
@@ -398,16 +421,28 @@ export default {
     isBossZone() {
       return this.subfeature === 1 && this.areaList[this.currentArea].zones[this.zone].type === 'boss';
     },
-    selectedCorruption() {
-      return this.$store.getters['horde/enemyCorruption'](this.selectedZone);
-    },
     zoneList() {
       const list = [];
-      for (let i = Math.max(this.selectedZone - 2, 0);i <= this.selectedZone + 2; i++) {
-        list.unshift({
-          zone: i,
-          corruption: this.$store.getters['horde/enemyCorruption'](i)
-        })
+      if (this.subfeature === 0) {
+        for (let zone = Math.max(this.selectedZone - 2, 0);zone <= this.selectedZone + 2; zone++) {
+          list.unshift({
+            zone,
+            corruption: this.$store.getters['horde/enemyCorruption'](zone)
+          })
+        }
+      }
+      if (this.subfeature === 1) {
+        for (const [zone, elem] of Object.entries(this.areaList[this.selectedZoneArea].zones)) {
+          if (elem.difficulty !== undefined) {
+            list.push({
+              zone,
+              unlocked: elem.unlocked,
+              type: elem.type,
+              difficulty: (elem.type === 'boss' && this.$store.state.unlock[elem.reward].use) ? (elem.difficulty + this.bossBonusDifficulty) : elem.difficulty,
+              corruption: this.$store.getters['horde/enemyCorruption'](elem.difficulty)
+            });
+          }
+        }
       }
       return list;
     }
@@ -465,7 +500,12 @@ export default {
       this.selectedArea = name;
     },
     viewZoneList() {
-      this.selectedZone = this.zone;
+      if (this.subfeature === 0) {
+        this.selectedZone = this.zone;
+      }
+      if (this.subfeature === 1) {
+        this.selectedZoneArea = this.selectedArea;
+      }
       this.showZoneList = true;
     }
   },

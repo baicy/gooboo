@@ -2215,7 +2215,7 @@ export default {
       zoneEndless: '无尽区域',
       zoneBoss: 'Boss ({0})',
       zone: '区域 {0}',
-      difficulty: '{0} 难度',
+      difficulty: '难度 {0}',
       enemyAmount: '这个区域有 {0} 敌人',
       warzone: '战区',
       monkeyJungle: '猴子丛林',
