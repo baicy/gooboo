@@ -99,26 +99,6 @@
         </template>
         <div>查看未解锁工艺品</div>
       </gb-tooltip>
-      <v-card class="pa-2 ml-2">
-        <gb-tooltip :min-width="0" v-for="item in handover.out" :key="`handover-out-${item}`">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" :color="craftingList[item].color">{{ craftingList[item].icon }}</v-icon>
-          </template>
-          <div>{{ $vuetify.lang.t(`$vuetify.village.crafting.${ item }`) }}</div>
-        </gb-tooltip>
-        <gb-tooltip>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" class="mx-8">mdi-hand-extended</v-icon>
-          </template>
-          <div>左侧工艺品如果材料不足，该工匠将按排列顺序自动制作右侧工艺品。离线不生效。</div>
-        </gb-tooltip>
-        <gb-tooltip :min-width="0" v-for="item in handover.in" :key="`handover-in-${item}`">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" :color="craftingList[item].color">{{ craftingList[item].icon }}</v-icon>
-          </template>
-          <div>{{ $vuetify.lang.t(`$vuetify.village.crafting.${ item }`) }}</div>
-        </gb-tooltip>
-      </v-card>
     </div>
     <div v-if="showMaterials" class="d-flex flex-wrap bg-tile-background px-2 justify-center my-1" style="gap: 8px">
       <gb-tooltip
@@ -191,24 +171,6 @@
             @click="toggleCrafting"
             :disabled="isFrozen || !craftObj.isCrafting && currentArtisan >= maxArtisan"
           ><v-icon>{{ craftObj.isCrafting ? 'mdi-check' : 'mdi-cancel' }}</v-icon></v-btn>
-          <v-btn
-            class="mr-2"
-            :color="handover.out.includes(selectedCraft) ? 'success' : ''"
-            v-if="$store.getters['system/checkExtraCheated']('extraToolbar') && craftObj.isCrafting"
-            @click="toggleHandover('out', selectedCraft)"
-            :disabled="isFrozen"
-          >
-            <v-icon>mdi-clock-out</v-icon>
-          </v-btn>
-          <v-btn
-            class="mr-2"
-            :color="handover.in.includes(selectedCraft) ? 'success' : ''"
-            v-if="$store.getters['system/checkExtraCheated']('extraToolbar') && craftObj.unlocked && !craftObj.isCrafting"
-            @click="toggleHandover('in', selectedCraft)"
-            :disabled="isFrozen"
-          >
-            <v-icon>mdi-clock-in</v-icon>
-          </v-btn>
           <v-progress-linear class="rounded balloon-text-dynamic" height="16" :value="craftObj.progress * 100">{{ $formatTime(craftObj.timeNeeded * (1 - craftObj.progress)) }} / {{ $formatTime(craftObj.timeNeeded) }}</v-progress-linear>
         </div>
         <div v-if="!craftObj.isSpecial" class="d-flex align-center my-1 mt-3">
@@ -272,7 +234,6 @@ export default {
     ...mapState({
       craftingList: state => state.village.crafting,
       isFrozen: state => state.cryolab.village.active,
-      handover: state => state.village.craftingHandover,
       currency: state => state.currency
     }),
     ...mapGetters({
@@ -410,11 +371,6 @@ export default {
     toggleCrafting() {
       if (this.selectedCraft !== null) {
         this.$store.commit('village/updateSubkey', {key: 'crafting', name: this.selectedCraft, subkey: 'isCrafting', value: !this.craftObj.isCrafting});
-        if (!this.craftObj.isCrafting && this.handover.out.includes(this.selectedCraft)) {
-          this.toggleHandover('out', this.selectedCraft);
-        } else if (this.craftObj.isCrafting && this.handover.in.includes(this.selectedCraft)) {
-          this.toggleHandover('in', this.selectedCraft);
-        }
       }
     },
     toggleSelling() {
@@ -437,9 +393,6 @@ export default {
         this.showMaterials = false;
         this.crafting = false;
       }
-    },
-    toggleHandover(list, name) {
-      this.$store.commit('village/updateHandover', {list, key: name});
     }
   },
   watch: {
