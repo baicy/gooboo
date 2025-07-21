@@ -281,6 +281,7 @@ export default {
                     for (const [k, e] of Object.entries(store.getters['mining/smelteryPrice'](key, doneAmount))) {
                         store.dispatch('currency/spend', {feature: k.split('_')[0], name: k.split('_')[1], amount: e});
                     }
+                    store.commit('mining/updateSmelteryKey', {name: key, key: 'progress', value: (seconds - singleTime * doneAmount) / singleTime});
                 }
                 const barSplit = elem.output.split('_');
                 store.dispatch('currency/gain', {feature: barSplit[0], name: barSplit[1], amount: doneAmount});
@@ -289,7 +290,6 @@ export default {
                 const remainAmount = Math.min(elem.book - doneAmount, store.getters['mining/smelteryAffordAmount'](key));
                 if (remainAmount > 0) {
                     store.dispatch('mining/addToSmelteryCustom', {name: key, amount: remainAmount, book: true});
-                    store.commit('mining/updateSmelteryKey', {name: key, key: 'progress', value: (seconds - singleTime * doneAmount) / singleTime});
                 }
             }
         }
