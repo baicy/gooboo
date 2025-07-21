@@ -594,7 +594,7 @@ import General from './components/view/General.vue';
 import Event from './components/view/Event.vue';
 import Treasure from './components/view/Treasure.vue';
 import Cryolab from './components/view/Cryolab.vue';
-import { cleanStore, decodeFile, exportFile, saveLocal, saveCloud, exportFileString } from './js/savefile';
+import { cleanStore, decodeFile, exportFile, saveLocal, exportFileString } from './js/savefile';
 import NextTile from './components/partial/main/NextTile.vue';
 import VSnackbars from 'v-snackbars'
 import AchievementMessage from './components/partial/snackbar/AchievementMessage.vue';
@@ -618,6 +618,7 @@ import CommonMessage from './components/partial/snackbar/CommonMessage.vue';
 import { APP_ENV } from './js/constants';
 import ImportMessage from './components/partial/snackbar/ImportMessage.vue';
 import CloudSave from './components/partial/info/CloudSave.vue';
+import { saveCloud } from './js/utils/cloud';
 const semverCompare = require('semver/functions/compare');
 
 export default {

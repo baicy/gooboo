@@ -18,9 +18,7 @@ import v1_1_0 from "./modules/migration/v1_1_0";
 import { getDay } from "./utils/date";
 import v1_1_2 from "./modules/migration/v1_1_2";
 import v1_3_0 from "./modules/migration/v1_3_0";
-import { loadGame } from "@/js/init";
 import { APP_TESTING, LOCAL_STORAGE_NAME } from "./constants";
-import { saveData, getLatestDataList, loadSaveFile } from "./cloud"
 import v1_3_4 from "./modules/migration/v1_3_4";
 import v1_3_5 from "./modules/migration/v1_3_5";
 import v1_4_0 from "./modules/migration/v1_4_0";
@@ -31,7 +29,6 @@ import v1_5_1 from "./modules/migration/v1_5_1";
 import v1_5_3 from "./modules/migration/v1_5_3";
 import v1_5_4 from "./modules/migration/v1_5_4";
 import v1_5_6 from "./modules/migration/v1_5_6";
-let isSaving = false;
 const migrations = {
     '1.1.0': v1_1_0,
     '1.1.2': v1_1_2,
@@ -47,7 +44,7 @@ const migrations = {
     '1.5.6': v1_5_6,
 };
 
-export { checkLocal, saveLocal, loadFile, exportFile, exportFileString, cleanStore, getSavefile, getSavefileName, encodeFile, decodeFile, saveCloud, getCloudList, loadCloud }
+export { checkLocal, saveLocal, loadFile, exportFile, exportFileString, cleanStore, getSavefile, getSavefileName, encodeFile, decodeFile }
 const semverCompare = require('semver/functions/compare');
 
 /**
@@ -62,84 +59,6 @@ function checkLocal() {
 function saveLocal() {
     localStorage.setItem(LOCAL_STORAGE_NAME, getSavefile());
 }
-
-/**
- * 云存档
- */
-const saveCloud = async () => {
-    if (isSaving) {
-        store.commit('system/addNotification', { color: 'error', timeout: 2000, message: { type: 'common', message: '正在上传云存档', icon: 'mdi-cloud-arrow-up' } });
-        return;
-    }
-    isSaving = true;
-
-    try {
-        let userId = store.state.system.cloudSave.user;
-        let tokenId = store.state.system.cloudSave.pwd;
-
-        if (!userId || !tokenId) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码未填写完整', icon: 'mdi-cloud-alert' } });
-            isSaving = false;
-            return; 
-        }
-        
-        const goobooSavefile = localStorage.getItem('goobooSavefile');
-        if (!goobooSavefile) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '未获取本地存档', icon: 'mdi-content-save-alert' } });
-            isSaving = false;
-            return;
-        }
-
-        const res = await saveData(goobooSavefile, userId, tokenId); 
-        if (res.success){
-            store.commit('system/addNotification', { color: 'info', timeout: 3000, message: { type: 'common', message: '云存档已上传', icon: 'mdi-cloud-arrow-up' } });
-        }
-    } catch (error) {
-        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档上传错误', icon: 'mdi-cloud-arrow-up' } });
-    } finally {
-        isSaving = false;
-    }
-
-};
-
-const getCloudList = async () => {
-    try {
-        let userId = store.state.system.cloudSave.user;
-        let tokenId = store.state.system.cloudSave.pwd;
-
-        if (!userId || !tokenId) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码未填写完整', icon: 'mdi-cloud-alert' } });
-            return null;
-        }
-        return await getLatestDataList(userId, tokenId);
-    } catch (error) {
-        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档加载失败', icon: 'mdi-cloud-alert' } });
-        return null;
-    }
-};
-
-const loadCloud = async (selectedSavefile) => {
-    try {
-        let userId = store.state.system.cloudSave.user;
-        let tokenId = store.state.system.cloudSave.pwd;
-
-        if (!userId || !tokenId) {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '用户名或者密码未填写完整', icon: 'mdi-cloud-alert' } });
-            return;
-        }
-
-        const saveData = await loadSaveFile(selectedSavefile.id, userId, tokenId);
-        if (saveData) {
-            store.commit('system/addNotification', { color: 'success', timeout: 3000, message: { type: 'common', message: '云存档加载成功', icon: 'mdi-cloud-arrow-up' } });
-            cleanStore();
-            loadGame(saveData);
-        } else {
-            store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档加载失败', icon: 'mdi-cloud-alert' } });
-        }
-    } catch (error) {
-        store.commit('system/addNotification', { color: 'error', timeout: 5000, message: { type: 'common', message: '云存档加载失败', icon: 'mdi-cloud-alert' } });
-    }
-};
 
 function cleanStore() {
     Object.keys(store._modules.root._children).forEach(module => {

@@ -5,7 +5,13 @@
       <span v-else>请设置云存档用户信息</span>
     </v-card-title>
     <v-card-text>
-      <v-list v-if="files.length" style="max-height: 250px; overflow-y: auto;">
+      <div v-if="loading" class="d-flex justify-center align-center" style="height: 250px;">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+      </div>
+      <v-list v-else-if="files.length" style="max-height: 250px; overflow-y: auto;">
         <v-list-item
           v-for="file in files"
           :key="file.id"
@@ -13,7 +19,8 @@
           @click="selectedFile = file"
           active-class="primary--text"
         >
-          <span>备注: {{ file.memo || '无'  }}</span>
+          <span>{{ file.memo || '无'  }}</span>
+          <v-icon class="ml-1" @click="showEditRemark(file.id, file.memo)">mdi-comment-edit</v-icon>
           <v-spacer></v-spacer>
           <span>{{ file.created_at }}</span>
         </v-list-item>
@@ -41,12 +48,21 @@
               :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="showPwd = !showPwd"
             ></v-text-field>
-            <v-text-field v-model.number="autoTime" label="自动上传" outlined dense hide-details clearable class="mt-2" suffix="s" type="number"></v-text-field>
+            <v-text-field v-model.number="autoTime" :step="10" label="自动上传" outlined dense hide-details clearable class="mt-2" suffix="s" type="number"></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="error" @click="setting = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
             <v-btn color="primary" @click="saveSetting" :disabled="!!autoTime && autoTime < 0">{{ $vuetify.lang.t('$vuetify.gooboo.saveManual') }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="editing" max-width="400">
+        <v-card class="default-card">
+          <v-card-actions class="">
+            <v-text-field v-model.trim="remark" label="备注" dense outlined hide-details clearable></v-text-field>
+            <v-btn color="error" class="ml-2" @click="editing = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+            <v-btn color="primary" @click="editRemark()" :loading="loading">{{ $vuetify.lang.t('$vuetify.gooboo.saveManual') }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -56,19 +72,23 @@
 
 <script>
 import { mapState } from 'vuex';
-import { getCloudList, loadCloud } from '../../../js/savefile';
 import AlertText from '../render/AlertText.vue';
+import { getCloudList, loadCloud, updateRemark } from '@/js/utils/cloud';
 
 export default {
   components: { AlertText },
   data: () => ({
+    loading: true,
     files: [],
     selectedFile: { id: -1 },
     setting: false,
     showPwd: false,
     user: null,
     pwd: null,
-    autoTime: null
+    autoTime: null,
+    editing: false,
+    remark: '',
+    editId: -1
   }),
   computed: {
     ...mapState({
@@ -101,15 +121,23 @@ export default {
       }
     },
     async loadList() {
-      try {
-        this.files = (await getCloudList()) || [];
-      } catch {
-        this.$store.commit('system/addNotification', {color: 'error', timeout: 5000, message: {type: 'common', message: '获取云存档列表失败', icon: 'mdi-cloud-arrow-down'}});
-      }
+      this.files = (await getCloudList()) || [];
+      this.loading = false;
     },
     loadFile() {
-      loadCloud(this.selectedFile);
+      loadCloud(this.selectedFile.id);
       this.$emit('close');
+    },
+    showEditRemark(id, remark) {
+      this.editing = true;
+      this.editId = id;
+      this.remark = remark;
+    },
+    async editRemark() {
+      this.loading = true;
+      await updateRemark(this.editId, this.remark);
+      this.editing = false;
+      this.loadList();
     }
   }
 }

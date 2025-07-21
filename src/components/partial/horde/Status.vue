@@ -209,7 +209,7 @@
             {{ $vuetify.lang.t(`$vuetify.horde.area.${ currentArea }`) }}
           </span>
         </v-sheet>
-        <div v-for="item in zoneList" :key="item.zone" class="ma-1" :class="{'selected-primary': currentArea === selectedZoneArea && item.zone === zone}">
+        <div v-for="item in zoneList" :key="item.zone" class="ma-1" :class="{'selected-primary': item.zone === zone && ((subfeature === 1 && currentArea === selectedZoneArea) || subfeature === 0)  }">
           <v-card>
             <v-card-actions>
               <span v-if="item.zone === 'endless'">{{ $vuetify.lang.t('$vuetify.horde.area.zoneEndless') }}</span>
