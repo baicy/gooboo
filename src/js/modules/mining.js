@@ -221,7 +221,10 @@ export default {
                                 const neededBreaks = targetBreaks - currentBreaks;
                                 if (neededBreaks <= 0) {
                                     awardLoot(breaks, loots, preHits);
-                                    store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
+                                    const allBreaks = store.state.mining.breaks;
+                                    let nextDepth = currentDepth - 1;
+                                    while(allBreaks[nextDepth - 1] >= targetBreaks && nextDepth >= startDepth) nextDepth--;
+                                    store.commit('mining/updateKey', { key: 'depth', value: nextDepth });
                                     store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
                                     store.dispatch('mining/applyBeaconEffects');
                                     continue;
@@ -234,7 +237,10 @@ export default {
                                         loots += secondsNeeded;
                                         secondsLeft -= secondsNeeded;
                                         awardLoot(breaks, loots, loots);
-                                        store.commit('mining/updateKey', { key: 'depth', value: currentDepth - 1 });
+                                        const allBreaks = store.state.mining.breaks;
+                                        let nextDepth = currentDepth - 1;
+                                        while(allBreaks[nextDepth - 1] >= targetBreaks && nextDepth >= startDepth) nextDepth--;
+                                        store.commit('mining/updateKey', { key: 'depth', value: nextDepth });
                                         store.commit('mining/updateKey', {key: 'durability', value: store.getters['mining/currentDurability']});
                                         store.dispatch('mining/applyBeaconEffects');
                                         continue;
