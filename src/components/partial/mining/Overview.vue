@@ -47,7 +47,7 @@
           </v-select>
         </v-col>
         <v-col cols="12" md="8" :class="$vuetify.breakpoint.mdAndUp ? 'pl-1' : 'pt-1'" v-if="filters.length">
-          <v-select label="筛选" hide-details dense outlined clearable :items="filters" multiple v-model="filterBy" @change="resetFilterBy">
+          <v-select label="筛选" hide-details dense outlined clearable :items="loots" multiple v-model="filterBy" @change="resetFilterBy">
             <template #item="{ item }">
               <v-chip
                 label small
