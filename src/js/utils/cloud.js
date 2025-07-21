@@ -71,6 +71,10 @@ function cloudNotify(action, err) {
         message = '云存档备注更新失败';
         icon = 'mdi-cloud-alert';
     }
+    if (action === 'delete') {
+        message = '云存档删除失败';
+        icon = 'mdi-cloud-alert';
+    }
     store.commit('system/addNotification', {
         color: err ? 'error' : 'info',
         timeout: err ? 5000 : 3000,
@@ -176,6 +180,25 @@ export async function updateRemark(id, remark) {
     });
     if (!response.success) {
         cloudNotify('remark', true);
+    }
+}
+
+export async function deleteCloud(id) {
+    const {res, data} = getToken();
+    if (!res) return;
+    const response = await instance({
+        url: '/listweb',
+        method: 'post',
+        data: {
+            userId: data.user,
+            tokenId: data.token,
+            gameId: window.location.hostname,
+            saveId: parseInt(id),
+            action: 'delete',
+        }
+    });
+    if (!response.success) {
+        cloudNotify('delete', true);
     }
 }
 
