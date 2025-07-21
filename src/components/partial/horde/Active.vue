@@ -23,7 +23,7 @@
     <gb-tooltip>
       <template v-slot:activator="{ on, attrs }">
         <span>
-          <div v-if="pretend || cooldownLeft > 0" class="balloon-text-dynamic active-container rounded d-flex justify-center align-center" :class="pretend ? activeColor : null" v-bind="attrs" v-on="on">
+          <div v-if="(pretend && item.activeType !== 'utility') || item.passive || cooldownLeft > 0" class="balloon-text-dynamic active-container rounded d-flex justify-center align-center" :class="pretend ? activeColor : null" v-bind="attrs" v-on="on">
             <v-progress-linear class="active-cooldown rounded" height="36" :color="activeColor + ($vuetify.theme.dark ? ' darken-2' : ' lighten-2')" v-if="!pretend" :value="cooldownPercent"></v-progress-linear>
             <v-icon :class="{'opacity-half': !pretend}">{{ activeIcon }}</v-icon>
           </div>

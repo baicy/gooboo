@@ -1692,9 +1692,9 @@ export default {
     zone: '区域',
     player: '玩家',
     enemy: '敌人',
-    loadoutName: '预载名称',
-    newLoadout: '新预载',
-    noLoadouts: '无预载',
+    loadoutName: '预设名称',
+    newLoadout: '新预设',
+    noLoadouts: '无预设',
     monsterPartHint:
       '前往 10+ 区并找到敌人 #101 来发现新货币！ 这种货币对于进一步进度至关重要，因为它可以帮助您提高骨头容量。',
     enemyDescription:

@@ -1238,7 +1238,7 @@ export default {
             const activeCost = item.activeCost !== undefined ? item.activeCost(level) : {};
             if (
                 item &&
-                (subfeature !== 0 || item.equipped) &&
+                (subfeature !== 0 || item.equipped || item.activeType === 'utility') &&
                 cooldownLeft <= 0 &&
                 (activeCost.energy === undefined || state.player.energy >= activeCost.energy) &&
                 (activeCost.mana === undefined || state.player.mana >= activeCost.mana)

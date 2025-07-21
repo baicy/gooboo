@@ -58,9 +58,10 @@
       <v-pagination v-model="page" :length="pages"></v-pagination>
     </div>
     <div v-if="$store.getters['system/checkExtraCheated']('extraToolbar')" class="px-2 d-flex justify-center">
-      <v-checkbox label="已装备" v-model="equipped" dense hide-details></v-checkbox>
+      <v-checkbox label="装备中" v-model="equipped" dense hide-details></v-checkbox>
       <v-checkbox label="可升级" v-model="canUpgrade" class="ml-2" dense hide-details></v-checkbox>
       <v-checkbox label="未解锁" v-model="seeLocked" class="ml-2" dense hide-details></v-checkbox>
+      <v-checkbox label="成长型" v-model="isUtility" class="ml-2" dense hide-details></v-checkbox>
     </div>
     <item v-for="item in finalItems" :key="'item-' + item.name" :name="item.name" :disabled="itemsBlocked" :active-disabled="isFrozen" class="ma-2"></item>
   </div>
@@ -80,7 +81,8 @@ export default {
     showLoadouts: false,
     seeLocked: false,
     equipped: false,
-    canUpgrade: false
+    canUpgrade: false,
+    isUtility: false
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -113,6 +115,9 @@ export default {
       }
       if (this.canUpgrade) {
         arr = arr.filter(item => item.cap !== item.level && item.known && item.price(item.level) <= this.$store.getters['currency/value']('horde_monsterPart'));
+      }
+      if (this.isUtility) {
+        arr = arr.filter(item => item.activeType === 'utility');
       }
       return arr;
     },
