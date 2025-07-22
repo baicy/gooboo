@@ -146,8 +146,8 @@ export default {
       this.maxFlashDepth = flash;
     },
     getNiter() {
-      let start = Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth-1));
-      while (this.allBreaks[start - 1] >= this.breaks && start < this.maxDepth) start++;
+      let start = Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth - 1));
+      while (this.allBreaks[start - 1] >= this.breaks && start <= this.maxFlashDepth) start++;
       this.start = start;
       let neededTime = 0;
       let niter = 0;
