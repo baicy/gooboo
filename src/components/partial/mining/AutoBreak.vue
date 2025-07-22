@@ -91,6 +91,7 @@ export default {
     ...mapState({
       subfeature: state => state.system.features.mining.currentSubfeature,
       depth: state => state.mining.depth,
+      allBreaks: state => state.mining.breaks,
       autoBreak: state => state.mining.autoBreak,
       beacon: state => state.mining.beacon,
       beaconPlaced: state => state.mining.beaconPlaced,
@@ -108,10 +109,9 @@ export default {
   },
   mounted() {
     this.getMaxFlashDepth();
-    this.start = this.autoBreak.startDepth || Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth-1));
-    this.end = this.autoBreak.endDepth || this.maxFlashDepth + 1;
     this.breaks = this.autoBreak.targetBreaks || 1000;
-    this.final = this.autoBreak.finalDepth || this.maxDepth;
+    this.end = this.maxFlashDepth + 1;
+    this.final = this.depth;
     this.getNiter();
   },
   methods: {
@@ -146,6 +146,9 @@ export default {
       this.maxFlashDepth = flash;
     },
     getNiter() {
+      let start = Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth-1));
+      while (this.allBreaks[start - 1] >= this.breaks && start < this.maxDepth) start++;
+      this.start = start;
       let neededTime = 0;
       let niter = 0;
       this.resetBeaconEffects();
