@@ -440,6 +440,21 @@ export default {
                 });
             });
         },
+        rerollIsland({ state, commit, dispatch }) {
+            dispatch('generateIsland');
+            for (const [id] of Object.entries(state.placedBuilding)) {
+                dispatch('resetBuildingEffects', id);
+            }
+            commit('updateKey', {key: 'placedBuilding', value: {}});
+            commit('updateKey', {key: 'buildQueue', value: []});
+            commit('updateKey', {key: 'freeExpansion', value: 0});
+            let topaz = 0;
+            for (let i = 0; i < state.topazExpansion; i++) {
+                topaz += (i * 10 + 100);
+            }
+            dispatch('currency/gain', {feature: 'gem', name: 'topaz', amount: topaz}, {root: true});
+            commit('updateKey', {key: 'topazExpansion', value: 0});
+        },
         collectDrop({ state, getters, rootGetters, commit, dispatch }, o) {
             const cell = state.island[o.y][o.x];
             const cellType = state.cellType[cell.tile];

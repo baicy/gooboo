@@ -702,7 +702,7 @@ export default {
       quest: {
         name: '任务',
         currency: '收集 {0} ',
-        building: '构造 {0}x 等级 {1} {2}',
+        building: '建造 {1}级 {2} x{0}',
       },
       tile: {
         beach: '海滩',

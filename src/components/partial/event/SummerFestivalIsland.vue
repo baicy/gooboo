@@ -170,6 +170,36 @@
       </div>
     </div>
     <div class="d-flex flex-wrap align-center bg-tile-default rounded pa-1 ma-2">
+      <gb-tooltip :min-width="0" v-if="$store.getters['system/checkExtraCheated']('eventExtraShop')">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            class="ma-1 px-0"
+            min-width="36"
+            color="error"
+            @click="confirmReroll = true"
+            v-bind="attrs"
+            v-on="on"
+          ><v-icon>mdi-restart</v-icon></v-btn>
+        </template>
+        <div>重置整个岛屿</div>
+      </gb-tooltip>
+      <v-dialog :width="400" v-model="confirmReroll">
+        <v-card class="default-card pt-6">
+          <v-card-title>是否确认重置岛屿</v-card-title>
+          <v-card-text>
+            <div>恢复到初始状态</div>
+            <div>清空已经解锁的地块和地块上的建筑</div>
+            <div>返还解锁地块的黄玉</div>
+            <div>任务列表和活动资源不会重置</div>
+            <div>不返还已经花费的资源</div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="error" @click="confirmReroll = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+            <v-btn color="primary" @click="rerollIsland">{{ $vuetify.lang.t('$vuetify.gooboo.confirm') }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <gb-tooltip v-for="(item, key) in buildingList" :key="`building-${ key }`" :title-text="$vuetify.lang.t(`$vuetify.event.summerFestival.building.${ key }.name`)">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -266,6 +296,9 @@ import SummerFestivalBuildingCard from './SummerFestivalBuildingCard.vue';
 
 export default {
   components: { PriceTag, SummerFestivalBuildingCard, StatBreakdown },
+  data: () => ({
+    confirmReroll: false
+  }),
   computed: {
     ...mapState({
       currency: state => state.currency,
@@ -339,6 +372,10 @@ export default {
     }
   },
   methods: {
+    rerollIsland() {
+      this.confirmReroll = false;
+      this.$store.dispatch('summerFestival/rerollIsland');
+    },
     selectCell(x, y) {
       this.$store.commit('summerFestival/updateKey', {key: 'selectedCell', value: (
         this.selectedCell !== null && this.selectedCell.x === x && this.selectedCell.y === y
