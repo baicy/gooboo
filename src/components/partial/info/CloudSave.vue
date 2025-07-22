@@ -1,8 +1,20 @@
+<style scoped>
+.remark {
+  overflow: hidden;
+  width: 40%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+</style>
+
 <template>
   <v-card class="default-card" elevation="5">
     <v-card-title primary-title class="title">
       <span v-if="config.user && config.pwd">当前用户：{{ config.user }}</span>
-      <span v-else>请设置云存档用户信息</span>
+      <span v-else>请设置用户信息</span>
+      <v-spacer></v-spacer>
+      <v-btn color="info" icon @click="showSetting"><v-icon>mdi-cog</v-icon></v-btn>
+      <v-btn color="info" icon target="_blank" href="https://gamesaves.ggff.eu.org/listweb"><v-icon>mdi-cloud-cog</v-icon></v-btn>
     </v-card-title>
     <v-card-text>
       <div v-if="loading" class="d-flex justify-center align-center" style="height: 250px;">
@@ -19,18 +31,16 @@
           @click="selectedFile = file"
           active-class="primary--text"
         >
-          <span>{{ file.memo || '无'  }}</span>
+          <span class="remark">{{ file.memo || '无'  }}</span>
           <v-spacer></v-spacer>
           <span>{{ file.created_at }}</span>
-          <v-icon class="ml-1" @click="showEditRemark(file.id, file.memo)">mdi-comment-edit</v-icon>
-          <v-icon class="ml-1" @click="showDelete(file.id)">mdi-delete</v-icon>
         </v-list-item>
       </v-list>
     </v-card-text>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn color="info" target="_blank" href="https://gamesaves.ggff.eu.org/listweb">管理</v-btn>
-      <v-btn color="info" @click="showSetting">设置</v-btn>
+      <v-btn v-if="selectedFile.id !== -1" icon @click="showEditRemark"><v-icon>mdi-comment-edit</v-icon></v-btn>
+      <v-btn v-if="selectedFile.id !== -1" icon @click="deleting = true"><v-icon>mdi-delete</v-icon></v-btn>
       <v-spacer></v-spacer>
       <v-btn color="error" @click="$emit('close')">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
       <v-btn color="primary" @click="loadFile" :disabled="selectedFile.id===-1">加载</v-btn>
@@ -99,8 +109,7 @@ export default {
     autoTime: null,
     editing: false,
     remark: '',
-    deleting: false,
-    editId: -1
+    deleting: false
   }),
   computed: {
     ...mapState({
@@ -140,24 +149,19 @@ export default {
       loadCloud(this.selectedFile.id);
       this.$emit('close');
     },
-    showEditRemark(id, remark) {
+    showEditRemark() {
       this.editing = true;
-      this.editId = id;
-      this.remark = remark;
+      this.remark = this.selectedFile.memo || '';
     },
     async editRemark() {
       this.loading = true;
-      await updateRemark(this.editId, this.remark);
+      await updateRemark(this.selectedFile.id, this.remark);
       this.editing = false;
       this.loadList();
     },
-    showDelete(id) {
-      this.deleting = true;
-      this.editId = id;
-    },
     async deleteFile() {
       this.loading = true;
-      await deleteCloud(this.editId);
+      await deleteCloud(this.selectedFile.id);
       this.deleting = false;
       this.loadList();
     }
