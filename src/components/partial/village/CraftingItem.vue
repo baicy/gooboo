@@ -39,7 +39,7 @@ export default {
       return this.$store.state.village.crafting[this.name];
     },
     enable() {
-      if (this.crafting.isCrafting) return true;
+      if (this.crafting.isCrafting && this.crafting.progress > 0) return true;
       return this.$store.getters['village/canCraft'](this.name);
     }
   }

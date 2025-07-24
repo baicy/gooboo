@@ -110,8 +110,15 @@ export default {
   mounted() {
     this.getMaxFlashDepth();
     this.breaks = this.autoBreak.targetBreaks || 1000;
-    this.end = this.maxFlashDepth + 1;
-    this.final = this.depth;
+    if (this.autoBreak.active) {
+      this.start = this.autoBreak.startDepth;
+    } else {
+      let start = Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth - 1));
+      while (this.allBreaks[start - 1] >= this.breaks && start <= this.maxFlashDepth) start++;
+      this.start = start;
+    }
+    this.end = this.autoBreak.active ? this.autoBreak.endDepth : this.maxFlashDepth + 1;
+    this.final = this.autoBreak.active ? this.autoBreak.finalDepth : this.depth;
     this.getNiter();
   },
   methods: {
@@ -146,9 +153,6 @@ export default {
       this.maxFlashDepth = flash;
     },
     getNiter() {
-      let start = Math.max(...[1, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH].filter(l => l < this.maxDepth - 1));
-      while (this.allBreaks[start - 1] >= this.breaks && start <= this.maxFlashDepth) start++;
-      this.start = start;
       let neededTime = 0;
       let niter = 0;
       this.resetBeaconEffects();
