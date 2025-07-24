@@ -61,6 +61,15 @@
     </div>
     <div class="text-center">{{ $vuetify.lang.t(`$vuetify.event.summerFestival.building.${ placedBuilding.type }.description`) }}</div>
     <div v-if="Object.keys(actions).length > 0" class="d-flex justify-centar">
+      <v-progress-circular
+        :size="36"
+        :value="Math.floor(placedBuilding.actionTime * 100)"
+        color="primary"
+        :rotate="-90"
+        class="ma-1"
+      >
+        {{ Math.floor(placedBuilding.actionTime * 100) }}
+      </v-progress-circular>
       <gb-tooltip v-for="(item, key) in actions" :key="`action-${key}`" :title-text="$vuetify.lang.t(`$vuetify.event.summerFestival.building.${ placedBuilding.type }.action.${ key }`)">
         <template v-slot:activator="{ on, attrs }">
           <v-btn :color="placedBuilding.selectedAction === key ? 'primary' : 'secondary'" class="ma-1 px-0" min-width="36" v-bind="attrs" v-on="on" @click="setAction(key)"><v-icon>{{ item.icon }}</v-icon></v-btn>
