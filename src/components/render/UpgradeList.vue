@@ -54,6 +54,27 @@
             </v-card-text>
           </v-card>
         </v-dialog>
+        <gb-tooltip :min-width="0" v-if="feature === 'event'">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" color="error" @click="viewReset = true">
+              <v-icon>mdi-restart</v-icon>
+            </v-btn>
+          </template>
+          <div>重置升级列表</div>
+        </gb-tooltip>
+        <v-dialog :width="400" v-model="viewReset">
+          <v-card class="default-card pt-6">
+            <v-card-title>是否确认重置升级列表</v-card-title>
+            <v-card-text>
+              <div>重置该列表所有升级项并返还所用资源</div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="error" @click="viewReset = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+              <v-btn color="primary" @click="resetAll">{{ $vuetify.lang.t('$vuetify.gooboo.confirm') }}</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </div>
       <div v-if="viewFilter" class="d-flex flex-wrap bg-tile-background px-2 justify-center my-1" style="gap: 8px">
         <gb-tooltip v-for="mat in materials" :key="mat" :min-width="0" :title-text="$vuetify.lang.t(`$vuetify.currency.${mat}.name`)" >
@@ -167,6 +188,7 @@ export default {
     viewFilter: false,
     filter: '',
     mats: new Set(),
+    viewReset: false
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -291,6 +313,22 @@ export default {
     viewUnlockItems() {
       this.viewUnlock = true;
     },
+    resetAll() {
+      const items = this.$store.state.upgrade.item;
+      for (const [key, elem] of Object.entries(items)) {
+        if (elem.feature === this.feature && elem.type === this.type && elem.bought > 0) {
+          console.log(key, elem);
+          for (let i = 0; i < elem.bought; i++) {
+            for (const [mat, amount] of Object.entries(elem.price(i))) {
+              const [f, n] = mat.split('_');
+              this.$store.dispatch('currency/gain', {feature: f, name: n, amount});
+            }
+          }
+        }
+      }
+      this.$store.dispatch('upgrade/reset', {feature: 'event', type: 'summerFestival'});
+      this.viewReset = false;
+    }
   },
   watch: {
     page(newVal) {
