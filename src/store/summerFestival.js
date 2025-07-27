@@ -447,7 +447,7 @@ export default {
             }
             commit('updateKey', {key: 'placedBuilding', value: {}});
             commit('updateKey', {key: 'buildQueue', value: []});
-            commit('updateKey', {key: 'freeExpansion', value: 0});
+            commit('updateKey', {key: 'freeExpansion', value: Math.floor(state.questsCompleted / 5)});
             let topaz = 0;
             for (let i = 0; i < state.topazExpansion; i++) {
                 topaz += (i * 10 + 100);
