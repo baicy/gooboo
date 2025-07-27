@@ -266,7 +266,7 @@
       <summer-festival-building-card v-else-if="island[selectedCell.y][selectedCell.x].building" :id="island[selectedCell.y][selectedCell.x].building"></summer-festival-building-card>
       <template v-else>
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.event.summerFestival.empty') }}</div>
-        <template v-if="$store.getters['system/checkExtraCheated']('eventExtraShop') && topazExpansion">
+        <template v-if="canSell">
           <v-btn class="ma-1" color="error" @click="sellCell">退回</v-btn>
           +{{ $vuetify.lang.t(`$vuetify.event.summerFestival.freeExpansion.s`, 1) }}
         </template>
@@ -369,6 +369,18 @@ export default {
     },
     iconSizeMult() {
       return this.$vuetify.breakpoint.xsOnly ? 0.5 : (this.$vuetify.breakpoint.smOnly ? 0.75 : 1);
+    },
+    canSell() {
+      if (!this.$store.getters['system/checkExtraCheated']('eventExtraShop')) return false;
+      if (this.topazExpansion <= 0) return false;
+      // 初始地块无法退回
+      const initialCells = [
+          {x: 2, y: 2}, {x: 3, y: 2},
+          {x: 2, y: 3}, {x: 3, y: 3}, {x: 4, y: 3},
+          {x: 2, y: 4}, {x: 3, y: 4},
+      ];
+      if (initialCells.findIndex(c => c.x === this.selectedCell.x && c.y === this.selectedCell.y) !== -1) return false;
+      return true;
     }
   },
   methods: {
