@@ -85,7 +85,7 @@
         </div>
         <div>
           <v-icon small>mdi-timer</v-icon>
-          {{ $formatTime(1 / item.speed(placedBuilding.level)) }}
+          {{ $formatTime(1 / item.speed(placedBuilding.level - 1)) }}
         </div>
       </gb-tooltip>
     </div>
