@@ -24,7 +24,7 @@
         </ul>
       </v-card-text>
       <v-card-actions>
-        <v-btn class="ma-1" color="primary" @click="showQuests = true">任务列表</v-btn>
+        <v-btn class="ma-1" color="primary" @click="showQuests = true" v-if="questsCompleted < quests.length">任务列表</v-btn>
         <v-spacer></v-spacer>
         <price-tag class="ma-1" currency="event_summerFestivalToken" :amount="questTokenGain" add></price-tag>
         <v-btn class="ma-1" color="primary" :disabled="!questIsComplete" @click="completeQuest">{{ $vuetify.lang.t(`$vuetify.event.summerFestival.complete`) }}</v-btn>
@@ -33,8 +33,8 @@
     <v-dialog v-model="showQuests" :width="400">
       <v-card class="pa-2 default-card">
         <v-card-text>
-          <div v-for="(quest, no) in quests.slice(questsCompleted)" :key="no" class="my-2 d-flex bg-tile-default pa-2 rounded">
-            <div>#{{ questsCompleted + no + 1 }}</div>
+          <div v-for="(quest, no) in quests.slice(questsCompleted + 1)" :key="no" class="my-2 d-flex align-center bg-tile-default pa-2 rounded">
+            <div>#{{ questsCompleted + no + 2 }}</div>
             <ul>
               <li v-for="(item, key) in quest" :key="`task-${ key }`">
                 <template v-if="item.type === 'currency'">
@@ -51,6 +51,8 @@
                 }}</template>
               </li>
             </ul>
+            <v-spacer></v-spacer>
+            <price-tag class="ma-1" currency="event_summerFestivalToken" :amount="Math.floor(Math.pow((questsCompleted + no + 1) * 0.35, 1.12) + 4)" add></price-tag>
           </div>
         </v-card-text>
       </v-card>

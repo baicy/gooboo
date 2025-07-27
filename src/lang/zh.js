@@ -681,7 +681,7 @@ export default {
     summerFestival: {
       name: '夏日祭典',
       produces: '生产',
-      producesNothing: '什么也不产生',
+      producesNothing: '什么也不生产',
       empty: '空',
       constructing: '建造中',
       upgrading: '升级',
