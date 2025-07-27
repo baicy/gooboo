@@ -51,7 +51,7 @@ export default {
     description: '瓶子里捕捉到的一朵小云',
   },
   event_cocktail: {
-    name: '混合物',
+    name: '鸡尾酒',
     description: '您很想自己喝这些，但它们对您的建造者来说是一个极好的动力源泉',
   },
   event_magic: {

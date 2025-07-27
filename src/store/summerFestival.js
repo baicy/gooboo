@@ -447,13 +447,7 @@ export default {
             }
             commit('updateKey', {key: 'placedBuilding', value: {}});
             commit('updateKey', {key: 'buildQueue', value: []});
-            commit('updateKey', {key: 'freeExpansion', value: Math.floor(state.questsCompleted / 5)});
-            let topaz = 0;
-            for (let i = 0; i < state.topazExpansion; i++) {
-                topaz += (i * 10 + 100);
-            }
-            dispatch('currency/gain', {feature: 'gem', name: 'topaz', amount: topaz}, {root: true});
-            commit('updateKey', {key: 'topazExpansion', value: 0});
+            commit('updateKey', {key: 'freeExpansion', value: state.topazExpansion + Math.floor(state.questsCompleted / 5)});
         },
         collectDrop({ state, getters, rootGetters, commit, dispatch }, o) {
             const cell = state.island[o.y][o.x];
@@ -480,10 +474,9 @@ export default {
                 }
             }
         },
-        sellIslandCell({ state, commit, dispatch }, o) {
+        sellIslandCell({ state, commit }, o) {
             commit('updateIslandKey', {x: o.x, y: o.y, key: 'unlocked', value: false});
-            dispatch('currency/gain', {feature: 'gem', name: 'topaz', amount: (state.topazExpansion - 1) * 10 + 100}, {root: true});
-            commit('updateKey', {key: 'topazExpansion', value: state.topazExpansion - 1});
+            commit('updateKey', {key: 'freeExpansion', value: state.freeExpansion + 1});
         },
         placeBuilding({ state, getters, rootGetters, commit, dispatch }) {
             if (getters.canPlaceBuilding && state.buildQueue.length < rootGetters['mult/get']('summerFestivalBuildQueueSlots')) {

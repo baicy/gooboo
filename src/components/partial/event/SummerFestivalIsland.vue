@@ -268,7 +268,7 @@
         <div class="text-center">{{ $vuetify.lang.t('$vuetify.event.summerFestival.empty') }}</div>
         <template v-if="$store.getters['system/checkExtraCheated']('eventExtraShop') && topazExpansion">
           <v-btn class="ma-1" color="error" @click="sellCell">退回</v-btn>
-          <price-tag class="ma-1" currency="gem_topaz" :amount="(topazExpansion - 1) * 10 + 100" add></price-tag>
+          +{{ $vuetify.lang.t(`$vuetify.event.summerFestival.freeExpansion.s`, 1) }}
         </template>
         <div v-if="canTerraform" class="d-flex flex-wrap">
           <gb-tooltip v-for="(item, key) in cellType[island[selectedCell.y][selectedCell.x].tile].terraform" :key="`terraform-${ key }`" :min-width="0">
