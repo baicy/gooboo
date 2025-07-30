@@ -72,7 +72,7 @@
         <v-card class="default-card">
           <v-card-actions>
             <v-text-field v-model.trim="remark" label="备注" dense outlined hide-details clearable></v-text-field>
-            <v-btn color="error" class="ml-2" @click="editing = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+            <v-btn color="error" class="ml-2" @click="editing = false" :loading="loading">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
             <v-btn color="primary" @click="editRemark()" :loading="loading">{{ $vuetify.lang.t('$vuetify.gooboo.saveManual') }}</v-btn>
           </v-card-actions>
         </v-card>
@@ -82,7 +82,7 @@
           <v-card-text>确定要删除此云存档吗？该操作不可恢复。</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="error" class="ml-2" @click="deleting = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
+            <v-btn color="error" class="ml-2" @click="deleting = false" :loading="loading">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
             <v-btn color="primary" @click="deleteFile()" :loading="loading">{{ $vuetify.lang.t('$vuetify.gooboo.confirm') }}</v-btn>
           </v-card-actions>
         </v-card>

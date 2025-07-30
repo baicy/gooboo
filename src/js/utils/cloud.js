@@ -187,14 +187,13 @@ export async function deleteCloud(id) {
     const {res, data} = getToken();
     if (!res) return;
     const response = await instance({
-        url: '/listweb',
+        url: '/del',
         method: 'post',
         data: {
             userId: data.user,
             tokenId: data.token,
             gameId: window.location.hostname,
-            saveId: parseInt(id),
-            action: 'delete',
+            saveId: parseInt(id)
         }
     });
     if (!response.success) {
