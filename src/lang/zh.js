@@ -1417,7 +1417,7 @@ export default {
     max: '最大值',
     globalLevel: '全局等级',
     prestige: '声望',
-    graniteBreaksMult: 'Log10 中断',
+    graniteBreaksMult: 'Log10 击碎次数',
     miningTemperature: '温度',
     villageOffering: '供品',
     zoneCleared: '区域已通关',

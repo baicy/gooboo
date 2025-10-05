@@ -29,12 +29,12 @@
           <div>点击显示升级项需要用到的材料</div>
           <div>升级项收起可将其加入黑名单</div>
         </gb-tooltip>
-        <v-btn :color="listSort ? 'primary' : ''" class="mx-1" @click="setListSort" min-width="36" width="36" elevation="5">
+        <v-btn :color="listSort ? 'primary' : ''" class="ml-1" @click="setListSort" min-width="36" width="36" elevation="5">
           <v-icon>mdi-order-bool-descending-variant</v-icon>
         </v-btn>
         <gb-tooltip v-if="unlockItems.length">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="error" v-bind="attrs" v-on="on" @click="viewUnlockItems" width="36" min-width="36" elevation="5">
+            <v-btn color="error" v-bind="attrs" v-on="on" @click="viewUnlockItems" width="36" min-width="36" elevation="5" class="ml-1">
             <v-icon>mdi-eye-lock-open</v-icon>
           </v-btn>
           </template>
@@ -56,7 +56,7 @@
         </v-dialog>
         <gb-tooltip :min-width="0" v-if="feature === 'event'">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" color="error" @click="viewReset = true">
+            <v-btn v-bind="attrs" v-on="on" min-width="36" width="36" elevation="5" color="error" @click="viewReset = true" class="ml-1">
               <v-icon>mdi-restart</v-icon>
             </v-btn>
           </template>

@@ -171,6 +171,29 @@
         <currency-icon :name="`event_${key}`" large></currency-icon>
       </v-badge>
     </div>
+    <div class="d-flex justify-center align-center pa-1 pb-3">
+      <v-btn class="ma-1" color="primary" @click="searching = true">寻找({{ Object.keys(changedCurrency).length }})</v-btn>
+    </div>
+    <v-dialog v-model="searching" max-width="400px">
+      <v-card class="default-card">
+        <v-card-title>
+          <v-row no-gutters>
+            <v-col cols="4">成分</v-col>
+            <v-col cols="8">货币</v-col>
+          </v-row>
+        </v-card-title>
+        <v-card-text>
+          <v-row no-gutters v-for="(ingre, cur) in changedCurrency" :key="cur">
+            <v-col cols="4">
+              {{ $vuetify.lang.t(`$vuetify.currency.event_${ingre}.name`) }}
+            </v-col>
+            <v-col cols="8">
+              {{ $vuetify.lang.t(`$vuetify.feature.${cur.split('_')[0]}`) }} - {{ $vuetify.lang.t(`$vuetify.currency.${cur}.name`) }}
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -191,12 +214,14 @@ export default {
   components: { Currency, NightHuntIngredient, DisplayRow, CurrencyIcon, StatBreakdown, PriceTag, AlertText, NightHuntFavouritableDisplay },
   data: () => ({
     favouriteIngredient: 'copy',
+    searching: false,
   }),
   computed: {
     ...mapState({
       ritualIngredients: state => state.nightHunt.ritualIngredients,
       bonusIngredients: state => state.nightHunt.bonusIngredients,
       ingredientStat: state => state.nightHunt.ingredientStat,
+      changedCurrency: state => state.nightHunt.changedCurrency,
     }),
     ...mapGetters({
       canPerformRitual: 'nightHunt/canPerformRitual',

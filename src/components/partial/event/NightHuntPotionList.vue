@@ -14,6 +14,9 @@
     <div class="upgrade-pagination text-center px-2" :class="{'upgrade-pagination-mobile': $vuetify.breakpoint.xsOnly}" v-if="pages > 1">
       <v-pagination class="bg-tile-default rounded-b elevation-2" v-model="page" :length="pages"></v-pagination>
     </div>
+    <div class="d-flex justify-center pt-1">
+      <v-checkbox label="未找到" v-model="unlock" dense hide-details></v-checkbox>
+    </div>
     <v-row class="pa-1" no-gutters>
       <v-col class="pa-1" v-for="(item, key) in finalItems" :key="key" :cols="cols">
         <night-hunt-potion :name="item"></night-hunt-potion>
@@ -36,7 +39,8 @@ export default {
   },
   data: () => ({
     page: 1,
-    cacheKey: 'nighthunt_potion'
+    cacheKey: 'nighthunt_potion',
+    unlock: false
   }),
   mounted() {
     const cachePage = this.$store.state.system.cachePage[this.cacheKey];
@@ -48,7 +52,7 @@ export default {
     items() {
       let arr = [];
       for (const [key, elem] of Object.entries(this.$store.state.nightHunt.potion)) {
-        if (elem.level > 0) {
+        if (this.unlock || elem.level > 0) {
           arr.push(key);
         }
       }
