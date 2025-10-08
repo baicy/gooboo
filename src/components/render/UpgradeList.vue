@@ -315,9 +315,8 @@ export default {
     },
     resetAll() {
       const items = this.$store.state.upgrade.item;
-      for (const [key, elem] of Object.entries(items)) {
+      for (const [, elem] of Object.entries(items)) {
         if (elem.feature === this.feature && elem.type === this.type && elem.bought > 0) {
-          console.log(key, elem);
           for (let i = 0; i < elem.bought; i++) {
             for (const [mat, amount] of Object.entries(elem.price(i))) {
               const [f, n] = mat.split('_');
@@ -326,7 +325,7 @@ export default {
           }
         }
       }
-      this.$store.dispatch('upgrade/reset', {feature: 'event', type: 'summerFestival'});
+      this.$store.dispatch('upgrade/reset', {feature: 'event', type: this.type});
       this.viewReset = false;
     }
   },
