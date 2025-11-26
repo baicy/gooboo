@@ -57,7 +57,6 @@ import PriceTag from '../../render/PriceTag.vue';
 import StatBreakdown from '../../render/StatBreakdown.vue';
 import StatusTemplate from '../prestige/StatusTemplate.vue';
 import AlertText from '../render/AlertText.vue';
-import StatBreakdown from '../../render/StatBreakdown.vue';
 
 export default {
   components: { StatusTemplate, PriceTag, AlertText, StatBreakdown },

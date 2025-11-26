@@ -68,6 +68,7 @@ function playerDie() {
             store.dispatch('horde/resetStats');
         } else {
             const respawnTimer = store.getters['mult/get']('hordeRespawn', store.getters['horde/baseRespawnTime']);
+            const endmin = store.state.system.endmin;
             store.commit('horde/updateKey', {key: 'respawn', value: respawnTimer});
             store.commit('horde/updateKey', {key: 'maxRespawn', value: respawnTimer});
             store.commit('horde/updateKey', {key: 'respawn', value: endmin ? Math.min(10, respawnTimer) : respawnTimer});

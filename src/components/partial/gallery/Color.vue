@@ -239,11 +239,12 @@ export default {
     canvasDisplay() {
       const level = this.canvasLevel;
       const nextLevel = this.canvasLevel + 1;
-      const drumPerLevel = this.$store.state.system.settings.cheat.items.oldGalleryUpgrade.value ? 25 : 10;
+      // const drumPerLevel = this.$store.state.system.settings.cheat.items.oldGalleryUpgrade.value ? 25 : 10;
       return [
         {type: 'mult', name: `currencyGallery${ capitalize(this.name) }Gain`, before: level > 0 ? Math.pow(2, level) : null, after: Math.pow(2, nextLevel)},
         {type: 'mult', name: `gallery${ capitalize(this.name) }Conversion`, before: level > 0 ? Math.pow(2, level) : null, after: Math.pow(2, nextLevel)},
-        {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (drumPerLevel * level) : null, after: drumPerLevel * nextLevel}
+        // {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (drumPerLevel * level) : null, after: drumPerLevel * nextLevel}
+        {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (10 * level) : null, after: 10 * nextLevel}
       ];
     },
     canvasUntilNext() {
@@ -252,8 +253,7 @@ export default {
       return speed > 0 ? ((1 - this.canvasPercent) * difficulty / speed) : null;
     },
     fakeCanvasUntilNext() {
-      const canvasSpeedBase = getSequence(10, this.canvasSpaceMax) * 0.1;
-      const speed = this.$store.getters['mult/get']('galleryCanvasSpeed', canvasSpeedBase, this.canvasSpeedMultAmount);
+      const speed = this.$store.getters['mult/get']('galleryCanvasSpeed', this.canvasSpeedBase, this.canvasSpeedMultAmount);
       const difficulty = this.$store.getters['gallery/canvasDifficulty'](this.name, this.canvasLevel);
       return speed > 0 ? ((1 - this.canvasPercent) * difficulty / speed) : null;
     },

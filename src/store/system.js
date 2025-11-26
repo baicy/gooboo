@@ -550,14 +550,14 @@ export default {
                         value: false,
                         defaultValue: false
                     },
-                    oldGalleryUpgrade: {
-                        feature: 'gallery',
-                        unlock: null,
-                        hasDescription: true,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
-                    },
+                    // oldGalleryUpgrade: {
+                    //     feature: 'gallery',
+                    //     unlock: null,
+                    //     hasDescription: true,
+                    //     type: 'switch',
+                    //     value: false,
+                    //     defaultValue: false
+                    // },
                     inspirationReset: {
                         feature: 'gallery',
                         unlock: null,

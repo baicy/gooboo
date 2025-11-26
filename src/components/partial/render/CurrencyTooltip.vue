@@ -224,7 +224,7 @@ export default {
         }
       }
       return sources;
-    }
+    },
     formattedValue() {
       switch (this.currency.display) {
         case 'number':

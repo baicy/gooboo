@@ -520,7 +520,7 @@ export default {
         }
       }
       return list;
-    }
+    },
     canEnterRaid() {
       return this.$store.getters['currency/value']('horde_raidKey') >= 1 && !this.raidboss && this.currentTower === null;
     },

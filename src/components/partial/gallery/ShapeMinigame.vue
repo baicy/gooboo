@@ -176,7 +176,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import { GALLERY_MOTIVATION_BUY_AMOUNT, GALLERY_MOTIVATION_BUY_COST, GALLERY_REROLL_COST, GALLERY_SHAPES_GRID_WIDTH, GALLERY_SHAPES_GRID_HEIGHT } from '../../../js/constants';
+import { GALLERY_MOTIVATION_BUY_AMOUNT, GALLERY_REROLL_COST, GALLERY_SHAPES_GRID_WIDTH, GALLERY_SHAPES_GRID_HEIGHT } from '../../../js/constants';
 import Consumable from '../../render/Consumable.vue';
 import Currency from '../../render/Currency.vue';
 import PriceTag from '../../render/PriceTag.vue';

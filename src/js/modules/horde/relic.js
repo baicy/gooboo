@@ -60,6 +60,6 @@ export default {
         }
     }},
     fakeSuitcase: {icon: 'mdi-bag-carry-on', color: 'red', effect() {return [
-        {name: 'hordeMaxItems', type: 'base', value: 7}
+        {name: 'hordeMaxEquipment', type: 'base', value: 7}
     ];}}
 }
