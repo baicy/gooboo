@@ -147,12 +147,12 @@ export default {
           this.$store.dispatch('currency/spend', {feature: 'gem', name: 'sapphire', amount: passSapphiresNeeded});
         }
         this.mode = 'exam';
+        this.timer = this.hasCustomTimer.includes(name) ? 0 : (SCHOOL_EXAM_TIME + 1);
+        this.score = 0;
+        this.playing = name;
         if (this.$store.state.system.settings.cheat.items.cheatSchoolExam.value) {
           this.updateScore(100);
-        } else{
-          this.timer = this.hasCustomTimer.includes(name) ? 0 : (SCHOOL_EXAM_TIME + 1);
-          this.score = 0;
-          this.playing = name;
+          return;
         }
         if (!this.hasCustomTimer.includes(name)) {
           this.intervalId = setInterval(this.tickTimer, 1000);
