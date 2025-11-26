@@ -22,6 +22,7 @@ export default {
         total: this.prestigeGainBase,
         gainMult: 'currencyGalleryCashGain',
         showDescription: true,
+        showFormula: true,
       }} : {};
     }
   }

@@ -41,18 +41,29 @@ export default {
   },
   mining_oreVariety: {
     achievement: 'Diversität',
-    description: 'Erzarten gefunden'
+    description0: 'Erzarten gefunden',
+    description1: 'Erz- und Bodenschatzarten gefunden',
+    description2: 'Erz-, Bodenschatz- und Gasarten gefunden',
   },
   mining_coal: {
     achievement: 'Dunkelheit',
     description: 'Kohle erhalten'
   },
-  mining_coalMax: {
-    description: 'Höchste Kohlemenge'
-  },
   mining_resin: {
     achievement: 'Schwierige Situation',
     description: 'Harz erhalten'
+  },
+  mining_gasTotal: {
+    achievement: 'Hitzkopf',
+    description: 'Ziffernsumme der höchsten Gasmengen'
+  },
+  mining_smoke: {
+    achievement: 'Schwer zu sehen',
+    description: 'Höchste Rauchmenge'
+  },
+  mining_enhancementHighest: {
+    achievement: 'Vorbereitet',
+    description: 'Höchste Aufwertungsstufe'
   },
   mining_craftingWasted: {
     achievement: 'Verschwendet',
@@ -68,6 +79,9 @@ export default {
   },
   mining_timeSpent: {
     description: 'Zeit verbracht'
+  },
+  mining_relicActivesUsed: {
+    description: 'Reliktfähigkeiten benutzt'
   },
   mining_bestPrestige0: {
     description: 'Meiste grüne Kristalle in einem Prestige'
@@ -135,6 +149,9 @@ export default {
   village_timeSpent: {
     description: 'Zeit verbracht'
   },
+  village_relicActivesUsed: {
+    description: 'Reliktfähigkeiten benutzt'
+  },
   village_bestPrestige0: {
     description: 'Meiste Segen in einem Prestige'
   },
@@ -143,9 +160,6 @@ export default {
   },
   village_prestigeCount: {
     description: 'Prestigeanzahl'
-  },
-  village_offeringMax: {
-    description: 'Höchste Opfergabenmenge'
   },
 
   // Horde stats
@@ -161,7 +175,6 @@ export default {
     description: 'Maximale Zone in unter 30 Minuten'
   },
   horde_totalDamage: {
-    achievement: 'Krieger',
     description: 'Gesamter Schaden durch normale Angriffe verursacht'
   },
   horde_maxDamage: {
@@ -192,15 +205,43 @@ export default {
     achievement: 'Diversität',
     description: 'Summe aller Meisterungsstufen'
   },
+  horde_blood: {
+    achievement: 'Vampir',
+    description: 'Blut erhalten'
+  },
+  horde_courage: {
+    achievement: 'Mutig',
+    description: 'Courage erhalten'
+  },
+  horde_trinket: {
+    achievement: 'Für alles vorbereitet',
+    description: 'Summe aller Schmuck-Seltenheiten'
+  },
   horde_unlucky: {
     achievement: 'Pechvogel',
     description: 'Scheitere mit einer 99% Erbstücks-Chance'
+  },
+  horde_infiniteScore: {
+    achievement: 'Gladiator',
+    description: 'Summe von besiegten Gegnern mit der höchsten # in endlosen Zonen'
+  },
+  horde_warzoneInfiniteScore: {
+    description: 'Gegner mit höchster # in der endlosen Zone besiegt (Kriegsgebiet)'
+  },
+  horde_monkeyJungleInfiniteScore: {
+    description: 'Gegner mit höchster # in der endlosen Zone besiegt (Affendschungel)'
+  },
+  horde_loveIslandInfiniteScore: {
+    description: 'Gegner mit höchster # in der endlosen Zone besiegt (Liebesinsel)'
   },
   horde_maxItems: {
     description: 'Meiste Ausrüstung verwendet'
   },
   horde_timeSpent: {
     description: 'Zeit verbracht'
+  },
+  horde_relicActivesUsed: {
+    description: 'Reliktfähigkeiten benutzt'
   },
   horde_bestPrestige0: {
     description: 'Meiste korrupte Seelen in einem Prestige'
@@ -245,14 +286,9 @@ export default {
     achievement: 'Monokel',
     description: 'Gold erhalten'
   },
-  farm_bugMax: {
-    description: 'Höchste Käfermenge'
-  },
-  farm_ladybugMax: {
-    description: 'Höchste Marienkäfermenge'
-  },
-  farm_butterflyMax: {
-    description: 'Höchste Schmetterlingsmenge'
+  farm_care: {
+    achievement: 'Wertvolle Pflanzen',
+    description: 'Pflanzen gepflegt'
   },
   farm_totalMystery: {
     description: 'Mysterium'
@@ -275,18 +311,12 @@ export default {
     achievement: 'Reich',
     description: 'Geld erhalten'
   },
-  gallery_greenMax: {
-    description: 'Meiste grüne Farbe in einem Prestige'
-  },
   gallery_bestPrestige: {
     description: 'Meistes Geld in einem Prestige'
   },
   gallery_highestTierIdea: {
     achievement: 'Großhirn',
     description: 'Höchste Ideenstufe angewendet'
-  },
-  gallery_inspirationMax: {
-    description: 'Höchste Inspirationsmenge'
   },
   gallery_packageMax: {
     achievement: 'Pappkartonburg',
@@ -315,8 +345,16 @@ export default {
   gallery_timeSpent: {
     description: 'Zeit verbracht'
   },
+  gallery_relicActivesUsed: {
+    description: 'Reliktfähigkeiten benutzt'
+  },
   gallery_prestigeCount: {
     description: 'Prestigeanzahl'
+  },
+
+  // Other stats
+  school_totalPoints: {
+    description: 'Gesamtpunkte erhalten'
   },
 
   // Meta stats
@@ -331,5 +369,10 @@ export default {
   meta_longestOfflineTime: {
     achievement: 'Comeback',
     description: 'Längste Abwesenheit'
-  }
+  },
+
+  // Custom stats
+  custom_hordeBattlepass: {
+    description: 'Battlepass-Stufe'
+  },
 };

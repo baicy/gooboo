@@ -54,7 +54,13 @@
     <div v-else class="ma-1">
       <v-select class="w-100" outlined hide-details clearable item-value="name" v-model="selectedPlaceable" :items="placeableList" @change="selectPlaceable">
         <template v-slot:selection="{ item }"><placeable-select-display :item="item" is-simple></placeable-select-display></template>
-        <template v-slot:item="{ item }"><placeable-select-display :item="item"></placeable-select-display></template>
+        <template v-slot:item="{ item }">
+          <div v-if="item.type === 'divider'" class="w-100 mt-2">
+            <v-divider></v-divider>
+            <div class="ml-2 mt-1">{{ $vuetify.lang.t(`$vuetify.farm.divider.${ item.name }`) }}</div>
+          </div>
+          <placeable-select-display v-else :item="item"></placeable-select-display>
+        </template>
       </v-select>
     </div>
     <div v-if="unlock.farmFertilizer.see && selectedCropName" class="d-flex flex-wrap justify-center ma-1">
@@ -80,7 +86,7 @@ import TabIconText from '../render/TabIconText.vue';
 export default {
   components: { Currency, CropCard, FertilizerCard, Consumable, BuildingCard, PlaceableSelectDisplay, TabIconText },
   data: () => ({
-    currencies: ['vegetable', 'berry', 'grain', 'flower', 'gold', 'seedHull', 'grass', 'petal', 'bug', 'butterfly', 'ladybug', 'spider', 'bee', 'mysteryStone', 'goldenPetal', 'smallSeed'],
+    currencies: ['vegetable', 'berry', 'grain', 'flower', 'gold', 'seedHull', 'grass', 'petal', 'bug', 'butterfly', 'ladybug', 'spider', 'bee', 'mysteryStone', 'smallSeed'],
     selectedPlaceable: null,
     categories: ['vegetable', 'berry', 'grain', 'flower'],
     category: 'vegetable'
@@ -97,27 +103,41 @@ export default {
       currency: state => state.currency
     }),
     fertilizers() {
+      if (this.selectedCropName === null) {
+        return {};
+      }
       let obj = {};
-
-      const selectedCropType = this.selectedCropName ? this.crops[this.selectedCropName].type : null;
-
       for (const [key, elem] of Object.entries(this.$store.state.farm.fertilizer)) {
-        if (this.consumable[`farm_${key}`].found && (elem.type === 'all' || elem.type === selectedCropType)) {
+        if (this.consumable[`farm_${key}`].found && ((elem.type === 'all' && this.crops[this.selectedCropName].type !== 'special') || elem.type === this.crops[this.selectedCropName].type)) {
           obj[key] = elem;
         }
       }
-
       return obj;
     },
     placeableList() {
       let arr = [];
       for (const [key, elem] of Object.entries(this.crops)) {
-        if (elem.found) {
+        if (elem.found && elem.type !== 'special') {
           arr.push({...elem, name: `crop_${ key }`});
         }
       }
+      let hasSpecial = false;
+      for (const [key, elem] of Object.entries(this.crops)) {
+        if (elem.found && elem.type === 'special') {
+          if (!hasSpecial) {
+            arr.push({type: 'divider', name: 'specialCrop', disabled: true});
+            hasSpecial = true;
+          }
+          arr.push({...elem, name: `crop_${ key }`});
+        }
+      }
+      let hasBuilding = false;
       for (const [key, elem] of Object.entries(this.buildings)) {
         if (elem.max > 0 && elem.cacheAmount < elem.max) {
+          if (!hasBuilding) {
+            arr.push({type: 'divider', name: 'decoration', disabled: true});
+            hasBuilding = true;
+          }
           arr.push({...elem, name: `building_${ key }`});
         }
       }
@@ -158,7 +178,7 @@ export default {
   },
   methods: {
     selectPlaceable() {
-      if (this.selectedPlaceable === null) {
+      if (!this.selectedPlaceable) {
         this.$store.commit('farm/updateKey', {key: 'selectedCropName', value: null});
         this.$store.commit('farm/updateKey', {key: 'selectedBuildingName', value: null});
         this.$store.commit('farm/updateKey', {key: 'selectedFertilizerName', value: null});

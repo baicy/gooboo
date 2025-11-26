@@ -7,11 +7,10 @@ import { LOCAL_STORAGE_NAME, EXTRA_VERSION } from "../js/constants";
 export default {
     namespaced: true,
     state: {
-        version: '1.5.8',
+        version: '1.6.2',
         cheaterSelfMark: 0,
         cheatDetected: {},
         lastPlayedDays: [],
-        patchnote: {},
         timestamp: null,
         screen: 'newGame',
         notification: [],
@@ -87,7 +86,7 @@ export default {
             },
             school: {
                 unlock: 'schoolFeature',
-                subfeatures: ['schoolLiteratureSubfeature', 'schoolHistorySubfeature', 'schoolArtSubfeature'],
+                subfeatures: ['schoolLiteratureSubfeature', 'schoolHistorySubfeature', 'schoolArtSubfeature', 'schoolChemistrySubfeature'],
                 icon: 'mdi-school',
                 main: false
             },
@@ -192,6 +191,13 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    showFormulas: {
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
                     useLegacyFarmSelect: {
                         unlock: 'farmFeature',
                         hasDescription: true,
@@ -199,6 +205,35 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    numberFormatting: {
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'select',
+                        items: ['standard', 'scientific', 'engineering'],
+                        value: 'standard',
+                        defaultValue: 'standard'
+                    },
+                    showDetailedPatchnotes: {
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    showAllCards: {
+                        unlock: 'debugFeature',
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                    showEfficiencyStats: {
+                        unlock: 'debugFeature',
+                        hasDescription: false,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    }
                 }
             },
             automation: {
@@ -209,7 +244,7 @@ export default {
                         hasDescription: true,
                         type: 'number',
                         min: 1,
-                        max: 86400,
+                        max: 999999999,
                         step: 1,
                         suffix: 's',
                         value: null,
@@ -245,6 +280,13 @@ export default {
                         value: 2,
                         defaultValue: 2
                     },
+                    cssAnimations: {
+                        unlock: null,
+                        hasDescription: false,
+                        type: 'switch',
+                        value: true,
+                        defaultValue: true
+                    },
                     particleAmount: {
                         unlock: 'gemFeature',
                         hasDescription: false,
@@ -252,13 +294,6 @@ export default {
                         items: [0, 1, 2, 3],
                         value: 2,
                         defaultValue: 2
-                    },
-                    recordAutoplay: {
-                        unlock: 'debugFeature',
-                        hasDescription: false,
-                        type: 'switch',
-                        value: false,
-                        defaultValue: false
                     }
                 }
             },
@@ -573,8 +608,6 @@ export default {
         cloudSave: {autoTime: null},
         cloudAutosaveTimer: null,
         backupTimer: 0,
-        autoplayData: [],
-        autoplayChoice: {},
         note: null,
         confirm: null,
         currentDay: null,
@@ -586,6 +619,8 @@ export default {
         timeMult: 1,
         noteHint: [],
         farmHint: false,
+        bookHint: [],
+        questlineHint: {},
         tutorial: {},
         cachePage: {},
         playerId: null,
@@ -637,6 +672,9 @@ export default {
         getRngById: (state) => (name, id) => {
             return seedrandom(state.playerId + name + '_' + id);
         },
+        getStaticRng: () => (name) => {
+            return seedrandom('static_' + name);
+        },
         backupHint: (state) => {
             const mode = state.settings.notification.items.backupHint.value;
 
@@ -651,7 +689,7 @@ export default {
                         case 0:
                             return rootState.stat.mining_maxDepth0.total > 475;
                         case 1:
-                            return rootState.stat.mining_maxDepth1.total > 160;
+                            return rootState.stat.mining_maxDepth1.total > 250;
                     }
                     break;
                 }
@@ -667,14 +705,14 @@ export default {
                 case 'horde': {
                     switch (state.features.horde.currentSubfeature) {
                         case 0:
-                            return rootState.stat.horde_maxZone.total > 300;
+                            return rootState.stat.horde_maxZone.total > 400;
                         case 1:
                             return rootState.unlock.hordeEndOfContent.use;
                     }
                     break;
                 }
                 case 'farm': {
-                    return rootState.upgrade.item.farm_seedBox.highestLevel >= 24;
+                    return rootState.upgrade.item.farm_seedBox.highestLevel >= 32;
                 }
                 case 'gallery': {
                     return rootState.stat.gallery_brown.total > 0;
@@ -721,6 +759,14 @@ export default {
         },
         checkExtraCheated: (state) => (name) => {
             return state.settings.cheat.items[name].value;
+        },
+        hasQuestlineHint: (state) => {
+            for (const [, elem] of Object.entries(state.questlineHint)) {
+                if (elem.length > 0) {
+                    return true;
+                }
+            }
+            return false;
         }
     },
     mutations: {
@@ -741,12 +787,6 @@ export default {
                 particles: o.particles ?? null,
                 light: o.light,
                 dark: o.dark
-            });
-        },
-        initPatchnote(state, o) {
-            Vue.set(state.patchnote, o.name, {
-                day: o.day,
-                content: o.content
             });
         },
         initTutorial(state, o) {
@@ -803,17 +843,23 @@ export default {
             const timer = state.cloudSave.autoTime;
             Vue.set(state, 'cloudAutosaveTimer', timer !== null ? parseInt(timer) : timer);
         },
-        addAutoplayData(state, data) {
-            state.autoplayData.push(data);
-        },
-        updateAutoplayChoice(state, o) {
-            Vue.set(state.autoplayChoice, o.key, o.value);
-        },
         addNoteHint(state, name) {
             state.noteHint.push(name);
         },
         removeNoteHint(state, name) {
             Vue.set(state, 'noteHint', state.noteHint.filter(elem => elem !== name));
+        },
+        addBookHint(state, name) {
+            state.bookHint.push(name);
+        },
+        removeBookHint(state, name) {
+            Vue.set(state, 'bookHint', state.bookHint.filter(elem => elem !== name));
+        },
+        addQuestlineHint(state, o) {
+            state.questlineHint[o.general].push(o.questline);
+        },
+        removeQuestlineHint(state, o) {
+            Vue.set(state.questlineHint, o.general, state.questlineHint[o.general].filter(elem => elem !== o.questline));
         },
         generatePlayerId(state) {
             if (state.playerId === null) {
@@ -855,15 +901,15 @@ export default {
             commit('updateKey', {key: 'autosaveTimer', value: null});
             commit('updateKey', {key: 'cloudAutosaveTimer', value: null});
             commit('updateKey', {key: 'backupTimer', value: 0});
-            commit('updateKey', {key: 'autoplayData', value: []});
-            commit('updateKey', {key: 'autoplayChoice', value: {}});
             commit('updateKey', {key: 'note', value: null});
             commit('updateKey', {key: 'confirm', value: null});
+            commit('updateKey', {key: 'theme', value: 'default'});
             commit('updateKey', {key: 'offlineTime', value: 0});
             commit('updateKey', {key: 'oldSavefile', value: null});
             commit('updateKey', {key: 'timeMult', value: 1});
             commit('updateKey', {key: 'noteHint', value: []});
             commit('updateKey', {key: 'farmHint', value: false});
+            commit('updateKey', {key: 'bookHint', value: []});
             commit('updateKey', {key: 'rng', value: {}});
             commit('updateKey', {key: 'cachePage', value: {}});
             commit('updateKey', {key: 'playerId', value: null});
@@ -877,6 +923,9 @@ export default {
             for (const [key, elem] of Object.entries(state.features)) {
                 if (elem.currentSubfeature !== undefined) {
                     commit('updateSubfeature', {key, value: 0});
+                }
+                if (elem.nextSubfeature !== undefined) {
+                    commit('updateNextSubfeature', {key, value: 0});
                 }
             }
             for (const [key, elem] of Object.entries(state.settings)) {
@@ -894,8 +943,11 @@ export default {
                 commit('updateTutorialKey', {name: key, key: 'active', value: false});
                 commit('updateTutorialKey', {name: key, key: 'completed', value: false});
             }
+            for (const [key] of Object.entries(state.questlineHint)) {
+                commit('updateSubkey', {name: 'questlineHint', key, value: []});
+            }
         },
-        applyEffect({ commit, dispatch }, o) {
+        applyEffect({ rootState, commit, dispatch }, o) {
             switch (o.type) {
                 case 'base':
                     if (!isNaN(o.value) && o.value !== null) {
@@ -914,7 +966,7 @@ export default {
                     break;
                 case 'unlock':
                     if (o.value) {
-                        commit('unlock/unlock', o.name, {root: true});
+                        dispatch('unlock/unlock', o.name, {root: true});
                         if (o.trigger && o.name.slice(0, 15) === 'villageOffering') {
                             dispatch('village/applyOfferingEffect', null, {root: true});
                         }
@@ -930,9 +982,20 @@ export default {
                         dispatch('upgrade/makePersistent', o.name, {root: true});
                     }
                     break;
+                case 'uncapUpgrade':
+                    if (o.value) {
+                        commit('upgrade/updateKey', {name: o.name, key: 'cap', value: null}, {root: true});
+                        commit('upgrade/updateCacheKey', rootState.upgrade.item[o.name], {root: true});
+                    }
+                    break;
                 case 'findConsumable':
                     if (o.value) {
                         commit('consumable/updateKey', {name: o.name, key: 'found', value: true}, {root: true});
+                    }
+                    break;
+                case 'gainConsumable':
+                    if (o.trigger) {
+                        dispatch('consumable/gain', {name: o.name, amount: o.value}, {root: true});
                     }
                     break;
                 case 'villageJob':
@@ -960,6 +1023,7 @@ export default {
                 case 'galleryIdea':
                     if (o.value) {
                         commit('gallery/updateIdeaKey', {name: o.name, key: 'owned', value: true}, {root: true});
+                        dispatch('gallery/applyIdea', {name: o.name, onBuy: false}, {root: true});
                     }
                     break;
                 case 'galleryShape':
@@ -971,7 +1035,7 @@ export default {
                     break;
             }
         },
-        resetEffect({ commit, dispatch }, o) {
+        resetEffect({ rootState, commit, dispatch }, o) {
             switch (o.type) {
                 case 'base':
                     dispatch('mult/removeKey', {name: o.name, type: 'base', key: o.multKey}, {root: true});
@@ -987,6 +1051,10 @@ export default {
                     break;
                 case 'tag':
                     commit('tag/reset', {name: o.name, key: o.multKey}, {root: true});
+                    break;
+                case 'uncapUpgrade':
+                    commit('upgrade/updateKey', {name: o.name, key: 'cap', value: rootState.upgrade.item[o.name].capDefault}, {root: true});
+                    commit('upgrade/updateCacheKey', rootState.upgrade.item[o.name], {root: true});
                     break;
                 case 'villageJob':
                     commit('village/updateJobKey', {name: o.name, key: 'max', value: 0}, {root: true});
@@ -1101,6 +1169,7 @@ export default {
         resetFeatureProgress({ state, rootState, commit, dispatch }, o) {
             if (o.feature !== 'school') {
                 commit('system/updateSubfeature', {key: o.feature, value: 0}, {root: true});
+                commit('system/updateNextSubfeature', {key: o.feature, value: 0}, {root: true});
                 for (let i = 0, n = state.features[o.feature].subfeatures.length + 1; i < n; i++) {
                     dispatch('upgrade/resetAll', {feature: o.feature, subfeature: i, type: 'regular'}, {root: true});
                     if (o.feature === 'village' && i === 0) {
@@ -1135,7 +1204,7 @@ export default {
                 }
                 for (const [key] of Object.entries(rootState.horde.itemStatMult)) {
                     const split = key.split('_');
-                    dispatch('system/resetEffect', {type: split[1], name: split[0], multKey: `hordeItemPermanent`}, {root: true});
+                    dispatch('system/resetEffect', {type: split[1], name: split[0], multKey: `hordeEquipmentPermanent`}, {root: true});
                 }
                 for (const [key, elem] of Object.entries(rootState.horde.heirloom)) {
                     elem.effect.forEach(eff => {
@@ -1163,6 +1232,7 @@ export default {
 
             // Feature specific effects after state wipe
             if (o.feature === 'mining') {
+                dispatch('mining/updateObsidianPenalty', null, {root: true});
                 dispatch('mining/applyBeaconEffects', null, {root: true});
             }
             if (o.feature === 'village') {
@@ -1217,18 +1287,33 @@ export default {
                     });
                 }
 
+                for (const [key] of Object.entries(rootState.horde.area)) {
+                    dispatch('horde/applyTeethCap', key, {root: true});
+                }
+                for (const [key] of Object.entries(rootState.horde.element)) {
+                    dispatch('horde/applyUpgradePlayerElemental', key, {root: true});
+                    dispatch('horde/applyUpgradePlayerStats', key, {root: true});
+                }
+
                 dispatch('horde/updateEnergy', null, {root: true});
                 dispatch('horde/updateMana', null, {root: true});
                 dispatch('horde/updateActiveTimer', 0, {root: true});
-                dispatch('horde/updateMaxDifficulty', null, {root: true});
                 dispatch('horde/updateMysticalShardCap', null, {root: true});
                 dispatch('horde/updateSacrifice', null, {root: true});
+                dispatch('horde/applyRaidEffect', null, {root: true});
+                dispatch('horde/updateRaidbossEffect', null, {root: true});
             }
             if (o.feature === 'farm') {
                 commit('farm/initField', null, {root: true});
                 dispatch('farm/applyEarlyGameBuff', null, {root: true});
                 dispatch('farm/applyCropPrestige', null, {root: true});
                 dispatch('farm/applyGeneEffects', null, {root: true});
+
+                for (const [key, elem] of Object.entries(rootState.farm.crop)) {
+                    if (elem.type === 'special') {
+                        dispatch('farm/applySpecialCropEffect', {name: key}, {root: true});
+                    }
+                }
             }
             if (o.feature === 'gallery') {
                 for (const [key] of Object.entries(rootState.gallery.idea)) {
@@ -1238,6 +1323,18 @@ export default {
                     dispatch('gallery/applyCanvasLevel', {name: key}, {root: true});
                 }
                 commit('gallery/initShapeGrid', null, {root: true});
+            }
+
+            // Apply books correctly
+            if (o.feature === 'school') {
+                for (const [key] of Object.entries(rootState.school.book)) {
+                    dispatch('school/applyBookEffect', key, {root: true});
+                }
+                for (const [key] of Object.entries(rootState.school.subject)) {
+                    dispatch('school/applySubjectBooks', key, {root: true});
+                }
+            } else {
+                dispatch('school/updateBookEffects', o.feature, {root: true});
             }
 
             // Make sure premium buildings and relics get applied correctly
@@ -1276,13 +1373,17 @@ export default {
                     break;
                 }
                 case 'cardPack': {
-                    dispatch('card/buyPack', {name: state.confirm.name, notify: true, amount: state.confirm.amount}, {root: true});
+                    dispatch('card/buyPack', {name: state.confirm.name, amount: state.confirm.amount}, {root: true});
+                    break;
+                }
+                case 'cardShinyPack': {
+                    dispatch('card/buyShinyPack', state.confirm.name, {root: true});
                     break;
                 }
                 case 'farmCrop': {
                     switch (state.confirm.mode) {
                         case 'plantSingle':
-                            dispatch('farm/plantCrop', {x: state.confirm.x, y: state.confirm.y, crop: state.confirm.crop, fertilizer: state.confirm.fertilizer}, {root: true});
+                            dispatch('farm/plantCrop', {x: state.confirm.x, y: state.confirm.y, crop: state.confirm.crop, fertilizer: state.confirm.fertilizer, giant: state.confirm.giant}, {root: true});
                             break;
                         case 'plantAll':
                             dispatch('farm/plantAll', {crop: state.confirm.crop, fertilizer: state.confirm.fertilizer}, {root: true});
@@ -1297,8 +1398,8 @@ export default {
                     dispatch('gallery/buyMotivation', null, {root: true});
                     break;
                 }
-                case 'schoolExamPass': {
-                    dispatch('school/buyPass', null, {root: true});
+                case 'relicGlyph': {
+                    dispatch('relic/changePedestals', state.confirm.pedestals, {root: true});
                     break;
                 }
                 case 'treasure': {
@@ -1311,6 +1412,10 @@ export default {
                 }
                 case 'treasureDelete': {
                     dispatch('treasure/deleteItem', state.confirm.id, {root: true});
+                    break;
+                }
+                case 'buyDiamondForge': {
+                    dispatch('gem/buyForge', state.confirm.name, {root: true});
                     break;
                 }
                 case 'casinoBingoBuy': {
@@ -1341,6 +1446,14 @@ export default {
                         }
                         case 'useManaPotion': {
                             dispatch('horde/useManaPotion', null, {root: true});
+                            break;
+                        }
+                        case 'useTreasureModifier': {
+                            dispatch('treasure/useModifier', {id: state.confirm.treasure ,modifier: state.confirm.modifier}, {root: true});
+                            break;
+                        }
+                        case 'surpriseParty': {
+                            dispatch('gallery/surpriseParty', null, {root: true});
                             break;
                         }
                         case 'fastPrestige': {

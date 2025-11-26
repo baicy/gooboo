@@ -3,43 +3,43 @@ export default {
 
   gem_prestigeStone: {
     name: '声望石',
-    description: '获得与您的最佳周期相等的声望货币',
+    description: '获得与您的最佳周期相等的声望货币'
   },
   mining_goldenHammer: {
     name: '金锤',
-    description: '为这门手艺找到最好的镐',
+    description: '为这门手艺找到最好的镐'
   },
   village_ingredientBox: {
-    name: '原料箱',
-    description: '包含一些只能在这里找到的特殊原料'
+    name: '配料箱',
+    description: '含有只有在这些盒子里才能找到的特殊成分'
   },
   horde_manaPotion: {
-    name: '魔力药剂',
-    description: '恢复50%最大魔力值'
+    name: '法力药水',
+    description: '补充50%的最大法力值'
   },
   farm_basic: {
     name: '基础肥料',
-    description: '',
+    description: ''
   },
   farm_flower: {
     name: '花肥',
-    description: '',
+    description: ''
   },
   farm_speedGrow: {
     name: '快速生长',
-    description: '',
+    description: ''
   },
   farm_richSoil: {
     name: '肥沃的土壤',
-    description: '',
+    description: ''
   },
   farm_shiny: {
     name: '闪亮肥料',
-    description: '',
+    description: ''
   },
   farm_juicy: {
     name: '多汁肥料',
-    description: '',
+    description: ''
   },
   farm_dissolving: {
     name: '作物溶解剂',
@@ -47,23 +47,23 @@ export default {
   },
   farm_potatoWater: {
     name: '土豆水',
-    description: '',
+    description: ''
   },
   farm_roseWater: {
     name: '玫瑰水',
-    description: '',
+    description: ''
   },
   farm_weedKiller: {
     name: '除草剂',
-    description: '',
+    description: ''
   },
   farm_turboGrow: {
     name: '涡轮生长',
-    description: '',
+    description: ''
   },
   farm_premium: {
     name: '优质肥料',
-    description: '',
+    description: ''
   },
   farm_analyzing: {
     name: '分析肥料',
@@ -77,28 +77,44 @@ export default {
     name: '颗粒',
     description: ''
   },
-  farm_sunshine: {
-    name: '阳光',
-    description: '',
+  farm_supplementsS: {
+    name: '补充 (S)',
+    description: ''
   },
-  farm_superFlower: {
-    name: '超级鲜花',
-    description: '',
+  farm_supplementsM: {
+    name: '补充 (M)',
+    description: ''
   },
-  farm_smellyMud: {
-    name: '臭泥',
-    description: '',
+  farm_supplementsL: {
+    name: '补充 (L)',
+    description: ''
   },
-  farm_tropicalWater: {
-    name: '热带水',
-    description: '',
+  farm_supplementsXL: {
+    name: '补充 (XL)',
+    description: ''
   },
-  farm_fieldBlessing: {
-    name: '田野祝福',
-    description: '',
+  farm_supplementsXXL: {
+    name: '补充 (XXL)',
+    description: ''
   },
-  farm_cinnamonBag: {
-    name: '肉桂袋',
-    description: '',
+  gallery_surpriseParty: {
+    name: '惊喜派对',
+    description: '获得 500 动机'
+  },
+  treasure_upArrow: {
+    name: '上箭头',
+    description: '提高宝藏等级 2'
+  },
+  treasure_expander: {
+    name: '扩展器',
+    description: '宝藏等级随时间增加，但不能使用碎片升级'
+  },
+  treasure_wildcard: {
+    name: '通配符',
+    description: '所有的效果都可以重新选择'
+  },
+  treasure_eventStar: {
+    name: '活动星级',
+    description: '添加事件力量作为效果'
   },
 };
