@@ -473,15 +473,10 @@ export default {
       }
     },
     resetDna() {
-      let amount = 0;
       const upgrades = this.crop.upgrades;
       for (const upgrade in upgrades) {
-        for (let i = 0; i < upgrades[upgrade]; i++) {
-          amount += this.$store.getters['farm/upgradeDnaCost'](i);
-        }
         upgrades[upgrade] = 0;
       }
-      this.$store.state.farm.crop[this.name].dna += amount;
     },
     toggleGiant() {
       this.$store.commit('farm/updateKey', {key: 'plantGiant', value: !this.plantGiant});
