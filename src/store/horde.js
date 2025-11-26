@@ -306,7 +306,7 @@ export default {
         itemsList: (state, getters, rootState) => {
             let obj = {};
             for (const [key, elem] of Object.entries(state.items)) {
-                if (rootState.unlock.hordeChessItems.use || elem.unlock !== 'hordeChessItems') {
+                if (rootState.unlock.hordeChessEquipment.use || elem.unlock !== 'hordeChessEquipment') {
                     obj[key] = elem;
                 }
             }
