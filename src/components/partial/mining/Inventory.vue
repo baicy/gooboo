@@ -147,10 +147,9 @@ import AlertText from '../render/AlertText.vue';
 import DisplayRow from '../upgrade/DisplayRow.vue';
 import Ingredient from './Ingredient.vue';
 import Smeltery from './Smeltery.vue';
-import AutoEnhance from './AutoEnhance.vue';
 
 export default {
-  components: { Currency, Ingredient, Consumable, StatBreakdown, PriceTag, Smeltery, AlertText, DisplayRow, AutoEnhance },
+  components: { Currency, Ingredient, Consumable, StatBreakdown, PriceTag, Smeltery, AlertText, DisplayRow},
   data: () => ({
     subfeatureCurrencies: [
       ['mining_resin', 'mining_granite', 'mining_salt', 'mining_coal', 'mining_sulfur', 'mining_niter', 'mining_obsidian', 'mining_deeprock', 'mining_glowshard'],

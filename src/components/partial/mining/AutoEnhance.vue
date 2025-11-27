@@ -91,8 +91,8 @@ export default {
     },
     applyEnhance() {
       const bar = this.enhancementIngredient;
-      this.setIngredient('barAluminium');
-      this.$store.dispatch('mining/enhanceBars');
+      // this.setIngredient('barAluminium');
+      // this.$store.dispatch('mining/enhanceBars');
       this.setIngredient(bar);
       this.$store.dispatch('mining/enhanceFinal');
     }
