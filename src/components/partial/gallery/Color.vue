@@ -253,7 +253,8 @@ export default {
       return speed > 0 ? ((1 - this.canvasPercent) * difficulty / speed) : null;
     },
     fakeCanvasUntilNext() {
-      const speed = this.$store.getters['mult/get']('galleryCanvasSpeed', this.canvasSpeedBase, this.canvasSpeedMultAmount);
+      const canvasSpeedBase = this.canvasSpaceMax;
+      const speed = this.$store.getters['mult/get']('galleryCanvasSpeed', canvasSpeedBase, this.canvasSpeedMultAmount);
       const difficulty = this.$store.getters['gallery/canvasDifficulty'](this.name, this.canvasLevel);
       return speed > 0 ? ((1 - this.canvasPercent) * difficulty / speed) : null;
     },
