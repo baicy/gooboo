@@ -5,7 +5,6 @@ import { digitSum, isPrime, logBase } from "../js/utils/math";
 import { randomFloat } from "../js/utils/random";
 
 // For Mod
-// import { deltaLinear } from "../js/utils/math";
 
 export default {
     namespaced: true,
@@ -346,57 +345,42 @@ export default {
             const smeltery = state.smeltery[name];
             return smeltery.price(smeltery.total + add);
         },
-        // smelteryAffordAmount: (state, getters) => (name) => {
-        //     let amount = 0;  
-        //     if (getters.smelteryCanAfford(name)) {
-        //         amount = 1;
-        //         let step = 1;
-        //         while (getters.smelteryCanAfford(name, step)) {
-        //             step *= 2;
-        //         }
-        //         amount = step / 2;
-        //         while (step > 1) {
-        //             step /= 2;
-        //             if(getters.smelteryCanAfford(name, amount + step)) {
-        //                 amount += step;
-        //             }
-        //         }
-        //     }
-        //     return amount;
-        // },
-        // smelteryCanBook: (state, getters, rootState) => (name, amount = 1) => {
-        //     const smeltery = state.smeltery[name];
-        //     for (const [key, elem] of Object.entries(smeltery.price)) {
-        //         const price = deltaLinear(elem.base, elem.increment, amount, smeltery.total);
-        //         const maxPrice = deltaLinear(elem.base, elem.increment, 1, smeltery.total + amount - 1);
-        //         const cap = rootState.currency[key].cap ?? Infinity;
-        //         if (cap === Infinity) {
-        //             if (price > rootState.currency[key].value) return false;
-        //         } else {
-        //             if (maxPrice > cap) return false;
-        //         }
-        //     }
-        //     return true;
-        // },
-        // smelteryBookAmount: (state, getters) => (name) => {
-        //     const booked = state.smeltery[name].book;
-        //     let amount = 0;  
-        //     if (getters.smelteryCanBook(name)) {
-        //         amount = 1;
-        //         let step = 1;
-        //         while (getters.smelteryCanBook(name, step + booked)) {
-        //             step *= 2;
-        //         }
-        //         amount = step / 2;
-        //         while (step > 1) {
-        //             step /= 2;
-        //             if(getters.smelteryCanBook(name, amount + step + booked)) {
-        //                 amount += step;
-        //             }
-        //         }
-        //     }
-        //     return amount;
-        // },
+        smelteryAffordAmount: (state,getters,rootState,rootGetters) => (name) => {
+            let sumPrice={};
+            let maxPrice={};
+            let amount = 0;
+            for(;;){
+                for(const [key,elem] of Object.entries(getters.smelteryPrice(name,amount))){
+                    sumPrice[key] = (sumPrice[key]??0)+elem;
+                    maxPrice[key] = elem;
+                }
+                if(!rootGetters['currency/canAfford'](sumPrice, maxPrice)){
+                    return amount;
+                }
+                amount++;
+            }
+        },
+        smelteryBookAmount: (state, getters,rootState) => (name) => {
+            const booked = state.smeltery[name].book;
+            let sumPrice={};
+            let maxPrice={};
+            let amount = 0;
+            for(;;){
+                for(const [key,elem] of Object.entries(getters.smelteryPrice(name,booked+amount))){
+                    sumPrice[key] = (sumPrice[key]??0)+elem;
+                    maxPrice[key] = elem;
+                    const cap = rootState.currency[key].cap ?? Infinity;
+                    if(cap === Infinity){
+                        if(sumPrice[key]>rootState.currency[key].value){
+                            return amount;
+                        }
+                    } else {
+                        if(maxPrice[key]>cap) return amount;
+                    }
+                }
+                amount++;
+            }
+        },
         enhancementLevel: (state) => {
             let level = 0;
             for (const [, elem] of Object.entries(state.enhancement)) {
