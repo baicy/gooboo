@@ -674,17 +674,25 @@ export default {
                 commit('updateSmelteryKey', {name: o.name, key: 'total', value: smeltery.total + amount});
             }
         },
-        // addToSmelteryCustom({ state, getters, commit, dispatch }, o) {
-        //     const smeltery = state.smeltery[o.name];
-        //     for (const [key, elem] of Object.entries(getters.smelteryPrice(o.name, o.amount))) {
-        //         dispatch('currency/spend', {feature: key.split('_')[0], name: key.split('_')[1], amount: elem}, {root: true});
-        //     }
-        //     commit('updateSmelteryKey', {name: o.name, key: 'stored', value: smeltery.stored + o.amount});
-        //     if (o.book) {
-        //         commit('updateSmelteryKey', {name: o.name, key: 'book', value: smeltery.book - o.amount});
-        //     }
-        //     commit('updateSmelteryKey', {name: o.name, key: 'total', value: smeltery.total + o.amount});
-        // },
+        addToSmelteryCustom({ state, commit, dispatch }, o) {
+            const smeltery = state.smeltery[o.name];
+            let price = {};
+            let amount =0;
+            while(amount<o.amount) {
+                for (const [key, elem] of Object.entries(smeltery.price(smeltery.total + amount))) {
+                    price[key] = (price[key] ?? 0) + elem;
+                }
+                amount++;
+            }
+            for (const [key, elem] of Object.entries(price)) {
+                dispatch('currency/spend', {feature: key.split('_')[0], name: key.split('_')[1], amount: elem}, {root: true});
+            }
+            commit('updateSmelteryKey', {name: o.name, key: 'stored', value: smeltery.stored + o.amount});
+            if (o.book) {
+                commit('updateSmelteryKey', {name: o.name, key: 'book', value: smeltery.book - o.amount});
+            }
+            commit('updateSmelteryKey', {name: o.name, key: 'total', value: smeltery.total + o.amount});
+        },
         enhance({ state, getters, rootGetters, commit, dispatch }) {
             if (state.enhancementIngredient !== null && state.enhancement[state.enhancementIngredient].level < MINING_ENHANCEMENT_MAX && rootGetters['currency/value']('mining_' + state.enhancementIngredient) >= getters.enhancementBarsNeeded) {
                 dispatch('currency/spend', {feature: 'mining', name: state.enhancementIngredient, amount: getters.enhancementBarsNeeded}, {root: true});
