@@ -16,7 +16,7 @@
       <div v-if="$store.getters['system/checkExtraCheated']('categoryCrop')">
         <v-tabs v-model="category" grow show-arrows>
           <v-tab v-for="category in categories" :key="category" :href="`#${category}`">
-            <tab-icon-text :icon="currency[`farm_${category}`].icon"></tab-icon-text>
+            <tab-icon-text :icon="currency[`farm_${category}`]?currency[`farm_${category}`].icon:'mdi-star'"></tab-icon-text>
           </v-tab>
         </v-tabs>
         <div class="d-flex flex-wrap justify-center ma-1">
@@ -88,7 +88,7 @@ export default {
   data: () => ({
     currencies: ['vegetable', 'berry', 'grain', 'flower', 'gold', 'seedHull', 'grass', 'petal', 'bug', 'butterfly', 'ladybug', 'spider', 'bee', 'mysteryStone', 'smallSeed'],
     selectedPlaceable: null,
-    categories: ['vegetable', 'berry', 'grain', 'flower'],
+    categories: ['vegetable', 'berry', 'grain', 'flower','special'],
     category: 'vegetable'
   }),
   computed: {
