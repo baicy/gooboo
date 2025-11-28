@@ -309,6 +309,11 @@ function loadFile(file) {
             }
         }
     }
+    if (save.autoQueue) {
+        for (const [key, elem] of Object.entries(save.autoQueue)) {
+            Vue.set(store.state.upgrade.autoQueue, key, [...elem]);
+        }
+    }
     if (save.upgradeQueue) {
         for (const [key, elem] of Object.entries(save.upgradeQueue)) {
             if (store.state.upgrade.queue[key] !== undefined) {
@@ -462,6 +467,7 @@ function getSavefile() {
         stat: {},
         upgrade: {},
         upgradeQueue: {},
+        autoQueue: {},
         globalLevel: {},
         settings: {},
         keybinds: {},
@@ -523,6 +529,11 @@ function getSavefile() {
     for (const [key, elem] of Object.entries(store.state.upgrade.queue)) {
         if (elem.length > 0) {
             save.upgradeQueue[key] = [...elem];
+        }
+    }
+    for (const [key, elem] of Object.entries(store.state.upgrade.autoQueue)) {
+        if (elem.length > 0) {
+            save.autoQueue[key] = [...elem];
         }
     }
     for (const [key, elem] of Object.entries(store.getters['meta/globalLevelParts'])) {
