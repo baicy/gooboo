@@ -4,7 +4,7 @@ import { getSequence } from "../../utils/math";
 
 const requirementStat = 'mining_maxDepth1';
 const requirementBase = () => store.state.stat[requirementStat].total;
-// const extra = () => store.state.system.settings.cheat.items.miningExtraShop.value;
+ const extra = () => store.state.system.settings.cheat.items.miningExtraShop.value;
 
 export default {
     fumes: {subfeature: 1, price(lvl) {
@@ -81,12 +81,11 @@ export default {
         {name: 'miningPickaxeCraftingPower', type: 'mult', value: lvl => Math.pow(1.1, lvl)},
         {name: 'miningDamage', type: 'mult', value: lvl => Math.pow(1.05, lvl)}
     ]},
-    // Comment out for Re-Balancing 
-    // drillFuel2: {cheat: true, requirement: extra, subfeature: 1, requirementBase, requirementStat, requirementValue: 45, price(lvl) {
-    //     return {mining_scrap: Math.pow(lvl * 0.1 + 2.4, lvl) * buildNum(35, 'B')};
-    // }, effect: [
-    //     {name: 'miningDepthDwellerSpeed', type: 'mult', value: lvl => Math.pow(1.02, lvl) * (lvl * 0.05 + 1)}
-    // ]},
+    drillFuel2: {cheat: true, requirement: extra, subfeature: 1, cap: 30, requirementBase, requirementStat, requirementValue: 45, price(lvl) {
+        return {mining_scrap: Math.pow(lvl * 0.1 + 2.4, lvl) * 3.5e10};
+    }, effect: [
+        {name: 'miningDepthDwellerSpeed', type: 'mult', value: lvl => Math.pow(1.02, lvl) * (lvl * 0.05 + 1)}
+    ]},
     harvester: {subfeature: 1, cap: 10, requirementBase, requirementStat, requirementValue: 60, price(lvl) {
         return {mining_neon: Math.round(Math.pow(1.35, lvl) * 50)};
     }, effect: [
