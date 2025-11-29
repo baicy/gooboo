@@ -15,7 +15,7 @@
         <span class="ml-2 text-right" style="min-width: 70px">{{ depth }} / {{ maxDepth }}</span>
       </div>
       <v-row no-gutters class="mt-2">
-        <v-col cols="12" :md="filters.length ? 4 : 12">
+        <v-col cols="12" :md="4">
           <v-select label="排序" hide-details dense outlined clearable :items="filterBy.length ? filterBy : loots" v-model="sortBy">
             <template #item="{ item }">
               <v-chip
@@ -46,7 +46,7 @@
             </template>
           </v-select>
         </v-col>
-        <v-col cols="12" md="8" :class="$vuetify.breakpoint.mdAndUp ? 'pl-1' : 'pt-1'" v-if="filters.length">
+        <v-col cols="12" md="8" :class="$vuetify.breakpoint.mdAndUp ? 'pl-1' : 'pt-1'">
           <v-select label="筛选" hide-details dense outlined clearable :items="loots" multiple v-model="filterBy" @change="resetFilterBy">
             <template #item="{ item }">
               <v-chip
@@ -130,6 +130,10 @@
 import { mapState, mapGetters } from 'vuex';
 import { MINING_SCRAP_BREAK, MINING_SALT_DEPTH, MINING_DEEPROCK_DEPTH, MINING_OBSIDIAN_DEPTH } from '../../../js/constants';
 import { digitSum } from '../../../js/utils/math';
+
+// For Mods
+import { MINING_MOONSHARD_DEPTH, MINING_PHOSPHORUS_DEPTH } from '../../../js/constants';
+import { isPrime } from '../../../js/utils/math';
 
 export default {
   data: ()=> ({
@@ -222,13 +226,22 @@ export default {
           if (depth >= MINING_DEEPROCK_DEPTH && digitSum(depth) >= 14) {
             d.deeprock = this.getRareEarth('deeprock', depth, d.time);
           }
-          if (depth >= MINING_OBSIDIAN_DEPTH && this.$store.getters['mining/enhancementLevel'] <= 0) {
+          if (depth >= MINING_OBSIDIAN_DEPTH && (this.$store.getters['mining/enhancementLevel'] <= 0 || !this.$store.state.mining.enhancementsActive)) {
             d.obsidian = this.getRareEarth('obsidian', depth, d.time);
           }
         }
         if (this.subfeature === 1) {
           const smoke = this.$store.getters['mining/depthSmoke'](depth);
           if (smoke) d.smoke = smoke;
+          if (isPrime(depth)) {
+            d.limestone = this.getRareEarth('limestone', depth, d.time);
+          }
+          if (depth >= MINING_MOONSHARD_DEPTH && this.$store.state.stat.mining_depthDwellerCap1.value >= depth) {
+            d.moonshard = this.getRareEarth('moonshard', depth, d.time);
+          }
+          if (depth >= MINING_PHOSPHORUS_DEPTH && (depth % 25 === 0)) {
+            d.phosphorus = this.getRareEarth('phosphorus', depth, d.time);
+          }
         }
         depths.push(d);
         if (beacon) {
@@ -253,6 +266,15 @@ export default {
         case 'obsidian':
           amount = this.mult('currencyMiningObsidianGain', Math.pow(1.05, depth - MINING_OBSIDIAN_DEPTH));
           break;
+        case 'limestone':
+          amount = this.mult('currencyMiningLimestoneGain', Math.pow(1.1, depth) * 0.001);
+          break;
+        case 'moonshard':
+          amount = this.mult('currencyMiningMoonshardGain', Math.pow(1.35, depth - MINING_MOONSHARD_DEPTH) * 0.00001);
+          break;
+        case 'phosphorus':
+          amount = this.mult('currencyMiningPhosphorusGain', Math.pow(5, (depth - MINING_PHOSPHORUS_DEPTH) / 25) * 0.000001);
+          break;
       }
       return amount * (time === Infinity ? 0 : (time + 1) / time);
     },
@@ -267,21 +289,30 @@ export default {
     },
     getLoots() {
       let loots = ['scrap'];
+      loots = [...loots, ...this.filters];
       if (this.subfeature === 0) {
-        loots = [...loots, ...this.filters];
         if (this.maxDepth >= MINING_SALT_DEPTH) {
           loots.push('salt');
         }
         if (this.maxDepth >= MINING_DEEPROCK_DEPTH) {
           loots.push('deeprock');
         }
-        if (this.maxDepth >= MINING_OBSIDIAN_DEPTH && this.$store.getters['mining/enhancementLevel'] <= 0) {
+        if (this.maxDepth >= MINING_OBSIDIAN_DEPTH && (this.$store.getters['mining/enhancementLevel'] <= 0 || !this.$store.state.mining.enhancementsActive)) {
           loots.push('obsidian');
         }
       }
       if (this.subfeature === 1) {
+        if(this.maxDepth >=2) {
+          loots.push('limestone');
+        }
         if (this.maxDepth >= 25) {
           loots.push('smoke');
+        }
+        if (this.maxDepth >= MINING_MOONSHARD_DEPTH) {
+          loots.push('moonshard');
+        }
+        if (this.maxDepth >= MINING_PHOSPHORUS_DEPTH) {
+          loots.push('phosphorus');
         }
       }
       this.loots = loots;
