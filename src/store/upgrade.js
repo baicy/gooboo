@@ -460,14 +460,16 @@ export default {
             const upgrade = state.item[name];
             const pricePercents = [];
             const capPercents = [];
-            Object.entries(upgrade.price(upgrade.bought)).forEach(([key, elem]) => {
-                const currency = rootState.currency[key];
-                pricePercents.push(currency.value < elem ? currency.value / elem : 1);
-                capPercents.push(currency.cap && currency.cap < elem ? currency.cap / elem : 1);
-            });
-            const priceProgress = pricePercents.reduce((a, b) => a + b, 0) / pricePercents.length;
-            const capProgress = capPercents.reduce((a, b) => a + b, 0) / capPercents.length;
-            commit('updateKey', { name, key: 'buyProgress', value: capProgress===1 ? priceProgress : capProgress - 1 });
+            if (upgrade.price(upgrade.bought)) { //If a building under construction reaches cap the return value of upgrade.price() is undefined
+                Object.entries(upgrade.price(upgrade.bought)).forEach(([key, elem]) => {
+                    const currency = rootState.currency[key];
+                    pricePercents.push(currency.value < elem ? currency.value / elem : 1);
+                    capPercents.push(currency.cap && currency.cap < elem ? currency.cap / elem : 1);
+                });
+                const priceProgress = pricePercents.reduce((a, b) => a + b, 0) / pricePercents.length;
+                const capProgress = capPercents.reduce((a, b) => a + b, 0) / capPercents.length;
+                commit('updateKey', { name, key: 'buyProgress', value: capProgress === 1 ? priceProgress : capProgress - 1 });
+            }
         },
         tickDelay({ state, commit, dispatch }, o) {
             let seconds = o.seconds ?? 0;
