@@ -248,6 +248,14 @@ export default {
         currentElement: (state, getters, rootState, rootGetters) => {
             const subfeature = rootState.system.features.horde.currentSubfeature;
             if (subfeature === 0 && state.zone >= HORDE_ELEMENTAL_ZONE) {
+                // Temporary fix for towers
+                // If element is applicable for towers the get activeEffect for enemy should be rewrite in horde
+                // Otherwise element should not be used in towers
+                if(state.currentTower!==null)
+                {
+                    return null;
+                }
+
                 let eligible = [];
                 let eligibleWeight = [];
                 for (const [key, elem] of Object.entries(state.element)) {
