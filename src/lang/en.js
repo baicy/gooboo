@@ -1527,6 +1527,7 @@ export default {
     smelteryTemperatureDescription2: 'This smeltery has +{0}% speed because of temperature',
     smelterySpeedDescription: 'This smeltery has a base time of {0}',
     smelt: 'Smelt',
+    smeltBook: 'Smelt/Book',
     enhance: 'Enhance',
     enhancement: {
       title: 'Enhancements',

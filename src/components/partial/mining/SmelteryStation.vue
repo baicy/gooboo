@@ -26,7 +26,7 @@
       <v-spacer></v-spacer>
       <v-badge v-if="smeltery.stored + smeltery.book > 0" inline color="secondary" :content="$formatNum(smeltery.stored + smeltery.book)"></v-badge>
       <v-btn class="ma-1" small color="primary" :disabled="isFrozen" @click="showCustom">{{ $vuetify.lang.t('$vuetify.gooboo.custom') }}</v-btn>
-      <v-btn class="ma-1" color="primary" :disabled="isFrozen || !canAfford" @click="buy">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
+      <v-btn class="ma-1" color="primary" :disabled="isFrozen || !canAfford || isBooked" @click="buy">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
     </div>
     <v-progress-linear class="rounded-b" height="4" :indeterminate="isHighspeed" :value="isHighspeed ? undefined : (smeltery.progress * 100)"></v-progress-linear>
     <v-dialog :max-width="400" v-model="showSmeltCustom">
@@ -75,7 +75,7 @@
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary" @click="buyMax" :disabled="isFrozen || !canAfford">{{ $vuetify.lang.t('$vuetify.gooboo.max') }}</v-btn>
-          <v-btn color="primary" @click="bookCustom" :disabled="smeltAmount <= 0">{{ $vuetify.lang.t('$vuetify.mining.smelt') }}</v-btn>
+          <v-btn color="primary" @click="bookCustom" :disabled="smeltAmount <= 0">{{ $vuetify.lang.t('$vuetify.mining.smeltBook') }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" @click="showSmeltCustom = false">{{ $vuetify.lang.t('$vuetify.gooboo.cancel') }}</v-btn>
         </v-card-actions>
@@ -117,6 +117,9 @@ export default {
     },
     canAfford() {
       return this.$store.getters['currency/canAfford'](this.price, this.price);
+    },
+    isBooked(){
+      return this.smeltery.book;
     },
     baseTimeNeeded() {
       return this.smeltery.timeNeeded * Math.pow(MINING_SMELTERY_TIME_INCREMENT, this.smeltery.total);

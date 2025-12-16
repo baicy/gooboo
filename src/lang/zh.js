@@ -1621,6 +1621,7 @@ export default {
     smelteryTemperatureDescription2: '由于温度原因，该冶炼厂的速度增加了 +{0}%',
     smelterySpeedDescription: '该冶炼厂的基准时间为 {0}',
     smelt: '冶炼',
+    smeltBook: '冶炼/预定',
     enhance: '增强',
     enhancement: {
       title: '增强',
