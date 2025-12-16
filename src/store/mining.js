@@ -375,11 +375,23 @@ export default {
                             return amount;
                         }
                     } else {
-                        if(maxPrice[key]>cap) return amount;
+                        if(maxPrice[key]>cap) {
+                            return amount;
+                        }
                     }
                 }
                 amount++;
             }
+        },
+        smelteryPriceBookAmount: (state, getters) => (name, amount) => {
+            const booked = state.smeltery[name].book;
+            let sumPrice={};
+            for(let i=0;i<amount;i++){
+                for(const [key,elem] of Object.entries(getters.smelteryPrice(name,booked+i))){
+                    sumPrice[key] = (sumPrice[key]??0)+elem;
+                }
+            }
+            return sumPrice;
         },
         enhancementLevel: (state) => {
             let level = 0;

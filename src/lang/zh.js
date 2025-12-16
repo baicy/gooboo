@@ -32,6 +32,7 @@ export default {
     take: '拿走',
     max: '最大',
     maxed: '最大',
+    custom: '自定义',
     free: '免费',
     capacity: '容量',
     multCapacity: '{0} 容量',

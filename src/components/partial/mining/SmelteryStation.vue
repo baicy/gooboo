@@ -140,7 +140,7 @@ export default {
       return this.$vuetify.lang.t(`$vuetify.currency.mining_bar${capitalize(this.name)}.name`);
     },
     customPriceBooked() {
-      return this.$store.getters['mining/smelteryPrice'](this.name, this.smeltAmount + this.smeltery.book);
+      return this.$store.getters['mining/smelteryPriceBookAmount'](this.name, this.smeltAmount + this.smeltery.book);
     },
     bookAmount() {
       return this.$store.getters['mining/smelteryBookAmount'](this.name);

@@ -31,6 +31,7 @@ export default {
     take: 'Take',
     max: 'Max',
     maxed: 'Max',
+    custom: 'Custom',
     free: 'Free',
     capacity: 'Capacity',
     multCapacity: '{0} capacity',
@@ -97,7 +98,7 @@ export default {
       '<=': 'at most',
       '<': 'under',
       '==': 'exactly'
-    }
+    },
   },
   endOfContent: {
     name: 'End of content',

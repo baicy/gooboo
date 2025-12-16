@@ -141,12 +141,13 @@ export default {
 
         // Smeltery
         for (const [key, elem] of Object.entries(store.state.mining.smeltery)) {
-            if (elem.stored > 0) {
+            const affordableBookAmount = Math.min(elem.book, store.getters['mining/smelteryAffordAmount'](key))
+            if (elem.stored > 0 || (elem.booking && affordableBookAmount > 0)) {
                 let secondsLeft = seconds;
                 let bars = 0;
                 let newProgress = elem.progress;
                 let timeNeeded = store.getters['mining/smelteryTimeNeeded'](key);
-                while (secondsLeft > 0 && bars < elem.stored) {
+                while (secondsLeft > 0 && bars < elem.stored + affordableBookAmount) {
                     if (secondsLeft >= (timeNeeded * (1 - newProgress))) {
                         bars++;
                         secondsLeft -= timeNeeded * (1 - newProgress);
@@ -158,13 +159,49 @@ export default {
                     timeNeeded *= MINING_SMELTERY_TIME_INCREMENT;
                 }
                 if (bars > 0) {
-                    store.commit('mining/updateSmelteryKey', {name: key, key: 'stored', value: elem.stored - bars});
+                    if (bars <= elem.stored){
+                        store.commit('mining/updateSmelteryKey', { name: key, key: 'stored', value: elem.stored - bars });
+                    } else if (bars <= elem.stored + elem.book) {
+                        store.commit('mining/updateSmelteryKey', { name: key, key: 'stored', value: 0 })
+                        store.commit('mining/updateSmelteryKey', { name: key, key: 'book', value: elem.book - (bars - elem.stored) });
+                    } else {
+                        // This should never be hit
+                    }
                     const barSplit = elem.output.split('_');
                     store.dispatch('currency/gain', {feature: barSplit[0], name: barSplit[1], amount: bars});
                 }
                 store.commit('mining/updateSmelteryKey', {name: key, key: 'progress', value: newProgress});
+                const doneBookAmount = bars < elem.stored ? 0 : bars - elem.stored;
+                const remainAmount = Math.min(elem.book - doneBookAmount, store.getters['mining/smelteryAffordAmount'](key));
+                if (remainAmount > 0) {
+                    store.dispatch('mining/addToSmelteryCustom', {name: key, amount: remainAmount, book: true});
+                }
             }
         }
+
+        
+        // // 预定冶炼 Advance Smeltery
+        // for (const [key, elem] of Object.entries(store.state.mining.smeltery)) {
+        //     if (elem.booking && elem.book > 0) {
+        //         const singleTime = store.getters['mining/smelteryTimeNeeded'](key);
+        //         // 在这段时间冶炼完成一部分数量
+        //         const doneAmount = Math.min(Math.floor(seconds / singleTime), store.getters['mining/smelteryAffordAmount'](key), elem.book);
+        //         if (doneAmount > 0) {
+        //             for (const [k, e] of Object.entries(store.getters['mining/smelteryPrice'](key, doneAmount))) {
+        //                 store.dispatch('currency/spend', {feature: k.split('_')[0], name: k.split('_')[1], amount: e});
+        //             }
+        //             store.commit('mining/updateSmelteryKey', {name: key, key: 'progress', value: (seconds - singleTime * doneAmount) / singleTime});
+        //         }
+        //         const barSplit = elem.output.split('_');
+        //         store.dispatch('currency/gain', {feature: barSplit[0], name: barSplit[1], amount: doneAmount});
+        //         store.commit('mining/updateSmelteryKey', {name: key, key: 'book', value: elem.book - doneAmount});
+        //         // 剩余的预定数量
+        //         const remainAmount = Math.min(elem.book - doneAmount, store.getters['mining/smelteryAffordAmount'](key));
+        //         if (remainAmount > 0) {
+        //             store.dispatch('mining/addToSmelteryCustom', {name: key, amount: remainAmount, book: true});
+        //         }
+        //     }
+        // }
 
         // Resin
         if (store.state.unlock.miningResin.use && subfeature === 0) {
@@ -294,29 +331,6 @@ export default {
             // Sulfur gain
             if (store.state.mining.depth >= MINING_SULFUR_DEPTH && store.getters['mining/currentBreaks'] === 0) {
                 store.dispatch('currency/gain', {feature: 'mining', name: 'sulfur', amount: store.getters['mining/rareDropFinal']('sulfur') * seconds});
-            }
-        }
-
-        // 预定冶炼 Advance Smeltery
-        for (const [key, elem] of Object.entries(store.state.mining.smeltery)) {
-            if (elem.booking && elem.book > 0) {
-                const singleTime = store.getters['mining/smelteryTimeNeeded'](key);
-                // 在这段时间冶炼完成一部分数量
-                const doneAmount = Math.min(Math.floor(seconds / singleTime), store.getters['mining/smelteryAffordAmount'](key), elem.book);
-                if (doneAmount > 0) {
-                    for (const [k, e] of Object.entries(store.getters['mining/smelteryPrice'](key, doneAmount))) {
-                        store.dispatch('currency/spend', {feature: k.split('_')[0], name: k.split('_')[1], amount: e});
-                    }
-                    store.commit('mining/updateSmelteryKey', {name: key, key: 'progress', value: (seconds - singleTime * doneAmount) / singleTime});
-                }
-                const barSplit = elem.output.split('_');
-                store.dispatch('currency/gain', {feature: barSplit[0], name: barSplit[1], amount: doneAmount});
-                store.commit('mining/updateSmelteryKey', {name: key, key: 'book', value: elem.book - doneAmount});
-                // 剩余的预定数量
-                const remainAmount = Math.min(elem.book - doneAmount, store.getters['mining/smelteryAffordAmount'](key));
-                if (remainAmount > 0) {
-                    store.dispatch('mining/addToSmelteryCustom', {name: key, amount: remainAmount, book: true});
-                }
             }
         }
 
