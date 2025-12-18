@@ -251,7 +251,7 @@ export default {
                 // Temporary fix for towers
                 // If element is applicable for towers the get activeEffect for enemy should be rewrite in horde
                 // Otherwise element should not be used in towers
-                if(state.currentTower!==null)
+                if(state.currentTower!==null || state.raidboss)
                 {
                     return null;
                 }
