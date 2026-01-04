@@ -1492,6 +1492,10 @@ export default {
         name: '矿2额外升级项',
         description: '名字显示为红色。额外用废料升级深度居民速度，公式同矿1'
       },
+      critStunFix :{
+        name: '修复部落暴击时击晕',
+        description: '修复部落暴击必定击晕bug，可以用来阻止自己偷渡'
+      },
     }
   },
   statBreakdown: {

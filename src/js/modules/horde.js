@@ -114,7 +114,16 @@ function applyCritEffects(amount) {
         store.dispatch('currency/gain', {feature: 'horde', name: 'blood', gainMult: true, amount: bloodOnCrit * amount * store.getters['horde/enemyBlood'](store.state.stat.horde_maxDifficulty.value, 0)});
     }
     if (stunOnCrit > 0) {
-        store.commit('horde/updateEnemyKey', {key: 'stun', value: store.state.horde.enemy.stun + Math.round(stunOnCrit)});
+        // store.commit('horde/updateEnemyKey', {key: 'stun', value: store.state.horde.enemy.stun + Math.round(stunOnCrit)});
+        // Fix always stunning on crit
+        if(store.state.system.settings.cheat.items.critStunFix.value) {
+            if(chance(0.05)) {
+                store.commit('horde/updateEnemyKey', {key: 'stun', value: store.state.horde.enemy.stun + Math.round(stunOnCrit)});
+            }
+        }
+        else {
+            store.commit('horde/updateEnemyKey', {key: 'stun', value: store.state.horde.enemy.stun + Math.round(stunOnCrit)});
+        }
     }
 }
 
