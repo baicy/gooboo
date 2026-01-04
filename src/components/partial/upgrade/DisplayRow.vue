@@ -4,16 +4,17 @@
   <div v-else class="d-flex align-center" :class="{'error--text': isNegative}">
     <v-icon v-if="showIcon && featureIcon" small class="mr-2">{{ featureIcon }}</v-icon>
     <div class="flex-grow-1">{{ isLocked ? '???' : text }}{{ showStar ? '*' : '' }}{{ isBuff ? ` ${ $vuetify.lang.t(`$vuetify.horde.active.buff.suffix`) }` : '' }}:</div>
-    <div class="pl-1" v-if="showRelative">
+    <!-- <div class="pl-1" v-if="showRelative">
       <mult-stat :mult="name" :type="type" :value="relativeValue"></mult-stat>
-    </div>
-    <div v-else class="flex-grow-1 d-flex" :class="(before !== null && after !== null) ? 'justify-space-between' : 'justify-end'">
+    </div> -->
+    <div class="flex-grow-1 d-flex" :class="(before !== null && after !== null) ? 'justify-space-between' : 'justify-end'">
       <div class="px-1" v-if="before !== null">
         <mult-stat :hide-prefix="hidePrefix" :mult="name" :type="type" :value="before"></mult-stat>
       </div>
       <v-icon small v-if="before !== null && after !== null">mdi-transfer-right</v-icon>
       <div class="pl-1" v-if="after !== null">
         <mult-stat :hide-prefix="hidePrefix" :mult="name" :type="type" :value="after"></mult-stat>
+        <span class="pl-1" v-if="showRelative && before !== null">(<mult-stat :hide-prefix="hidePrefix" :mult="name" :type="type" :value="relativeValue"></mult-stat>)</span>
       </div>
     </div>
   </div>
