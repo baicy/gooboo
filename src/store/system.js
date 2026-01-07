@@ -590,7 +590,15 @@ export default {
                         value: false,
                         defaultValue: false
                     },
-                }
+                    horde2RaidKey: {
+                        feature: 'horde',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: false
+                    },
+                },
             },
         },
         keybinds: {

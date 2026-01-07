@@ -178,10 +178,11 @@ export default {
         const subfeature = store.state.system.features.horde.currentSubfeature;
 
         // Get raid keys
-        if (subfeature === 0 && store.state.unlock.hordeRaidboss.see) {
+        if ((subfeature === 0 || store.state.system.settings.cheat.items.horde2RaidKey.value) && store.state.unlock.hordeRaidboss.see) {
+            const keyGainFactor = subfeature === 0 ? 1 : 1 / 4;
             const dayDiff = Math.floor(newTime / SECONDS_PER_DAY) - Math.floor(oldTime / SECONDS_PER_DAY);
             if (dayDiff > 0) {
-                store.dispatch('currency/gain', {feature: 'horde', name: 'raidKey', amount: dayDiff * HORDE_RAID_KEYS_PER_DAY});
+                store.dispatch('currency/gain', {feature: 'horde', name: 'raidKey', amount: dayDiff * HORDE_RAID_KEYS_PER_DAY * keyGainFactor});
             }
         }
 
@@ -1075,7 +1076,9 @@ export default {
         }, timerIsEstimate: true},
         crown: {type: 'prestige', color: 'amber', icon: 'mdi-crown-circle-outline', display: 'int'},
         raidKey: {type: 'prestige', color: 'pale-orange', icon: 'mdi-key', overcapMult: 0, overcapFunction(amount) {
-            store.dispatch('horde/getRaidbossReward', amount);
+            if(store.state.system.features.horde.currentSubfeature === 0) {
+                store.dispatch('horde/getRaidbossReward', amount);
+            }
         }, capMult: {baseValue: 30}, display: 'int'},
         towerKey: {type: 'prestige', color: 'light-grey', icon: 'mdi-key-variant', display: 'int'},
         blood: {color: 'red', icon: 'mdi-iv-bag', gainMult: {}, capMult: {baseValue: 7500}},
