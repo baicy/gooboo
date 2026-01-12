@@ -598,6 +598,14 @@ export default {
                         value: false,
                         defaultValue: false
                     },
+                    noResettingPedestalProgress: {
+                        feature: 'relic',
+                        unlock: null,
+                        hasDescription: true,
+                        type: 'switch',
+                        value: false,
+                        defaultValue: 'false'
+                    },
                 },
             },
         },

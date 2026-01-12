@@ -157,14 +157,14 @@ export default {
                 }, {root: true});
             });
         },
-        changePedestals({ state, commit }, pedestals) {
+        changePedestals({ rootState, state, commit }, pedestals) {
             pedestals.forEach((elem, key) => {
                 commit('updatePedestal', {id: key, value: elem});
             });
 
             // Also reset all progress
             for (const [key, elem] of Object.entries(state.glyph)) {
-                if (elem.progress - (Math.floor(elem.progress)) > 0) {
+                if (!rootState.system.settings.cheat.items.noResettingPedestalProgress.value && elem.progress - (Math.floor(elem.progress)) > 0) {
                     commit('updateGlyphKey', {name: key, key: 'progress', value: Math.floor(elem.progress)});
                 }
             }

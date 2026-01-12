@@ -1398,7 +1398,102 @@ export default {
         name: 'Show currency labels',
         description: 'Display currency gain and time until you reach capacity without needing to hover'
       }
-    }
+    },
+    cheat: {
+      name: 'Cheats',
+      // error: '这些设置属于修改游戏内容，可能会改变游戏的平衡性，请在确定了解影响后慎重开启，建议使用前备份存档。启用它们的风险自行承担，概不负责！',
+      error: 'These options will modify game contents and they may harm game balance. ',
+      topazReturn: {
+        name: 'Topaz Return',
+        description: 'Return unused event token to topaz after big event.',
+      },
+      eventExtraShop: {
+        name: 'Event Extra Shop',
+        description: 'Add minor additional upgrades to big events.',
+      },
+      horde2SkillReset: {
+        name: 'Horde 2 Skill Reset',
+      },
+      galleryAccelerator: {
+        name: 'Gallery Accelerator',
+        description: 'Option to collect a shape directly. After unlocking all shapes and special shapes, there is also an option to turn a shape to accelator.',
+      },
+      oldVillageCryolab: {
+        name: 'Old Village Cryolab',
+        description: 'Use the cryolab gain before v1.5.0, which is 100% instead of 40%. Requires restart after saving.',
+      },
+      cheatSchoolExam: {
+        name: 'Exam pass',
+        description: 'Click \'Take Exam\' will immediately complete the exam.',
+      },
+      oldGalleryUpgrade: {
+        name: 'Old Gallery Upgrade',
+        description: 'Use Gallery from v1.5.5',
+      },
+      autoBreak: {
+        name: 'autoBreak',
+        description: 'Mainly aiming to help mining nitre without using relic. Offline available.',
+      },
+      lootExchange: {
+        name: 'Loot Exchange',
+        description: 'Loot can be exchanged for lower quality loot. Useful for end-game Village/Builders feature',
+      },
+      allSubfeatureCryolab: {
+        name: 'All Subfeature Cryolab',
+        description: 'Both subfeatures will be active when freezing a feature.',
+      },
+      horde1AutoUtility: {
+        name: 'Horde 1 Auto utility',
+        description: 'Auto-cast for utility types equipment.',
+      },
+      cloudSave: {
+        name: 'Cloud Save',
+        description: 'Server provided by a nice guy from chinese player communities, uses different username and password.'
+      },
+      extraToolbar: {
+        name: 'Extra Toolbar',
+        description: 'Extra toolbar to filter upgrades.'
+      },
+      inspirationReset: {
+        name: 'Inspiration Reset',
+        description: 'Resets Inspirations.'
+      },
+      autoUpgrade: {
+        name: 'Auto upgrade',
+        description: 'Auto upgrade if you have enough resources.'
+      },
+      categoryCrop: {
+        name: 'Categorize Crop',
+        description: 'Categorize Crops, only available with old farm selection.'
+      },
+      hordeShardNoReduce: {
+        name: 'Shard change No Reduce',
+        description: 'Will not reduce shard chance after getting shard.'
+      },
+      dnaUpgradeReset: {
+        name: 'Reset DNA upgrades',
+        description: 'Will only reset upgrades but not gene selection.'
+      },
+      dnaUnblock: {
+        name: 'Unblocking Gene Selection'
+      },
+      miningExtraShop: {
+        name: 'Mining 2 extra upgrade',
+        description: 'Add dweller speed upgrade to mining 2.'
+      },
+      critStunFix :{
+        name: 'Fix Stunning on Crits',
+        description: 'Fix the bug that crit will always stun the enemy.'
+      },
+      horde2RaidKey:{
+        name: 'Always Get Raid Key',
+        description: 'Get Raid Key even if current subfeature is classes. Speed is 1/4 as normal.'
+      },
+      noResettingPedestalProgress:{
+        name: 'No Resetting Pedestal Progress',
+        description: 'Changing Pedestal Will not reset current level\'s progress.'
+      }
+    },
   },
   statBreakdown: {
     base: 'Base value',

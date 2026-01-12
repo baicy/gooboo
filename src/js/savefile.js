@@ -202,7 +202,7 @@ function loadFile(file) {
         return;
     }
 
-    ['timestamp', 'currentDay', 'lastPlayedDays', 'theme', 'backupTimer', 'playerId', 'noteHint', 'bookHint', 'cheaterSelfMark', 'cheatDetected','extraVersion', 'listSort', 'forceXlLayout', 'endmin', 'cloudSave','critStunFix','horde2RaidKey'].forEach(elem => {
+    ['timestamp', 'currentDay', 'lastPlayedDays', 'theme', 'backupTimer', 'playerId', 'noteHint', 'bookHint', 'cheaterSelfMark', 'cheatDetected','extraVersion', 'listSort', 'forceXlLayout', 'endmin', 'cloudSave','critStunFix','horde2RaidKey','noResettingPedestalProgress'].forEach(elem => {
         if (save[elem]) {
             store.commit('system/updateKey', {key: elem, value: save[elem]});
         }
@@ -460,6 +460,7 @@ function getSavefile() {
         cloudSave: store.state.system.cloudSave,
         critStunFix: store.state.system.critStunFix,
         horde2RaidKey: store.state.system.horde2RaidKey,
+        noResettingPedestalProgress: store.state.system.noResettingPedestalProgress,
 
         // Generic systems
         subfeature: {},

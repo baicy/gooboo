@@ -1496,7 +1496,15 @@ export default {
         name: '修复部落暴击时击晕',
         description: '修复部落暴击必定击晕bug，可以用来阻止自己偷渡'
       },
-    }
+      horde2RaidKey:{
+        name: '部落2突袭钥匙',
+        description: '即使当年子功能为部落2也可以获得突袭钥匙，产量为原先的1/4'
+      },
+      noResettingPedestalProgress:{
+        name: '更换圣遗物不重置当前等级进度',
+        description: '更换供奉底座进度将不会重置当前层进度'
+      }
+    },
   },
   statBreakdown: {
     base: '基础值',

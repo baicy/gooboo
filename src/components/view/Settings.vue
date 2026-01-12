@@ -71,6 +71,7 @@ export default {
       horde: '部落',
       farm: '农场',
       gallery: '画廊',
+      relic: '圣遗物',
       event: '事件',
     }
   }),
