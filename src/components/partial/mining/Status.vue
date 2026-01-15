@@ -22,6 +22,9 @@
 .no-beacon {
   opacity: 0.1;
 }
+.enhancement-disabled {
+  text-decoration: line-through;
+}
 </style>
 
 <template>
@@ -104,37 +107,21 @@
           <stat-breakdown :base="item.baseAmount" :name="gainMultName('mining', key)"></stat-breakdown>
           <div>{{ $vuetify.lang.t('$vuetify.mining.gainSummary', $formatNum(item.amount, true), $formatNum(item.amount * oreBreakMult, true), oreBreakMult, $formatNum(item.amount * (oreMultPerSecond !== null ? oreMultPerSecond : 0), true)) }}</div>
         </gb-tooltip>
-        <gb-tooltip v-for="(item, key, index) in rareDrops" :key="`loot-${ Object.keys(ore).length + index }`" :title-text="$vuetify.lang.t(`$vuetify.currency.mining_${key}.name`)">
-          <template v-slot:activator="{ on, attrs }">
-            <v-chip label class="balloon-text-dynamic ma-1" :class="$vuetify.theme.dark ? 'darken-2' : 'lighten-2'" :color="currency['mining_' + key].color" v-bind="attrs" v-on="on">
-              <v-icon class="mr-2">{{ currency['mining_' + key].icon }}</v-icon>
-              <span :class="{'warning--text': isDeepest && rareEarthType[key] !== 'hit'}">
-                <span v-if="rareEarthType[key] === 'hit'">{{ $formatNum(item, true) }}</span>
-                <span v-else-if="rareEarthMultPerSecond === null">-</span>
-                <span v-else-if="rareEarthType[key] === 'break'">{{ $formatNum(item, true) }}</span>
-                <span v-else>{{ $formatNum(item * rareEarthMultPerSecond, true) }}/s</span>
-              </span>
-            </v-chip>
-          </template>
-          <div>{{ $vuetify.lang.t(`$vuetify.mining.rareEarthDescription.${ key }`, rareEarthDepth[key]) }}</div>
-          <alert-text v-if="isDeepest && rareEarthType[key] !== 'hit'" type="warning">{{ $vuetify.lang.t('$vuetify.mining.rareEarthNotBroken') }}</alert-text>
-          <div class="text-center">{{ $vuetify.lang.t('$vuetify.gooboo.gain') }}</div>
-          <stat-breakdown :base="rareDropBase(key)" :multArray="key === 'granite' ? graniteMult : []" :name="gainMultName('mining', key)"></stat-breakdown>
-          <div v-if="rareEarthType[key] === 'hit'">{{ $vuetify.lang.t('$vuetify.mining.gainSummaryHit', $formatNum(item, true)) }}</div>
-          <div v-else-if="rareEarthType[key] === 'break'">{{ $vuetify.lang.t('$vuetify.mining.gainSummaryBreak', $formatNum(item, true)) }}</div>
-          <div v-else>{{ $vuetify.lang.t('$vuetify.mining.gainSummary', $formatNum(item, true), $formatNum(item * rareEarthBreakMult, true), rareEarthBreakMult, $formatNum(item * (rareEarthMultPerSecond !== null ? rareEarthMultPerSecond : 0), true)) }}</div>
-          <alert-text v-if="key === 'coal' || key === 'niter'" type="info">{{ $vuetify.lang.t('$vuetify.mining.rareEarthNotAffected') }}</alert-text>
-        </gb-tooltip>
       </template>
       <template v-else-if="subfeature === 1">
-        <v-chip v-if="smoke > 0" label class="balloon-text-dynamic ma-1" :class="$vuetify.theme.dark ? 'darken-2' : 'lighten-2'" :color="currency.mining_smoke.color">
-          <v-icon class="mr-2">{{ currency.mining_smoke.icon }}</v-icon>
-          <span>{{ $formatNum(smoke, true) }}</span>
-        </v-chip>
+        <gb-tooltip v-if="smoke > 0" key="loot-smoke" :title-text="$vuetify.lang.t(`$vuetify.currency.mining_smoke.name`)">
+          <template v-slot:activator="{ on, attrs }">
+            <v-chip label class="balloon-text-dynamic ma-1" :class="$vuetify.theme.dark ? 'darken-2' : 'lighten-2'" :color="currency.mining_smoke.color" v-bind="attrs" v-on="on">
+              <v-icon class="mr-2">{{ currency.mining_smoke.icon }}</v-icon>
+              <span>{{ $formatNum(smoke, true) }}</span>
+            </v-chip>
+          </template>
+          <stat-breakdown :base="baseSmoke" :name="gainMultName('mining', 'smoke')"></stat-breakdown>
+        </gb-tooltip>
         <template v-if="isDeepest">
           <gb-tooltip v-for="(amount, gas) in gasses" :key="gas" :title-text="$vuetify.lang.t(`$vuetify.currency.mining_${ gas }.name`)">
             <template v-slot:activator="{ on, attrs }">
-              <v-chip label class="ma-1" :class="$vuetify.theme.dark ? 'darken-2' : 'lighten-2'" :color="currency[`mining_${gas}`].color" v-bind="attrs" v-on="on">
+              <v-chip label class="balloon-text-dynamic ma-1" :class="$vuetify.theme.dark ? 'darken-2' : 'lighten-2'" :color="currency[`mining_${gas}`].color" v-bind="attrs" v-on="on">
                 <v-icon class="mr-2">{{ currency[`mining_${gas}`].icon }}</v-icon>
                 <span>{{ $formatNum(amount) }}</span>
               </v-chip>
@@ -152,6 +139,29 @@
           </gb-tooltip>
         </template>
       </template>
+      <gb-tooltip v-for="(item, key, index) in rareDrops" :key="`loot-${ Object.keys(ore).length + index }`" :title-text="$vuetify.lang.t(`$vuetify.currency.mining_${key}.name`)">
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip label class="balloon-text-dynamic ma-1" :class="$vuetify.theme.dark ? 'darken-2' : 'lighten-2'" :color="currency['mining_' + key].color" v-bind="attrs" v-on="on">
+            <v-icon class="mr-2">{{ currency['mining_' + key].icon }}</v-icon>
+            <span :class="{'warning--text': isDeepest && rareEarthType[key] !== 'hit'}">
+              <span v-if="rareEarthType[key] === 'hit'">{{ $formatNum(item, true) }}</span>
+              <span v-else-if="rareEarthMultPerSecond === null">-</span>
+              <span v-else-if="rareEarthType[key] === 'break'">{{ $formatNum(item, true) }}</span>
+              <span v-else>{{ $formatNum(item * rareEarthMultPerSecond, true) }}/s</span>
+            </span>
+          </v-chip>
+        </template>
+        <div>{{ $vuetify.lang.t(`$vuetify.mining.rareEarthDescription.${ key }`, rareEarthDepth[key]) }}</div>
+        <alert-text v-if="isDeepest && rareEarthType[key] !== 'hit'" type="warning">{{ $vuetify.lang.t('$vuetify.mining.rareEarthNotBroken') }}</alert-text>
+        <div class="text-center">{{ $vuetify.lang.t('$vuetify.gooboo.gain') }}</div>
+        <stat-breakdown :base="rareDropBase(key)" :multArray="key === 'granite' ? graniteMult : []" :name="gainMultName('mining', key)"></stat-breakdown>
+        <div v-if="rareEarthType[key] === 'hit'">{{ $vuetify.lang.t('$vuetify.mining.gainSummaryHit', $formatNum(item, true)) }}</div>
+        <div v-else-if="rareEarthType[key] === 'break'">{{ $vuetify.lang.t('$vuetify.mining.gainSummaryBreak', $formatNum(item, true)) }}</div>
+        <div v-else>{{ $vuetify.lang.t('$vuetify.mining.gainSummary', $formatNum(item, true), $formatNum(item * rareEarthBreakMult, true), rareEarthBreakMult, $formatNum(item * (rareEarthMultPerSecond !== null ? rareEarthMultPerSecond : 0), true)) }}</div>
+        <alert-text v-if="key === 'coal' || key === 'niter'" type="info">{{ $vuetify.lang.t('$vuetify.mining.rareEarthNotAffected') }}</alert-text>
+      </gb-tooltip>
+      <v-spacer></v-spacer>
+      <v-icon v-if="hasTorch">mdi-torch</v-icon>
     </div>
     <alert-text v-if="showScrapHint" class="ma-1" type="info">{{ $vuetify.lang.t('$vuetify.mining.scrapGainHint') }}</alert-text>
     
@@ -203,12 +213,18 @@
         <display-row class="mt-0" v-for="(effect, key) in beaconEffect" :key="`effect-beacon-${ key }`" :type="effect.type" :name="effect.name" :after="effect.value"></display-row>
       </gb-tooltip>
     </div>
-    <div v-if="enhancementLevel > 0" class="d-flex justify-center mt-8 mt-lg-12">
+    <div v-if="enhancementLevel > 0" class="d-flex justify-center align-center mt-8 mt-lg-12">
       <v-icon class="mr-2">mdi-package-up</v-icon>
+      <gb-tooltip v-if="canDisableEnhancements" key="enhancement-disable" :min-width="0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn class="mr-2" small :color="enhancementsActive ? 'error' : 'success'" @click="toggleEnhancements" v-bind="attrs" v-on="on">{{ $vuetify.lang.t(`$vuetify.gooboo.${ enhancementsActive ? 'disable' : 'enable' }`) }}</v-btn>
+        </template>
+        <div class="mt-0">{{ $vuetify.lang.t('$vuetify.mining.enhancement.disableDescription') }}</div>
+      </gb-tooltip>
       <div>
         <gb-tooltip v-for="(enhancement, name) in enhancements" :key="`enhancement-${ name }`" :title-text="$vuetify.lang.t(`$vuetify.mining.enhancement.${ name }`)">
           <template v-slot:activator="{ on, attrs }">
-            <div :class="[`${ currency['mining_' + name].color }--text`, {'text--lighten-2': $vuetify.theme.dark, 'text--darken-2': !$vuetify.theme.dark}]" v-bind="attrs" v-on="on">{{ $vuetify.lang.t(`$vuetify.mining.enhancement.${ name }`) }} {{ $formatRoman(enhancement.level) }}</div>
+            <div :class="[`${ currency['mining_' + name].color }--text`, {'text--lighten-2': $vuetify.theme.dark, 'text--darken-2': !$vuetify.theme.dark, 'enhancement-disabled': !enhancementsActive}]" v-bind="attrs" v-on="on">{{ $vuetify.lang.t(`$vuetify.mining.enhancement.${ name }`) }} {{ $formatRoman(enhancement.level) }}</div>
           </template>
           <display-row class="mt-0" v-for="(effect, key) in enhancement.effect" :key="`effect-${ name }-${ key }`" :type="effect.type" :name="effect.name" :after="effect.value"></display-row>
         </gb-tooltip>
@@ -220,7 +236,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { MINING_COAL_DEPTH, MINING_DEEPROCK_DEPTH, MINING_GLOWSHARD_DEPTH, MINING_GRANITE_DEPTH, MINING_NITER_DEPTH, MINING_OBSIDIAN_DEPTH, MINING_ORE_BREAK, MINING_RARE_DROP_BREAK, MINING_SALT_DEPTH, MINING_SCRAP_BREAK, MINING_SULFUR_DEPTH } from '../../../js/constants';
+import { MINING_COAL_DEPTH, MINING_DEEPROCK_DEPTH, MINING_GLOWSHARD_DEPTH, MINING_GRANITE_DEPTH, MINING_MOONSHARD_DEPTH, MINING_NITER_DEPTH, MINING_OBSIDIAN_DEPTH, MINING_ORE_BREAK, MINING_PHOSPHORUS_DEPTH, MINING_RARE_DROP_BREAK, MINING_SALT_DEPTH, MINING_SCRAP_BREAK, MINING_SULFUR_DEPTH } from '../../../js/constants';
 import CurrencyIcon from '../../render/CurrencyIcon.vue';
 import StatBreakdown from '../../render/StatBreakdown.vue';
 import AlertText from '../render/AlertText.vue';
@@ -241,6 +257,9 @@ export default {
       obsidian: 'both',
       deeprock: 'both',
       glowshard: 'hit',
+      limestone: 'both',
+      moonshard: 'both',
+      phosphorus: 'both',
     },
     rareEarthDepth: {
       granite: MINING_GRANITE_DEPTH,
@@ -251,6 +270,9 @@ export default {
       obsidian: MINING_OBSIDIAN_DEPTH,
       deeprock: MINING_DEEPROCK_DEPTH,
       glowshard: MINING_GLOWSHARD_DEPTH,
+      limestone: 0,
+      moonshard: MINING_MOONSHARD_DEPTH,
+      phosphorus: MINING_PHOSPHORUS_DEPTH,
     },
     showBeacons: false,
     showAutoBreak: false,
@@ -266,6 +288,7 @@ export default {
       unlock: state => state.unlock,
       subfeature: state => state.system.features.mining.currentSubfeature,
       beacon: state => state.mining.beacon,
+      enhancementsActive: state => state.mining.enhancementsActive,
       isFrozen: state => state.cryolab.mining.active,
       autoBreak: state => state.mining.autoBreak,
     }),
@@ -276,6 +299,7 @@ export default {
       baseToughness: 'mining/currentBaseToughness',
       scrap: 'mining/currentScrap',
       baseScrap: 'mining/currentBaseScrap',
+      baseSmoke: 'mining/currentBaseSmoke',
       ore: 'mining/currentOre',
       smoke: 'mining/currentSmoke',
       gasses: 'mining/currentGas',
@@ -352,6 +376,9 @@ export default {
       const maxDepth = this.$store.state.stat.mining_maxDepth0.total;
       return maxDepth >= 5 && maxDepth <= 10;
     },
+    canDisableEnhancements() {
+      return this.$store.state.stat.mining_obsidian.total > 0;
+    },
     canSeeBeacons() {
       return this.$store.getters['mult/get']('miningBeaconPiercing') >= 1;
     },
@@ -365,6 +392,9 @@ export default {
         return [];
       }
     },
+    hasTorch() {
+      return this.$store.state.mining.torchDepths.includes(this.depth);
+    }
   },
   methods: {
     resetDurability() {
@@ -406,6 +436,9 @@ export default {
       this.$store.commit('system/updateTutorialKey', {name: 'miningDepth', key: 'completed', value: true});
       this.resetDurability();
     },
+    toggleEnhancements() {
+      this.$store.dispatch('mining/toggleEnhancements');
+    }
   }
 }
 </script>

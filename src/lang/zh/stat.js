@@ -41,18 +41,29 @@ export default {
   },
   mining_oreVariety: {
     achievement: '多样性',
-    description: '发现的矿石类型'
+    description0: '发现的矿石类型',
+    description1: '发现矿石和稀土类型',
+    description2: '发现矿石、稀土和天然气类型',
   },
   mining_coal: {
     achievement: '黑暗',
     description: '获得的煤'
   },
-  mining_coalMax: {
-    description: '最高煤量'
-  },
   mining_resin: {
     achievement: '陷入困境',
     description: '得到的树脂'
+  },
+  mining_gasTotal: {
+    achievement: '急性子',
+    description: '最高气体量的数字总和'
+  },
+  mining_smoke: {
+    achievement: '很难看清',
+    description: '最高烟雾量'
+  },
+  mining_enhancementHighest: {
+    achievement: '准备好了',
+    description: '最高增强级别'
   },
   mining_craftingWasted: {
     achievement: '浪费了',
@@ -69,14 +80,17 @@ export default {
   mining_timeSpent: {
     description: '花费的时间'
   },
+  mining_relicActivesUsed: {
+    description: '遗物激活已使用'
+  },
   mining_bestPrestige0: {
-    description: '最高声望（矿山）'
+    description: '最佳声望 (矿山)'
   },
   mining_bestPrestige1: {
-    description: '最高声望（气态）'
+    description: '最佳声望 (气体巨人)'
   },
   mining_prestigeCount: {
-    description: '声望次数'
+    description: '声望'
   },
 
   // Village stats
@@ -118,7 +132,7 @@ export default {
   },
   village_sacrifice: {
     achievement: '黑洞',
-    description: '牺牲的次数'
+    description: '做出的牺牲'
   },
   village_oil: {
     achievement: '拿走他们的油!',
@@ -135,17 +149,17 @@ export default {
   village_timeSpent: {
     description: '花费的时间'
   },
+  village_relicActivesUsed: {
+    description: '遗物激活已使用'
+  },
   village_bestPrestige0: {
-    description: '最高声望（工人）'
+    description: '最佳声望 (工人)'
   },
   village_bestPrestige1: {
-    description: '最高声望（工匠）'
+    description: '最佳声望 (工匠公会)'
   },
   village_prestigeCount: {
     description: '声望'
-  },
-  village_offeringMax: {
-    description: '最大供品数'
   },
 
   // Horde stats
@@ -154,19 +168,18 @@ export default {
     description: '最大区域'
   },
   horde_maxDifficulty: {
-    description: '最高难度'
+    description: '最大难度'
   },
   horde_maxZoneSpeedrun: {
     achievement: '迅捷出击',
-    description: '30分钟内达到的最大区域'
+    description: '30分钟内达到最大区域'
   },
   horde_totalDamage: {
-    achievement: '杀手',
-    description: '造成的基本攻击总伤害'
+    description: '造成的常规攻击总伤害'
   },
   horde_maxDamage: {
     achievement: '威猛',
-    description: '一次基本攻击造成最大伤害'
+    description: '一次常规攻击造成最大伤害'
   },
   horde_bone: {
     achievement: '狗的最爱',
@@ -182,7 +195,7 @@ export default {
   },
   horde_maxCorruptionKill: {
     achievement: '挑战邪恶',
-    description: '击败的最高腐化敌人'
+    description: '击败最高腐化敌人'
   },
   horde_maxMastery: {
     achievement: '一招',
@@ -192,21 +205,49 @@ export default {
     achievement: '多样性',
     description: '总计精通等级'
   },
+  horde_blood: {
+    achievement: '吸血鬼',
+    description: '获得血液'
+  },
+  horde_courage: {
+    achievement: '勇敢',
+    description: '获得勇气'
+  },
+  horde_trinket: {
+    achievement: '做好一切准备',
+    description: '所有饰品稀有度的总和'
+  },
   horde_unlucky: {
     achievement: '不幸',
     description: '失败有 99% 的传家宝几率'
   },
   horde_maxItems: {
-    description: '最大装备数'
+    description: '最多装备使用'
+  },
+  horde_infiniteScore: {
+    achievement: '角斗士',
+    description: '在无尽的区域中击败的最高 # 敌人总数'
+  },
+  horde_warzoneInfiniteScore: {
+    description: '在无尽区（Warzone）击败最高 # 敌人'
+  },
+  horde_monkeyJungleInfiniteScore: {
+    description: '在无尽区域（猴子丛林）击败最高 # 敌人'
+  },
+  horde_loveIslandInfiniteScore: {
+    description: '无限区域（爱之岛）击败最高 # 敌人'
   },
   horde_timeSpent: {
     description: '花费的时间'
   },
+  horde_relicActivesUsed: {
+    description: '遗物激活已使用'
+  },
   horde_bestPrestige0: {
-    description: '最高声望（装备）'
+    description: '最佳声望 (装备)'
   },
   horde_bestPrestige1: {
-    description: '最高声望（职业）'
+    description: '最佳声望 (职业)'
   },
   horde_prestigeCount: {
     description: '声望'
@@ -226,33 +267,28 @@ export default {
     description: '最高作物声望'
   },
   farm_vegetable: {
-    achievement: '蔬菜主义者',
-    description: '收获的蔬菜'
+    achievement: '素食主义者',
+    description: '获得的蔬菜'
   },
   farm_berry: {
-    achievement: '浆果主义者',
-    description: '收获的浆果'
+    achievement: '浆果不错',
+    description: '获得的浆果'
   },
   farm_grain: {
     achievement: '面包师',
-    description: '收获的粮食'
+    description: '获得的谷物'
   },
   farm_flower: {
     achievement: '花店老板',
-    description: '收获的鲜花'
+    description: '获得的鲜花'
   },
   farm_gold: {
     achievement: '单片眼镜',
-    description: '收获的黄金'
+    description: '获得的黄金'
   },
-  farm_bugMax: {
-    description: '最高虫子数量'
-  },
-  farm_ladybugMax: {
-    description: '最高瓢虫数量'
-  },
-  farm_butterflyMax: {
-    description: '最高蝴蝶数量'
+  farm_care: {
+    achievement: '珍贵植物',
+    description: '医疗应用'
   },
   farm_totalMystery: {
     description: '神秘'
@@ -275,9 +311,6 @@ export default {
     achievement: '富有',
     description: '获得的现金'
   },
-  gallery_greenMax: {
-    description: '在一次声望中达到的最高绿色涂料'
-  },
   gallery_bestPrestige: {
     description: '一次声望中的最高现金'
   },
@@ -285,38 +318,43 @@ export default {
     achievement: '脑洞大',
     description: '应用的最高层创意'
   },
-  gallery_inspirationMax: {
-    description: '最高灵感数量'
-  },
   gallery_packageMax: {
     achievement: '纸板堡垒',
-    description: '最高包裹数量'
+    description: '最高包包数量'
   },
   gallery_redDrumMax: {
     achievement: '笨蛋笨蛋笨蛋',
     description: '最高红鼓数量'
   },
   gallery_shapeComboTotal: {
-    achievement: '收集家',
-    description: '总计收集的形状'
+    achievement: '收藏家',
+    description: '收集的形状总数'
   },
   gallery_shapeComboHighest: {
     achievement: '天才',
-    description: '最大形状组合数'
+    description: '最高形状组合'
   },
   gallery_canvasLevelTotal: {
-    achievement: '远见',
+    achievement: '远见卓识',
     description: '画布总等级'
   },
   gallery_hourglassHighest: {
     achievement: '借来的时间',
-    description: '沙漏时间达到 1d '
+    description: '沙漏时间达到 1 天'
   },
   gallery_timeSpent: {
     description: '花费的时间'
   },
+  gallery_relicActivesUsed: {
+    description: '遗物激活已使用'
+  },
   gallery_prestigeCount: {
     description: '声望'
+  },
+
+  // Other stats
+  school_totalPoints: {
+    description: '获得的总点数'
   },
 
   // Meta stats
@@ -331,5 +369,10 @@ export default {
   meta_longestOfflineTime: {
     achievement: '回来',
     description: '最长离线时长'
-  }
+  },
+
+  // Custom stats
+  custom_hordeBattlepass: {
+    description: '战斗通过等级'
+  },
 };

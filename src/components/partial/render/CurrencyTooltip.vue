@@ -1,6 +1,7 @@
 <template>
   <div class="tooltip-text-container">
-    <div v-if="!hideDetails">{{ $vuetify.lang.t(`$vuetify.currency.${name}.description`) }}</div>
+    <div v-if="currency.showSubtype" class="text-center">{{ $vuetify.lang.t(`$vuetify.currency.subtype.${ feature }.${ currency.subtype }`) }}</div>
+    <div v-if="!hideDetails">{{ $vuetify.lang.t(`$vuetify.currency.${ name }.description`) }}</div>
     <div v-if="dropSource.length" class="d-flex">
       <div class="my-1" style="min-width: 70px">掉落作物：</div>
       <div class="d-flex flex-wrap">
@@ -11,15 +12,17 @@
       </div>
     </div>
     <slot></slot>
-    <alert-text v-if="!hideDetails && isOvercap" type="error">{{
-      currency.overcapMult > 0 ? ($vuetify.lang.t('$vuetify.currency.overcapGain', $formatNum(overcapMult * 100, true)) + (overcapStage > 1 ? ` (x${ overcapStage })` : '')) : $vuetify.lang.t('$vuetify.currency.overcapNoGain')
-    }}</alert-text>
+    <alert-text v-if="!hideDetails && isOvercap" :type="overcapMult < 1 ? 'error' : 'warning'">
+      <span v-if="overcapMult <= 0">{{ $vuetify.lang.t('$vuetify.currency.overcapNoGain') }}</span>
+      <span v-else-if="overcapMult >= 1">{{ $vuetify.lang.t('$vuetify.currency.overcapFullGain') }}</span>
+      <span v-else>{{ $vuetify.lang.t('$vuetify.currency.overcapGain', $formatNum(overcapMult * 100, true)) + (overcapStage > 1 ? ` (x${ overcapStage })` : '') }}</span>
+    </alert-text>
     <alert-text v-if="!hideDetails && currency.cap && currency.overcapMult > 0" type="info">
       当前阶段 {{ $formatNum((currency.value-currency.cap * overcapStage) / currency.cap * 100, true) }}%
     </alert-text>
     <div class="text-center mt-2">
       <span :class="afford ? '' : `red--text ${ $vuetify.theme.dark ? 'text--lighten-3' : 'text--darken-2'}`">
-        <span>{{ $formatNum(currency.value, true) }}</span>
+        <span>{{ formattedValue }}</span>
         <span v-if="neededPercent !== null"> ({{ $formatNum(neededPercent, true) }}%)</span>
       </span>
       <template v-if="currency.cap !== null">
@@ -38,10 +41,12 @@
     </div>
     <alert-text v-if="!afford" type="error">{{ $vuetify.lang.t('$vuetify.gooboo.cantAfford') }}</alert-text>
     <alert-text v-if="!affordCap" type="error">{{ $vuetify.lang.t('$vuetify.gooboo.capTooLow') }}</alert-text>
-    <alert-text v-if="showMultWarning" type="warning">{{ $vuetify.lang.t('$vuetify.currency.benefitLoss') }}</alert-text>
+    <alert-text v-if="showMultWarning && isSpent" type="warning">{{ $vuetify.lang.t('$vuetify.currency.benefitLoss') }}</alert-text>
+    <alert-text v-if="!isSpent" type="info">{{ $vuetify.lang.t('$vuetify.currency.isNotSpent') }}</alert-text>
     <template v-if="currency.value > 0">
       <display-row class="mt-0" v-for="(item, key) in currencyMult" :key="key" :name="key" :type="item.type" :after="item.value"></display-row>
     </template>
+    <slot name="before-stats"></slot>
     <template v-if="!hideDetails && currency.showGainMult && (gainBase !== null || baseArray.length > 0 || gainAmount > 0)">
       <div class="text-center">{{ $vuetify.lang.t('$vuetify.gooboo.gain') }}</div>
       <stat-breakdown :name="gainName" :base="gainBase" :base-array="baseArray" :mult-array="multArray" :bonus-array="bonusArray"></stat-breakdown>
@@ -54,6 +59,7 @@
 </template>
 
 <script>
+import { formatInt, formatNum } from '../../../js/utils/format';
 import StatBreakdown from '../../render/StatBreakdown.vue';
 import DisplayRow from '../upgrade/DisplayRow.vue';
 import AlertText from './AlertText.vue';
@@ -99,11 +105,19 @@ export default {
       type: Array,
       required: false,
       default: (() => [])
+    },
+    isSpent: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   computed: {
     currency() {
       return this.$store.state.currency[this.name];
+    },
+    feature() {
+      return this.name.split('_')[0];
     },
     gainName() {
       return this.currency.showGainMult ? this.$store.getters['currency/gainMultName'](...this.name.split('_')) : null;
@@ -210,6 +224,15 @@ export default {
         }
       }
       return sources;
+    },
+    formattedValue() {
+      switch (this.currency.display) {
+        case 'number':
+          return formatNum(this.currency.value, true);
+        case 'int':
+          return formatInt(this.currency.value);
+      }
+      return this.currency.value;
     }
   }
 }

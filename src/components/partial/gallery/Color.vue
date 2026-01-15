@@ -13,7 +13,7 @@
 </style>
 
 <template>
-  <div class="bg-tile-default d-flex flex-wrap align-center rounded pa-2" :class="{'premium-glow': isPremium, 'elevation-2': !isPremium}" style="position: relative; min-height: 76px;">
+  <div class="bg-tile-default d-flex flex-wrap align-center rounded pa-2" :class="{[premiumGlowName]: isPremium, 'elevation-2': !isPremium}" style="position: relative; min-height: 76px;">
     <currency :name="`gallery_${name}`" class="ma-1" :large="name === 'beauty'">
       <alert-text v-if="showAmountInfo" type="info">{{ $vuetify.lang.t('$vuetify.gallery.colorGainReduced') }}</alert-text>
     </currency>
@@ -103,7 +103,6 @@
 <script>
 import { GALLERY_CONVERTER_EXPONENT } from '../../../js/constants';
 import { capitalize } from '../../../js/utils/format';
-import { getSequence } from '../../../js/utils/math';
 import Currency from '../../render/Currency.vue';
 import PriceTag from '../../render/PriceTag.vue';
 import StatBreakdown from '../../render/StatBreakdown.vue';
@@ -229,7 +228,7 @@ export default {
       return this.$store.state.unlock.galleryCanvas.use;
     },
     canvasSpeedBase() {
-      return this.name !== 'beauty' ? (getSequence(10, this.$store.state.gallery.colorData[this.name].cacheSpace) * 0.1) : 0;
+      return this.name !== 'beauty' ? this.$store.state.gallery.colorData[this.name].cacheSpace : 0;
     },
     canvasSpeedMult() {
       return this.canvasSpeedMultAmount <= 1 ? [] : [{name: `currencyMult_gallery_${ this.name }Drum`, value: this.canvasSpeedMultAmount}];
@@ -240,11 +239,12 @@ export default {
     canvasDisplay() {
       const level = this.canvasLevel;
       const nextLevel = this.canvasLevel + 1;
-      const drumPerLevel = this.$store.state.system.settings.cheat.items.oldGalleryUpgrade.value ? 25 : 10;
+      // const drumPerLevel = this.$store.state.system.settings.cheat.items.oldGalleryUpgrade.value ? 25 : 10;
       return [
         {type: 'mult', name: `currencyGallery${ capitalize(this.name) }Gain`, before: level > 0 ? Math.pow(2, level) : null, after: Math.pow(2, nextLevel)},
         {type: 'mult', name: `gallery${ capitalize(this.name) }Conversion`, before: level > 0 ? Math.pow(2, level) : null, after: Math.pow(2, nextLevel)},
-        {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (drumPerLevel * level) : null, after: drumPerLevel * nextLevel}
+        // {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (drumPerLevel * level) : null, after: drumPerLevel * nextLevel}
+        {type: 'base', name: `currencyGallery${ capitalize(this.name) }DrumCap`, before: level > 0 ? (10 * level) : null, after: 10 * nextLevel}
       ];
     },
     canvasUntilNext() {
@@ -253,7 +253,7 @@ export default {
       return speed > 0 ? ((1 - this.canvasPercent) * difficulty / speed) : null;
     },
     fakeCanvasUntilNext() {
-      const canvasSpeedBase = getSequence(10, this.canvasSpaceMax) * 0.1;
+      const canvasSpeedBase = this.canvasSpaceMax;
       const speed = this.$store.getters['mult/get']('galleryCanvasSpeed', canvasSpeedBase, this.canvasSpeedMultAmount);
       const difficulty = this.$store.getters['gallery/canvasDifficulty'](this.name, this.canvasLevel);
       return speed > 0 ? ((1 - this.canvasPercent) * difficulty / speed) : null;
@@ -268,6 +268,9 @@ export default {
         chance *= this.$store.getters['mult/get'](`gallery${ capitalize(elem) }DrumChance`);
       });
       return chance;
+    },
+    premiumGlowName() {
+      return `premium-${ this.$store.state.system.settings.performance.items.cssAnimations.value ? 'glow' : 'frame' }-${ this.$store.state.upgrade.item[`gallery_pretty${ this.statBaseName }`]?.level }`;
     }
   },
   methods: {
