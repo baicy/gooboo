@@ -427,30 +427,36 @@ export default {
                     break;
                 }
                 case 'cinders': {
+                    dispatch('stat/reset',{feature: 'event', type: 'cinders'}, {root: true});
                     dispatch('note/find', 'event_7', {root: true});
                     break;
                 }
                 case 'bloom': {
+                    dispatch('stat/reset',{feature: 'event', type: 'bloom'}, {root: true});
                     dispatch('bloom/addFlower', rootGetters['bloom/buildFlower']({type: 'daisy'}), {root: true});
                     dispatch('note/find', 'event_11', {root: true});
                     break;
                 }
                 case 'weatherChaos': {
+                    dispatch('stat/reset',{feature: 'event', type: 'weatherChaos'}, {root: true});
                     dispatch('weatherChaos/initWeatherCycle', null, {root: true});
                     dispatch('note/find', 'event_15', {root: true});
                     break;
                 }
                 case 'summerFestival': {
+                    dispatch('stat/reset',{feature: 'event', type: 'summerFestival'}, {root: true});
                     dispatch('summerFestival/generateIsland', null, {root: true});
                     dispatch('note/find', 'event_19', {root: true});
                     break;
                 }
                 case 'nightHunt': {
+                    dispatch('stat/reset',{feature: 'event', type: 'nightHunt'}, {root: true});
                     dispatch('nightHunt/seedRecipes', null, {root: true});
                     dispatch('note/find', 'event_26', {root: true});
                     break;
                 }
                 case 'snowdown': {
+                    dispatch('stat/reset',{feature: 'event', type: 'snowdown'}, {root: true});
                     dispatch('note/find', 'event_30', {root: true});
                     break;
                 }
@@ -593,6 +599,7 @@ export default {
             if (stats.startedBigEvent) {
                 // Remaining event tokens are cleared when a new big event starts
                 dispatch('currency/reset', {feature: 'event', type: 'token'}, {root: true});
+                dispatch('stat/reset',{feature: 'event', type: 'token'}, {root: true});
             }
             if (!stats.isSameEvent && stats.startEvent !== null) {
                 dispatch('end', stats.startEvent);
